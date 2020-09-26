@@ -15,10 +15,21 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from django.contrib import admin
-from django.urls import include, path
+from django.db import models
 
-urlpatterns = [
-    path('', include('main.urls')), 
-    path('admin/', admin.site.urls),
-]
+from django.contrib.auth.models import User
+
+class Book(models.Model):
+    isbn = models.PositiveBigIntegerField()
+    name = models.CharField(max_length=255)
+    count = models.IntegerField()
+    available_count = models.IntegerField()
+    status = models.IntegerField()
+
+class Lease(models.Model):
+    customer = models.ForeignKey(User, on_delete=models.PROTECT, related_name='+')
+    librarian = models.ForeignKey(User, on_delete=models.PROTECT, related_name='+')
+    book = models.ForeignKey(Book, on_delete=models.PROTECT)
+    issue_date = models.DateTimeField()
+    return_date = models.DateTimeField()
+    status = models.IntegerField()
