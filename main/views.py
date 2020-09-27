@@ -19,9 +19,6 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 
-def index(request):
-    return HttpResponse("Welcome to Library Management System!")
-
 @login_required
-def profile(request):
-    return HttpResponse(request.user.username)
+def index(request):
+    return HttpResponse("Welcome to Library Management System! Your name is %s" % request.user.username)

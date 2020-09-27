@@ -23,5 +23,4 @@ app_name = 'main'
 urlpatterns = [
     path('', views.index, name='index'),
     path('', include('django.contrib.auth.urls')),
-    path('profile/', views.profile, name='profile'),
 ]
