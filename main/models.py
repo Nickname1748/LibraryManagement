@@ -27,9 +27,9 @@ class Book(models.Model):
     status = models.IntegerField()
 
 class Lease(models.Model):
-    customer = models.ForeignKey(User, on_delete=models.PROTECT, related_name='+')
-    librarian = models.ForeignKey(User, on_delete=models.PROTECT, related_name='+')
+    customer = models.ForeignKey(User, on_delete=models.PROTECT)
     book = models.ForeignKey(Book, on_delete=models.PROTECT)
     issue_date = models.DateTimeField()
-    return_date = models.DateTimeField()
+    expire_date = models.DateTimeField()
+    return_date = models.DateTimeField(null=True)
     status = models.IntegerField()
