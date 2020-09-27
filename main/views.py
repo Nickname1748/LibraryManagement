@@ -20,3 +20,6 @@ from django.http import HttpResponse
 
 def index(request):
     return HttpResponse("Welcome to Library Management System!")
+
+def login(request):
+    return render(request, 'main/login.html')
