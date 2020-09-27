@@ -15,11 +15,13 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 
 def index(request):
     return HttpResponse("Welcome to Library Management System!")
 
-def login(request):
-    return render(request, 'main/login.html')
+@login_required
+def profile(request):
+    return HttpResponse(request.user.username)
