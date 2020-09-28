@@ -19,8 +19,7 @@ from django import forms
 from isbn_field import ISBNField
 
 class BookCreationForm(forms.Form):
-    isbn = ISBNField()
-    name = forms.CharField(max_length=255)
-    added_date = forms.DateTimeField()
-    count = forms.IntegerField()
-    available_count = forms.IntegerField()
+    isbn = forms.IntegerField(label="ISBN (13 или 10 цифр)")
+    name = forms.CharField(max_length=255, label="Название книги")
+    count = forms.IntegerField(label="Общее количество книг")
+    available_count = forms.IntegerField(label="Доступное количество книг")

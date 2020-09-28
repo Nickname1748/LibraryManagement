@@ -24,6 +24,7 @@ from django.contrib.auth.models import Group
 
 from .decorators import group_required
 from .models import Book
+from .forms import BookCreationForm
 
 @login_required
 def index(request):
@@ -46,7 +47,7 @@ def register(request):
     return render(request, 'registration/register.html', context=context)
 
 @login_required
-#@group_required('Librarian')
+@group_required('Librarian')
 def librarian(request):
     latest_book_list = Book.objects.filter(count__gt=0).order_by('-added_date')[:5]
     context = {
@@ -55,4 +56,10 @@ def librarian(request):
     return render(request, 'main/librarian.html', context=context)
 
 def new_book(request):
-    return render(request, 'main/new_book.html')
+    if request.method == 'POST':
+        form = BookCreationForm(request.POST)
+        if form.is_valid():
+            pass
+    else:
+        form = BookCreationForm()
+    return render(request, 'main/new_book.html', {'form':form})
