@@ -22,6 +22,9 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Group
 
+from .decorators import group_required
+from .models import Book
+
 @login_required
 def index(request):
     return HttpResponse("Welcome to Library Management System! Your name is %s" % request.user.username)
@@ -41,3 +44,15 @@ def register(request):
         form = UserCreationForm()
     context = {'form': form}
     return render(request, 'registration/register.html', context=context)
+
+@login_required
+#@group_required('Librarian')
+def librarian(request):
+    latest_book_list = Book.objects.filter(count__gt=0).order_by('-added_date')[:5]
+    context = {
+        'latest_book_list': latest_book_list,
+    }
+    return render(request, 'main/librarian.html', context=context)
+
+def new_book(request):
+    return render(request, 'main/new_book.html')

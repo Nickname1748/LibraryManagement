@@ -1,0 +1,26 @@
+{% extends "main/base.html" %}
+
+{% block title %}
+Новая книга
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <h1 class="mt-3">Новая книга</h1>
+        <form class="mt-3" method="POST" action="{% url 'main:new_book' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_isbn">ISBN (13 или 10 цифр)</label>
+                <input type="text" class="form-control" id="id_isbn" name="isbn" autofocus="" autocapitalize="none">
+            </div>
+            <div class="form-group">
+                <label for="id_bookname">Название</label>
+                <input type="text" class="form-control" id="id_bookname" name="bookname">
+            </div>
+            <div class="form-group">
+                <label for="id_bookcount">Количество</label>
+                <input type="number" class="form-control" id="id_bookcount" name="bookcount" min="1">
+            </div>
+            <input type="submit" class="btn btn-primary" value="Добавить">
+        </form>
+    </div>
+{% endblock %}

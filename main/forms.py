@@ -15,15 +15,12 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from django.urls import path, include
+from django import forms
+from isbn_field import ISBNField
 
-from . import views
-
-app_name = 'main'
-urlpatterns = [
-    path('', views.index, name='index'),
-    path('', include('django.contrib.auth.urls')),
-    path('register/', views.register, name='register'),
-    path('librarian/', views.librarian, name='librarian'),
-    path('librarian/new_book/', views.new_book, name='new_book'),
-]
+class BookCreationForm(forms.Form):
+    isbn = ISBNField()
+    name = forms.CharField(max_length=255)
+    added_date = forms.DateTimeField()
+    count = forms.IntegerField()
+    available_count = forms.IntegerField()

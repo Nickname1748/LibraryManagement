@@ -16,20 +16,30 @@
 """
 
 from django.db import models
+from isbn_field import ISBNField
 
 from django.contrib.auth.models import User
 
 class Book(models.Model):
-    isbn = models.PositiveBigIntegerField()
+    isbn = ISBNField(primary_key=True)
     name = models.CharField(max_length=255)
+    added_date = models.DateTimeField()
     count = models.IntegerField()
     available_count = models.IntegerField()
-    status = models.IntegerField()
 
 class Lease(models.Model):
+    ACTIVE = 0
+    EXPIRED = 1
+    RETURNED = 2
+    STATUS_CHOICES = (
+        (ACTIVE, 'Active'),
+        (EXPIRED, 'Expired'),
+        (RETURNED, 'Returned'),
+    )
+
     customer = models.ForeignKey(User, on_delete=models.PROTECT)
     book = models.ForeignKey(Book, on_delete=models.PROTECT)
     issue_date = models.DateTimeField()
     expire_date = models.DateTimeField()
     return_date = models.DateTimeField(null=True)
-    status = models.IntegerField()
+    status = models.IntegerField(choices=STATUS_CHOICES, default=0)
