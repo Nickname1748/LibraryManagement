@@ -20,6 +20,7 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import Group
 
 @login_required
 def index(request):
@@ -33,6 +34,7 @@ def register(request):
             username = request.POST['username']
             password = request.POST['password1']
             user = authenticate(request, username=username, password=password)
+            user.groups.add(Group.objects.get_or_create(name="Student"))
             login(request, user)
             return redirect('main:index')
     else:
