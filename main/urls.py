@@ -26,4 +26,5 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('librarian/', views.librarian, name='librarian'),
     path('librarian/new_book/', views.new_book, name='new_book'),
+    path('librarian/<slug:pk>/', views.BookDetailView.as_view(), name='book_detail')
 ]

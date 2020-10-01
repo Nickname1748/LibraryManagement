@@ -18,9 +18,11 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Group
+from django.views import generic
 
 from .decorators import group_required
 from .models import Book
@@ -46,7 +48,6 @@ def register(request):
     context = {'form': form}
     return render(request, 'registration/register.html', context=context)
 
-@login_required
 @group_required('Librarian')
 def librarian(request):
     latest_book_list = Book.objects.filter(count__gt=0).order_by('-added_date')[:5]
@@ -55,6 +56,7 @@ def librarian(request):
     }
     return render(request, 'main/librarian.html', context=context)
 
+@group_required('Librarian')
 def new_book(request):
     if request.method == 'POST':
         form = BookCreationForm(request.POST)
@@ -64,3 +66,7 @@ def new_book(request):
     else:
         form = BookCreationForm()
     return render(request, 'main/new_book.html', {'form':form})
+
+@method_decorator(group_required('Librarian'), name='dispatch')
+class BookDetailView(generic.DetailView):
+    model = Book

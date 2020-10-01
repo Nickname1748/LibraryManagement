@@ -11,7 +11,7 @@
         {% if latest_book_list %}
             {% for book in latest_book_list %}
                 <div class="card mt-3">
-                    <div class="card-body">{{ book.name }}</div>
+                    <div class="card-body"><a href="{% url 'main:book_detail' book.isbn %}">{{ book.name }}</a></div>
                 </div>
             {% endfor %}
         {% endif %}
