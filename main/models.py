@@ -16,6 +16,7 @@
 """
 
 from django.db import models
+from django.utils import timezone
 from isbn_field import ISBNField
 
 from django.contrib.auth.models import User
@@ -23,7 +24,7 @@ from django.contrib.auth.models import User
 class Book(models.Model):
     isbn = ISBNField(primary_key=True)
     name = models.CharField(max_length=255)
-    added_date = models.DateTimeField()
+    added_date = models.DateTimeField(default=timezone.now)
     count = models.IntegerField()
     available_count = models.IntegerField()
 

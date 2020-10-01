@@ -6,43 +6,24 @@
 {% block content %}
 
 {% load widget_tweaks %}
-    <script>
-        function is_ISBN_valid() {
-            var isbn = document.getElementById('id_isbn');
-            if ((isbn.value.length == 10) || (isbn.value.length == 13))
-            {
-                return true;
-            } else 
-            {
-                return false;
-            }
-        }
-        function submitForm() {
-            var form = document.getElementById('BookCreationForm');
-            if (is_ISBN_valid())
-            {
-                form.submit();
-                form.reset();
-            } else {
-                let main_div = document.createElement('div');
-                main_div.className = "alert alert-warning alert-dismissible fade show m-3";
-                main_div.setAttribute('role', 'alert');
-                main_div.innerHTML = 'Неверный формат ISBN! <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span></button>';
-                document.body.append(main_div);
-            }
-        }
-    </script>
     <div class="container">
         <h1 class="mt-3">Новая книга</h1>
+        {% if form.errors %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger">{{ error|escape }}</div>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
         <form id="BookCreationForm" class="mt-3" method="POST" action="{% url 'main:new_book' %}">
             {% csrf_token %}
             {% for field in form.visible_fields %}
             <div class="form-group">
-                {{field.label_tag}}
+                {{ field.label_tag }}
                 {% render_field field class="form-control" %}
             </div>
             {% endfor %}
-            <input type="button" class="btn btn-primary" value="Добавить" onclick="submitForm()">
+            <input type="submit" class="btn btn-primary" value="Добавить">
         </form>
     </div>
 {% endblock %}

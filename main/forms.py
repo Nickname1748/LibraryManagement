@@ -16,10 +16,10 @@
 """
 
 from django import forms
-from isbn_field import ISBNField
 
-class BookCreationForm(forms.Form):
-    isbn = forms.IntegerField(label="ISBN (13 или 10 цифр)")
-    name = forms.CharField(max_length=255, label="Название книги")
-    count = forms.IntegerField(label="Общее количество книг")
-    available_count = forms.IntegerField(label="Доступное количество книг")
+from .models import Book
+
+class BookCreationForm(forms.ModelForm):
+    class Meta:
+        model = Book
+        exclude = ['added_date']

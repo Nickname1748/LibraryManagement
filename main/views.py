@@ -59,7 +59,8 @@ def new_book(request):
     if request.method == 'POST':
         form = BookCreationForm(request.POST)
         if form.is_valid():
-            pass
+            form.save()
+            return redirect('main:librarian')
     else:
         form = BookCreationForm()
     return render(request, 'main/new_book.html', {'form':form})
