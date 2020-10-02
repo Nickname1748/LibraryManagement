@@ -68,5 +68,19 @@ def new_book(request):
     return render(request, 'main/new_book.html', {'form':form})
 
 @method_decorator(group_required('Librarian'), name='dispatch')
+class BookListView(generic.ListView):
+    model = Book
+    paginate_by = 25
+
+    def get_queryset(self):
+        try:
+            query = self.request.GET['q']
+        except:
+            query = ''
+        if query != '':
+            return self.model.objects.filter(name__icontains=query)
+        return self.model.objects.all()
+
+@method_decorator(group_required('Librarian'), name='dispatch')
 class BookDetailView(generic.DetailView):
     model = Book

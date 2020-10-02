@@ -9,7 +9,7 @@
         <h2 class="mt-2">Выдачи книг</h2>
         <h2 class="mt-2">Библиотечный фонд</h2>
         <h3 class="mt-2">Последние добавленные книги</h3>
-        <div class="d-flex flex-wrap flex-lg-nowrap">
+        <div class="d-flex flex-wrap">
             {% if latest_book_list %}
                 {% for book in latest_book_list %}
                     <div class="card m-2" style="width: 12.8em;">
@@ -22,7 +22,7 @@
                 {% endfor %}
             {% endif %}
         </div>
-        <a href="{% url 'main:new_book' %}" class="btn btn-primary mt-3">Больше книг</a><br>
+        <a href="{% url 'main:books' %}" class="btn btn-primary mt-3">Больше книг</a><br>
         <a href="{% url 'main:new_book' %}" class="btn btn-primary mt-3">Добавить новую книгу</a>
     </div>
 {% endblock %}

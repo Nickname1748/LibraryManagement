@@ -1,0 +1,34 @@
+{% extends "main/base.html" %}
+
+{% block title %}
+Библиотечный фонд
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <a href="{% url 'main:librarian' %}" class="btn btn-primary mt-3">Назад</a>
+        <h1 class="mt-3">Библиотечный фонд</h1>
+        <form class="mt-3" method="GET">
+            <div class="form-group">
+                <label for="query">Поиск</label>
+                <input type="text" class="form-control" action="{% url 'main:books' %}" id="query" name="q">
+            </div>
+            <input type="submit" class="btn btn-primary" value="Найти">
+        </form>
+        <a href="{% url 'main:new_book' %}" class="btn btn-primary mt-3">Добавить новую книгу</a>
+        {% if book_list %}
+            <div class="d-flex flex-wrap">
+                {% for book in book_list %}
+                    <div class="card m-2" style="width: 12.8em;">
+                        <img class="card-img-top" src="https://pictures.abebooks.com/isbn/{{ book.isbn }}-us.jpg" onerror="imgError(this);">
+                        <div class="card-body">
+                            <h4 class="card-title">{{ book.name }}</h4>
+                            <a href="{% url 'main:book_detail' book.isbn %}" class="btn btn-primary stretched-link">Подробнее</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+                <p>По вашему запросу книг не найдено</p>
+        {% endif %}
+    </div>
+{% endblock %}

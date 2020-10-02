@@ -25,6 +25,7 @@ urlpatterns = [
     path('', include('django.contrib.auth.urls')),
     path('register/', views.register, name='register'),
     path('librarian/', views.librarian, name='librarian'),
+    path('librarian/books/', views.BookListView.as_view(), name='books'),
     path('librarian/new_book/', views.new_book, name='new_book'),
-    path('librarian/<slug:pk>/', views.BookDetailView.as_view(), name='book_detail')
+    path('librarian/books/<slug:pk>/', views.BookDetailView.as_view(), name='book_detail'),
 ]

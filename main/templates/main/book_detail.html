@@ -5,6 +5,8 @@
 {% endblock %}
 {% block content %}
     <div class="container">
+        <a href="{% url 'main:librarian' %}" class="btn btn-primary mt-3">Назад</a>
+        <a href="{% url 'main:books' %}" class="btn btn-primary mt-3">Все книги</a>
         <h1 class="mt-3">{{ book.name }}</h1>
         <img src="https://pictures.abebooks.com/isbn/{{ book.isbn }}-us.jpg" style="width: 20em;" onerror="imgError(this);">
     </div>
