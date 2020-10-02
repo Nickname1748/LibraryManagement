@@ -17,9 +17,14 @@
 
 from django import forms
 
+import stdnum.isbn
+
 from .models import Book
 
 class BookCreationForm(forms.ModelForm):
     class Meta:
         model = Book
         exclude = ['added_date']
+    
+    def clean_isbn(self):
+        return stdnum.isbn.to_isbn13(self.cleaned_data['isbn'])
