@@ -15,3 +15,29 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+
+from django.test import TestCase
+
+from main.models import Book
+
+
+class BookModelTests(TestCase):
+
+    def setUp(self):
+        self.book1 = Book.objects.create(
+            isbn='9780000000002',
+            name='Test Book',
+            count=1
+        )
+
+        self.book2 = Book.objects.create(
+            isbn='9780000000019',
+            name='Test Book 2',
+            count=0
+        )
+    
+    def test_book_is_active_on_active_book(self):
+        self.assertTrue(self.book1.is_active())
+    
+    def test_book_is_active_on_inactive_book(self):
+        self.assertFalse(self.book2.is_active())

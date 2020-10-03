@@ -27,7 +27,15 @@ class Book(models.Model):
     name = models.CharField(max_length=255)
     added_date = models.DateTimeField(default=timezone.now)
     count = models.IntegerField()
-    available_count = models.IntegerField()
+
+    def is_active(self):
+        return self.count > 0
+    
+    def available_count(self):
+        return self.count - self.lease_set.count()
+
+    def is_available(self):
+        return self.count > 0 and self.available_count() > 0
 
 
 class Lease(models.Model):

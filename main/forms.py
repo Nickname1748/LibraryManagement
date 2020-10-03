@@ -16,16 +16,21 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from django import forms
+from django.forms import ModelForm, ValidationError
 import stdnum.isbn
 
 from .models import Book
 
 
-class BookCreationForm(forms.ModelForm):
+class BookCreationForm(ModelForm):
     class Meta:
         model = Book
         exclude = ['added_date']
     
     def clean_isbn(self):
         return stdnum.isbn.to_isbn13(self.cleaned_data['isbn'])
+    
+    def clean_count(self):
+        if self.cleaned_data['count'] == 0:
+            raise ValidationError('Invalid value')
+        return self.cleaned_data['count']

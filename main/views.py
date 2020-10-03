@@ -17,7 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, request
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.forms import UserCreationForm
@@ -93,9 +93,10 @@ class BookListView(generic.ListView):
             query = ''
 
         if query != '':
-            return self.model.objects.filter(name__icontains=query)
+            return self.model.objects.filter(name__icontains=query)\
+                .order_by('-added_date')
 
-        return self.model.objects.all()
+        return self.model.objects.order_by('-added_date')
 
 
 @method_decorator(group_required('Librarian'), name='dispatch')

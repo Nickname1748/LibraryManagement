@@ -15,3 +15,69 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+
+from django.test import TestCase
+
+from main.forms import BookCreationForm
+
+
+class BookCreationFormTests(TestCase):
+
+    def test_book_creation_form_valid_data_13(self):
+        form = BookCreationForm(data={
+            'isbn': '9780000000002',
+            'name': 'Test Book',
+            'count': 1
+        })
+        self.assertTrue(form.is_valid())
+    
+    def test_book_creation_form_valid_data_10(self):
+        form = BookCreationForm(data={
+            'isbn': '0000000000',
+            'name': 'Test Book',
+            'count': 1
+        })
+        self.assertTrue(form.is_valid())
+        self.assertEquals(form.cleaned_data['isbn'], '9780000000002')
+    
+    def test_book_creation_form_no_data(self):
+        form = BookCreationForm(data={})
+        self.assertFalse(form.is_valid())
+        self.assertEqual(len(form.errors), 3)
+    
+    def test_book_creation_form_no_isbn(self):
+        form = BookCreationForm(data={
+            'name': 'Test Book',
+            'count': 1
+        })
+        self.assertFalse(form.is_valid())
+
+    def test_book_creation_form_invalid_isbn(self):
+        form = BookCreationForm(data={
+            'isbn': '9780000000001',
+            'name': 'Test Book',
+            'count': 1
+        })
+        self.assertFalse(form.is_valid())
+    
+    def test_book_creation_form_no_name(self):
+        form = BookCreationForm(data={
+            'isbn': '9780000000002',
+            'count': 1
+        })
+        self.assertFalse(form.is_valid())
+    
+    def test_book_creation_form_no_count(self):
+        form = BookCreationForm(data={
+            'isbn': '9780000000002',
+            'name': 'Test Book'
+        })
+        self.assertFalse(form.is_valid())
+    
+    def test_book_creation_form_count_is_zero(self):
+        form = BookCreationForm(data={
+            'isbn': '9780000000002',
+            'name': 'Test Book',
+            'count': 0
+        })
+        self.assertFalse(form.is_valid())
