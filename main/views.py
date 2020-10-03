@@ -40,7 +40,8 @@ def register(request):
             username = request.POST['username']
             password = request.POST['password1']
             user = authenticate(request, username=username, password=password)
-            user.groups.add(Group.objects.get_or_create(name="Student"))
+            group = Group.objects.get_or_create(name="Student")[0]
+            user.groups.add(group)
             login(request, user)
             return redirect('main:index')
     else:
