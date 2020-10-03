@@ -26,8 +26,8 @@ from django.contrib.auth.models import Group
 from django.views import generic
 
 from .decorators import group_required
-from .models import Book
-from .forms import BookCreationForm
+from .models import Book, Lease
+from .forms import BookCreationForm, LeaseCreationForm
 
 
 @login_required
@@ -59,10 +59,12 @@ def register(request):
 
 @group_required('Librarian')
 def librarian(request):
+    nearest_lease_list = Lease.objects.order_by('expire_date')[:5]
     latest_book_list = \
         Book.objects.filter(count__gt=0).order_by('-added_date')[:5]
     context = {
         'latest_book_list': latest_book_list,
+        'nearest_lease_list': nearest_lease_list
     }
 
     return render(request, 'main/librarian.html', context=context)
@@ -102,3 +104,19 @@ class BookListView(generic.ListView):
 @method_decorator(group_required('Librarian'), name='dispatch')
 class BookDetailView(generic.DetailView):
     model = Book
+
+
+@group_required('Librarian')
+def new_lease(request, book_id):
+    if request.method == 'POST':
+        form = LeaseCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('main:librarian')
+    else:
+        form = LeaseCreationForm(initial={'book': book_id})
+
+    return render(request, 'main/new_lease.html', {
+        'form': form,
+        'book_id': book_id
+    })

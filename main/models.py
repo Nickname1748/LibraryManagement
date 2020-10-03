@@ -50,7 +50,7 @@ class Lease(models.Model):
 
     customer = models.ForeignKey(User, on_delete=models.PROTECT)
     book = models.ForeignKey(Book, on_delete=models.PROTECT)
-    issue_date = models.DateTimeField()
+    issue_date = models.DateTimeField(default=timezone.now)
     expire_date = models.DateTimeField()
     return_date = models.DateTimeField(null=True)
     status = models.IntegerField(choices=STATUS_CHOICES, default=0)
