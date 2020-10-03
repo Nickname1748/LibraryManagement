@@ -1,23 +1,27 @@
-""" Library Management System
-    Copyright (C) 2020 Andrey Shmaykhel, Alexander Solovyov, Timur Allayarov
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+Library Management System
+Copyright (C) 2020 Andrey Shmaykhel, Alexander Solovyov, Timur Allayarov
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
+
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User, Group
+
 from main.models import Book
+
 
 class IndexViewTests(TestCase):
 
@@ -39,6 +43,7 @@ class IndexViewTests(TestCase):
         self.client.login(**self.credentials)
         response = self.client.get(self.url)
         self.assertContains(response, self.user.username)
+
 
 class RegisterViewTests(TestCase):
 
@@ -88,6 +93,7 @@ class RegisterViewTests(TestCase):
         response = self.client.post(self.url, {})
         self.assertContains(response, "Обязательное поле.")
 
+
 class LibrarianViewTests(TestCase):
 
     def setUp(self):
@@ -96,6 +102,7 @@ class LibrarianViewTests(TestCase):
             'password': 'testpass'
         }
         self.user = User.objects.create_user(**self.credentials)
+
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
@@ -104,6 +111,7 @@ class LibrarianViewTests(TestCase):
             **self.librarian_credentials)
         group = Group.objects.get_or_create(name="Librarian")[0]
         self.librarian_user.groups.add(group)
+
         self.url = reverse('main:librarian')
     
     def test_librarian_view_get_no_login(self):
@@ -138,6 +146,7 @@ class LibrarianViewTests(TestCase):
         for isbn in isbn_list:
             Book.objects.create(
                 isbn=isbn, name=isbn, count=1, available_count=1)
+
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['latest_book_list'], [
@@ -158,6 +167,7 @@ class LibrarianViewTests(TestCase):
         for isbn in isbn_list:
             Book.objects.create(
                 isbn=isbn, name=isbn, count=1, available_count=1)
+
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['latest_book_list'], [
