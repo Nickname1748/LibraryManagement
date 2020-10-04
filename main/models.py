@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import uuid
 from django.db import models
 from django.utils import timezone
 from isbn_field import ISBNField
@@ -25,32 +26,24 @@ from django.contrib.auth.models import User
 class Book(models.Model):
     isbn = ISBNField(primary_key=True)
     name = models.CharField(max_length=255)
-    added_date = models.DateTimeField(default=timezone.now)
-    count = models.IntegerField()
+    added_date = models.DateTimeField(auto_now_add=True)
+    count = models.PositiveSmallIntegerField()
 
     def is_active(self):
         return self.count > 0
     
     def available_count(self):
-        return self.count - self.lease_set.count()
+        return max(self.count - self.lease_set.count(), 0)
 
     def is_available(self):
         return self.count > 0 and self.available_count() > 0
 
 
 class Lease(models.Model):
-    ACTIVE = 0
-    EXPIRED = 1
-    RETURNED = 2
-    STATUS_CHOICES = (
-        (ACTIVE, 'Active'),
-        (EXPIRED, 'Expired'),
-        (RETURNED, 'Returned'),
-    )
-
+    id = models.UUIDField(
+        primary_key=True, default=uuid.uuid4, editable=False)
     customer = models.ForeignKey(User, on_delete=models.PROTECT)
     book = models.ForeignKey(Book, on_delete=models.PROTECT)
-    issue_date = models.DateTimeField(default=timezone.now)
-    expire_date = models.DateTimeField()
+    issue_date = models.DateTimeField(auto_now_add=True)
+    expire_date = models.DateField()
     return_date = models.DateTimeField(null=True)
-    status = models.IntegerField(choices=STATUS_CHOICES, default=0)

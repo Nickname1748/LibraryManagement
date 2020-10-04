@@ -118,5 +118,11 @@ def new_lease(request, book_id):
 
     return render(request, 'main/new_lease.html', {
         'form': form,
-        'book_id': book_id
+        'book_id': book_id,
+        'book_name': Book.objects.get(pk=book_id).name
     })
+
+
+@method_decorator(group_required('Librarian'), name='dispatch')
+class LeaseDetailView(generic.DetailView):
+    model = Lease

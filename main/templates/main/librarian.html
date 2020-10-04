@@ -13,8 +13,10 @@
                     <div class="card m-2" style="width: 12.8em;">
                         <img class="card-img-top" src="https://pictures.abebooks.com/isbn/{{ lease.book.isbn }}-us.jpg" onerror="imgError(this);">
                         <div class="card-body">
-                            <h4 class="card-title">{{ lease.id }}</h4>
-                            <a href="{% url 'main:book_detail' lease.book.isbn %}" class="btn btn-primary stretched-link">Подробнее</a>
+                            <div class="card-text">
+                                <p><i class="fas fa-book mr-2"></i>{{ lease.book.name }}<br><i class="fas fa-user mr-2"></i>{{ lease.customer }}<br><i class="fas fa-calendar-day mr-2"></i>{{ lease.expire_date }}</p>
+                            </div>
+                            <a href="{% url 'main:lease_detail' lease.id %}" class="btn btn-primary stretched-link">Подробнее</a>
                         </div>
                     </div>
                 {% endfor %}

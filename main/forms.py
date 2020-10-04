@@ -16,29 +16,35 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from django.forms import ModelForm, ValidationError, HiddenInput
+from django import forms
+from django.core.validators import MinValueValidator
 import stdnum.isbn
 
 from .models import Book, Lease
 
 
-class BookCreationForm(ModelForm):
+class BookCreationForm(forms.ModelForm):
+    count = forms.IntegerField(validators=[MinValueValidator(1)], min_value=1)
+    
     class Meta:
         model = Book
         exclude = ['added_date']
-        widgets = {
-            'book': HiddenInput()
-        }
     
     def clean_isbn(self):
         return stdnum.isbn.to_isbn13(self.cleaned_data['isbn'])
     
-    def clean_count(self):
-        if self.cleaned_data['count'] == 0:
+    '''def clean_count(self):
+        if self.cleaned_data['count'] <= 0:
             raise ValidationError('Invalid value')
-        return self.cleaned_data['count']
+        return self.cleaned_data['count']'''
 
-class LeaseCreationForm(ModelForm):
+class LeaseCreationForm(forms.ModelForm):
     class Meta:
         model = Lease
         exclude = ['issue_date', 'return_date']
+    
+    def clean_book(self):
+        book = self.cleaned_data['book']
+        if book.available_count() <= 0:
+            raise forms.ValidationError('Book is not available')
+        return book

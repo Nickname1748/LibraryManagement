@@ -7,7 +7,7 @@
 
 {% load widget_tweaks %}
     <div class="container">
-        <h1 class="mt-3">Выдать книгу</h1>
+        <h1 class="mt-3">Выдать книгу {{ book_name }}</h1>
         {% if form.errors %}
             {% for field in form %}
                 {% for error in field.errors %}
@@ -17,12 +17,17 @@
         {% endif %}
         <form class="mt-3" method="POST" action="{% url 'main:new_lease' book_id %}">
             {% csrf_token %}
-            {% for field in form.visible_fields %}
             <div class="form-group">
-                {{ field.label_tag }}
-                {% render_field field class="form-control" %}
+                {{ form.customer.label_tag }}
+                {% render_field form.customer class="form-control" %}
             </div>
-            {% endfor %}
+            <div class="form-group">
+                {% render_field form.book hidden="" %}
+            </div>
+            <div class="form-group">
+                {{ form.expire_date.label_tag }}
+                {% render_field form.expire_date class="form-control" %}
+            </div>
             <input type="submit" class="btn btn-primary" value="Добавить">
         </form>
     </div>
