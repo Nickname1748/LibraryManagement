@@ -13,7 +13,9 @@
                 <h1 class="mt-3">{{ lease.id }}</h1>
                 <p>Книга: {{ lease.book.name }}</p>
                 <p>Вернуть до: {{ lease.expire_date }}</p>
+                {% if lease.is_active %}
                 <a href="{% url 'main:return_lease' lease.id %}" class="btn btn-primary">Вернуть книгу</a>
+                {% endif %}
             </div>
         </div>
     </div>

@@ -17,6 +17,7 @@
         {% if lease_list %}
             <div class="d-flex flex-wrap">
                 {% for lease in lease_list %}
+                    {% if lease.is_active %}
                     <div class="card m-2" style="width: 12.8em;">
                         <img class="card-img-top" src="https://pictures.abebooks.com/isbn/{{ lease.book.isbn }}-us.jpg" onerror="imgError(this);">
                         <div class="card-body d-flex flex-column justify-content-end">
@@ -26,6 +27,7 @@
                             <a href="{% url 'main:lease_detail' lease.id %}" class="btn btn-primary stretched-link">Подробнее</a>
                         </div>
                     </div>
+                    {% endif %}
                 {% endfor %}
             </div>
         {% else %}
