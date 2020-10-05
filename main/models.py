@@ -33,7 +33,8 @@ class Book(models.Model):
         return self.count > 0
     
     def available_count(self):
-        return max(self.count - self.lease_set.count(), 0)
+        return max(self.count
+            - self.lease_set.filter(return_date__isnull=True).count(), 0)
 
     def is_available(self):
         return self.count > 0 and self.available_count() > 0
