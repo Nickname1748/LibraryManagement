@@ -58,6 +58,17 @@ def register(request):
     return render(request, 'registration/register.html', context=context)
 
 
+@group_required('Student')
+def customer(request):
+    active_lease_list = Lease.objects\
+        .filter(customer__username__exact=request.user.username)\
+        .filter(return_date__isnull=True).order_by('expire_date')
+    context = {
+        'active_lease_list': active_lease_list
+    }
+    return render(request, 'main/customer.html', context=context)
+
+
 @group_required('Librarian')
 def librarian(request):
     nearest_lease_list = Lease.objects.filter(return_date__isnull=True)\

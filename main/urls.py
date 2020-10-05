@@ -25,6 +25,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('', include('django.contrib.auth.urls')),
     path('register/', views.register, name='register'),
+    path('customer/', views.customer, name='customer'),
     path('librarian/', views.librarian, name='librarian'),
     path('librarian/books/', views.BookListView.as_view(), name='books'),
     path('librarian/new_book/', views.new_book, name='new_book'),
