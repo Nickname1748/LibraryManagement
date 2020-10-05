@@ -1,0 +1,35 @@
+{% extends "main/base.html" %}
+
+{% block title %}
+Выдачи книг
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <a href="{% url 'main:librarian' %}" class="btn btn-primary mt-3">Назад</a>
+        <h1 class="mt-3">Выдачи книг</h1>
+        <form class="mt-3" method="GET">
+            <div class="form-group">
+                <label for="query">Поиск</label>
+                <input type="text" class="form-control" action="{% url 'main:leases' %}" id="query" name="q">
+            </div>
+            <input type="submit" class="btn btn-primary" value="Найти">
+        </form>
+        {% if lease_list %}
+            <div class="d-flex flex-wrap">
+                {% for lease in lease_list %}
+                    <div class="card m-2" style="width: 12.8em;">
+                        <img class="card-img-top" src="https://pictures.abebooks.com/isbn/{{ lease.book.isbn }}-us.jpg" onerror="imgError(this);">
+                        <div class="card-body d-flex flex-column justify-content-end">
+                            <div class="card-text">
+                                <p><i class="fas fa-book mr-2"></i>{{ lease.book.name }}<br><i class="fas fa-user mr-2"></i>{{ lease.customer }}<br><i class="fas fa-calendar-day mr-2"></i>{{ lease.expire_date }}</p>
+                            </div>
+                            <a href="{% url 'main:lease_detail' lease.id %}" class="btn btn-primary stretched-link">Подробнее</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+                <p>По вашему запросу выдач не найдено.</p>
+        {% endif %}
+    </div>
+{% endblock %}

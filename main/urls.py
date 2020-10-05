@@ -29,9 +29,12 @@ urlpatterns = [
     path('librarian/books/', views.BookListView.as_view(), name='books'),
     path('librarian/new_book/', views.new_book, name='new_book'),
     path('librarian/books/<slug:pk>/', views.BookDetailView.as_view(),
-         name='book_detail'),
+        name='book_detail'),
     path('librarian/books/<slug:book_id>/new_lease/', views.new_lease,
-         name='new_lease'),
-     path('librarian/leases/<slug:pk>/', views.LeaseDetailView.as_view(),
-         name='lease_detail')
+        name='new_lease'),
+    path('librarian/leases/<slug:pk>/', views.LeaseDetailView.as_view(),
+        name='lease_detail'),
+    path('librarian/leases/<slug:lease_id>/return/', views.return_lease,
+        name='return_lease'),
+    path('librarian/leases/', views.LeaseListView.as_view(), name='leases')
 ]

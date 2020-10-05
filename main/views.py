@@ -24,6 +24,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Group
 from django.views import generic
+from django.utils import timezone
 
 from .decorators import group_required
 from .models import Book, Lease
@@ -59,7 +60,8 @@ def register(request):
 
 @group_required('Librarian')
 def librarian(request):
-    nearest_lease_list = Lease.objects.order_by('expire_date')[:5]
+    nearest_lease_list = Lease.objects.filter(return_date__isnull=True)\
+        .order_by('expire_date')[:5]
     latest_book_list = \
         Book.objects.filter(count__gt=0).order_by('-added_date')[:5]
     context = {
@@ -126,3 +128,35 @@ def new_lease(request, book_id):
 @method_decorator(group_required('Librarian'), name='dispatch')
 class LeaseDetailView(generic.DetailView):
     model = Lease
+
+
+@group_required('Librarian')
+def return_lease(request, lease_id):
+    lease = Lease.objects.get(pk=lease_id)
+    if request.method == 'POST':
+        lease.return_date = timezone.now()
+        lease.save()
+        return redirect('main:librarian')
+
+    return render(request, 'main/return_lease.html', {
+        'lease': lease
+    })
+
+
+@method_decorator(group_required('Librarian'), name='dispatch')
+class LeaseListView(generic.ListView):
+    model = Lease
+    paginate_by = 25
+
+    def get_queryset(self):
+        try:
+            query = self.request.GET['q']
+        except:
+            query = ''
+
+        if query != '':
+            return self.model.objects\
+                .filter(customer__username__icontains=query)\
+                .order_by('expire_date')
+
+        return self.model.objects.order_by('expire_date')

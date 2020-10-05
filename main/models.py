@@ -47,3 +47,6 @@ class Lease(models.Model):
     issue_date = models.DateTimeField(auto_now_add=True)
     expire_date = models.DateField()
     return_date = models.DateTimeField(null=True)
+
+    def is_active(self):
+        return not bool(self.return_date)
