@@ -18,6 +18,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from django import forms
 from django.core.validators import MinValueValidator
+from django.utils import timezone
+
 import stdnum.isbn
 
 from .models import Book, Lease
@@ -32,17 +34,13 @@ class BookCreationForm(forms.ModelForm):
     
     def clean_isbn(self):
         return stdnum.isbn.to_isbn13(self.cleaned_data['isbn'])
-    
-    '''def clean_count(self):
-        if self.cleaned_data['count'] <= 0:
-            raise ValidationError('Invalid value')
-        return self.cleaned_data['count']'''
 
 class LeaseCreationForm(forms.ModelForm):
+
     class Meta:
         model = Lease
         exclude = ['issue_date', 'return_date']
-    
+
     def clean_book(self):
         book = self.cleaned_data['book']
         if book.available_count() <= 0:

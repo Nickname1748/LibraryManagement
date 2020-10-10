@@ -25,7 +25,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('', include('django.contrib.auth.urls')),
     path('register/', views.register, name='register'),
-    path('customer/', views.customer, name='customer'),
+    path('student/', views.student, name='student'),
     path('librarian/', views.librarian, name='librarian'),
     path('librarian/books/', views.BookListView.as_view(), name='books'),
     path('librarian/new_book/', views.new_book, name='new_book'),
@@ -33,9 +33,9 @@ urlpatterns = [
         name='book_detail'),
     path('librarian/books/<slug:book_id>/new_lease/', views.new_lease,
         name='new_lease'),
+    path('librarian/leases/', views.LeaseListView.as_view(), name='leases'),
     path('librarian/leases/<slug:pk>/', views.LeaseDetailView.as_view(),
         name='lease_detail'),
     path('librarian/leases/<slug:lease_id>/return/', views.return_lease,
-        name='return_lease'),
-    path('librarian/leases/', views.LeaseListView.as_view(), name='leases')
+        name='return_lease')
 ]

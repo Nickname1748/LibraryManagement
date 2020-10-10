@@ -59,14 +59,14 @@ def register(request):
 
 
 @group_required('Student')
-def customer(request):
+def student(request):
     active_lease_list = Lease.objects\
-        .filter(customer__username__exact=request.user.username)\
+        .filter(student__username__exact=request.user.username)\
         .filter(return_date__isnull=True).order_by('expire_date')
     context = {
         'active_lease_list': active_lease_list
     }
-    return render(request, 'main/customer.html', context=context)
+    return render(request, 'main/student.html', context=context)
 
 
 @group_required('Librarian')
@@ -137,24 +137,6 @@ def new_lease(request, book_id):
 
 
 @method_decorator(group_required('Librarian'), name='dispatch')
-class LeaseDetailView(generic.DetailView):
-    model = Lease
-
-
-@group_required('Librarian')
-def return_lease(request, lease_id):
-    lease = Lease.objects.get(pk=lease_id)
-    if request.method == 'POST':
-        lease.return_date = timezone.now()
-        lease.save()
-        return redirect('main:librarian')
-
-    return render(request, 'main/return_lease.html', {
-        'lease': lease
-    })
-
-
-@method_decorator(group_required('Librarian'), name='dispatch')
 class LeaseListView(generic.ListView):
     model = Lease
     paginate_by = 25
@@ -167,7 +149,27 @@ class LeaseListView(generic.ListView):
 
         if query != '':
             return self.model.objects\
-                .filter(customer__username__icontains=query)\
+                .filter(student__username__icontains=query)\
                 .order_by('expire_date')
 
         return self.model.objects.order_by('expire_date')
+
+
+@method_decorator(group_required('Librarian'), name='dispatch')
+class LeaseDetailView(generic.DetailView):
+    model = Lease
+
+
+@group_required('Librarian')
+def return_lease(request, lease_id):
+    lease = Lease.objects.get(pk=lease_id)
+    if not lease.is_active():
+        return redirect('main:librarian')
+    if request.method == 'POST':
+        lease.return_date = timezone.now()
+        lease.save()
+        return redirect('main:librarian')
+
+    return render(request, 'main/return_lease.html', {
+        'lease': lease
+    })
