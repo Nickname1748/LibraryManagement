@@ -30,6 +30,7 @@ from .decorators import group_required
 from .models import Book, Lease
 from .forms import BookCreationForm, LeaseCreationForm
 
+import csv
 
 @login_required
 def index(request):
@@ -173,3 +174,16 @@ def return_lease(request, lease_id):
     return render(request, 'main/return_lease.html', {
         'lease': lease
     })
+
+@group_required('Librarian')
+def books_report(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename = "Book Report.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['ISBN', 'Название книги', 'Дата добавления книги', 'Текущее количество'])
+    Books = Book.objects.order_by('added_date')
+    for book in Books:
+        writer.writerow([book.isbn, book.name, book.added_date, book.count])
+    
+    return response

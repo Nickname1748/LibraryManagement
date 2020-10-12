@@ -37,5 +37,6 @@ urlpatterns = [
     path('librarian/leases/<slug:pk>/', views.LeaseDetailView.as_view(),
         name='lease_detail'),
     path('librarian/leases/<slug:lease_id>/return/', views.return_lease,
-        name='return_lease')
+        name='return_lease'),
+    path('librarian/books_report/', views.books_report, name='books_report')
 ]

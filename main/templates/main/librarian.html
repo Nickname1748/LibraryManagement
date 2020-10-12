@@ -40,5 +40,9 @@
         </div>
         <a href="{% url 'main:books' %}" class="btn btn-primary mt-3">Больше книг</a><br>
         <a href="{% url 'main:new_book' %}" class="btn btn-primary mt-3">Добавить новую книгу</a>
+        <h3 class="mt-2">Отчёты</h3>
+        <div class="d-flex flex-wrap">
+            <a href="{% url 'main:books_report' %}" class="btn btn-success mt-3">Получить отчёт об учёте книг</a>
+        </div>
     </div>
 {% endblock %}
