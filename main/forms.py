@@ -26,11 +26,11 @@ from .models import Book, Lease
 
 class BookCreationForm(forms.ModelForm):
     count = forms.IntegerField(validators=[MinValueValidator(1)], min_value=1)
-    
+
     class Meta:
         model = Book
         exclude = ['added_date']
-    
+
     def clean_isbn(self):
         return stdnum.isbn.to_isbn13(self.cleaned_data['isbn'])
 

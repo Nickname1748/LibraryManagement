@@ -17,9 +17,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import uuid
+from isbn_field import ISBNField
+
 from django.db import models
 from django.utils import timezone
-from isbn_field import ISBNField
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 
@@ -32,7 +33,7 @@ class Book(models.Model):
 
     def is_active(self):
         return self.count > 0
-    
+
     def available_count(self):
         return max(self.count
             - self.lease_set.filter(return_date__isnull=True).count(), 0)

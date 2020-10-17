@@ -34,7 +34,7 @@ class UrlsTests(SimpleTestCase):
     def test_register_view_resolves(self):
         url = reverse('main:register')
         self.assertEqual(resolve(url).func, views.register)
-    
+
     def test_student_view_resolves(self):
         url = reverse('main:student')
         self.assertEqual(resolve(url).func, views.student)

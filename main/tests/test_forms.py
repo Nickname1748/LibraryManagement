@@ -40,7 +40,7 @@ class BookCreationFormTests(TestCase):
             'count': 1
         })
         self.assertTrue(form.is_valid())
-    
+
     def test_book_creation_form_valid_data_isbn_10(self):
         """
         If valid data is sent using ISBN-10 format, form is valid.
@@ -52,7 +52,7 @@ class BookCreationFormTests(TestCase):
         })
         self.assertTrue(form.is_valid())
         self.assertEqual(form.cleaned_data['isbn'], '9780000000002')
-    
+
     def test_book_creation_form_no_data(self):
         """
         If no data is sent, form is invalid.
@@ -60,7 +60,7 @@ class BookCreationFormTests(TestCase):
         form = BookCreationForm(data={})
         self.assertFalse(form.is_valid())
         self.assertEqual(len(form.errors), 3)
-    
+
     def test_book_creation_form_no_isbn(self):
         """
         If no isbn is sent, form is invalid.
@@ -81,7 +81,7 @@ class BookCreationFormTests(TestCase):
             'count': 1
         })
         self.assertFalse(form.is_valid())
-    
+
     def test_book_creation_form_no_name(self):
         """
         If no book name is sent, form is invalid.
@@ -91,7 +91,7 @@ class BookCreationFormTests(TestCase):
             'count': 1
         })
         self.assertFalse(form.is_valid())
-    
+
     def test_book_creation_form_no_count(self):
         """
         If no book count is sent, form is invalid.
@@ -101,7 +101,7 @@ class BookCreationFormTests(TestCase):
             'name': 'Test Book'
         })
         self.assertFalse(form.is_valid())
-    
+
     def test_book_creation_form_count_is_zero(self):
         """
         If book count is 0, form is invalid.
@@ -150,7 +150,7 @@ class LeaseCreationFormTests(TestCase):
                 (timezone.now()+timezone.timedelta(days=30)).date())
         })
         self.assertTrue(form.is_valid())
-    
+
     def test_lease_creation_form_no_data(self):
         """
         If no data is sent, form is invalid.
@@ -158,7 +158,7 @@ class LeaseCreationFormTests(TestCase):
         form = LeaseCreationForm(data={})
         self.assertFalse(form.is_valid())
         self.assertEqual(len(form.errors), 3)
-    
+
     def test_lease_creation_form_no_student(self):
         """
         If no student is sent, form is invalid.
@@ -169,7 +169,7 @@ class LeaseCreationFormTests(TestCase):
                 (timezone.now()+timezone.timedelta(days=30)).date())
         })
         self.assertFalse(form.is_valid())
-    
+
     def test_lease_creation_form_inexistent_student(self):
         """
         If student does not exist, form is invalid.
@@ -181,7 +181,7 @@ class LeaseCreationFormTests(TestCase):
                 (timezone.now()+timezone.timedelta(days=30)).date())
         })
         self.assertFalse(form.is_valid())
-    
+
     def test_lease_creation_form_no_book(self):
         """
         If no book is sent, form is invalid.
@@ -192,7 +192,7 @@ class LeaseCreationFormTests(TestCase):
                 (timezone.now()+timezone.timedelta(days=30)).date())
         })
         self.assertFalse(form.is_valid())
-    
+
     def test_lease_creation_form_inexistent_book(self):
         """
         If book does not exist, form is invalid.
@@ -204,7 +204,7 @@ class LeaseCreationFormTests(TestCase):
                 (timezone.now()+timezone.timedelta(days=30)).date())
         })
         self.assertFalse(form.is_valid())
-    
+
     def test_lease_creation_form_inactive_book(self):
         """
         If book is inactive, form is invalid.
@@ -216,7 +216,7 @@ class LeaseCreationFormTests(TestCase):
                 (timezone.now()+timezone.timedelta(days=30)).date())
         })
         self.assertFalse(form.is_valid())
-    
+
     def test_lease_creation_form_unavailable_book(self):
         """
         If book is unavailable, form is invalid.
@@ -234,7 +234,7 @@ class LeaseCreationFormTests(TestCase):
                 (timezone.now()+timezone.timedelta(days=30)).date())
         })
         self.assertFalse(form.is_valid())
-    
+
     def test_lease_creation_form_no_expire_date(self):
         """
         If student does not exist, form is invalid.
@@ -244,7 +244,7 @@ class LeaseCreationFormTests(TestCase):
             'book': '9780000000002'
         })
         self.assertFalse(form.is_valid())
-    
+
     def test_lease_creation_form_expire_date_in_past(self):
         """
         If student does not exist, form is invalid.

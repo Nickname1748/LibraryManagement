@@ -48,25 +48,25 @@ class BookModelTests(TestCase):
             **self.student_credentials)
         group = Group.objects.get_or_create(name="Student")[0]
         self.student_user.groups.add(group)
-    
+
     def test_book_is_active_on_active_book(self):
         """
         If book is active, true is returned.
         """
         self.assertTrue(self.book1.is_active())
-    
+
     def test_book_is_active_on_inactive_book(self):
         """
         If book is active, false is returned.
         """
         self.assertFalse(self.book2.is_active())
-    
+
     def test_book_available_count_when_two_available(self):
         """
         If 2 books are available, 2 is returned.
         """
         self.assertEqual(self.book1.available_count(), 2)
-    
+
     def test_book_available_count_when_one_available(self):
         """
         If 1 book is available, 1 is returned.
@@ -77,7 +77,7 @@ class BookModelTests(TestCase):
             book=Book.objects.get(pk='9780000000002'),
             expire_date=timezone.now() + timezone.timedelta(days=30))
         self.assertEqual(self.book1.available_count(), 1)
-    
+
     def test_book_available_count_when_none_available(self):
         """
         If no books are available, 0 is returned.
@@ -89,13 +89,13 @@ class BookModelTests(TestCase):
                 book=Book.objects.get(pk='9780000000002'),
                 expire_date=timezone.now() + timezone.timedelta(days=30))
         self.assertEqual(self.book1.available_count(), 0)
-    
+
     def test_book_is_available_when_two_available(self):
         """
         If 2 books are available, true is returned.
         """
         self.assertTrue(self.book1.is_available())
-    
+
     def test_book_is_available_when_one_available(self):
         """
         If 1 book is available, true is returned.
@@ -106,7 +106,7 @@ class BookModelTests(TestCase):
             book=Book.objects.get(pk='9780000000002'),
             expire_date=timezone.now() + timezone.timedelta(days=30))
         self.assertTrue(self.book1.is_available())
-    
+
     def test_book_is_available_when_none_available(self):
         """
         If no books are available, false is returned.
@@ -145,13 +145,13 @@ class LeaseModelTests(TestCase):
                 self.student_credentials['username']),
             book=Book.objects.get(pk='9780000000002'),
             expire_date=timezone.now() + timezone.timedelta(days=30))
-    
+
     def test_lease_is_active_on_active_lease(self):
         """
         If lease is active, true is returned.
         """
         self.assertTrue(self.lease.is_active())
-    
+
     def test_lease_is_active_on_returned_lease(self):
         """
         If lease is returned, false is returned.

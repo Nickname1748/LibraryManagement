@@ -46,7 +46,7 @@ class IndexViewTests(TestCase):
         self.assertRedirects(
             response,
             reverse('main:login') + '?next=' + self.url)
-    
+
     def test_index_view_get_login(self):
         """
         If user is authenticated, his username is shown.
@@ -76,7 +76,7 @@ class RegisterViewTests(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'registration/register.html')
-    
+
     def test_register_view_post_adds_new_user(self):
         """
         If valid POST request is sent, new Student user is added.
@@ -135,7 +135,7 @@ class StudentViewTests(TestCase):
                 isbn=isbn, name=isbn, count=1)
 
         self.url = reverse('main:student')
-    
+
     def test_student_view_get_no_login(self):
         """
         If user is not authenticated, he is redirected to login page.
@@ -144,7 +144,7 @@ class StudentViewTests(TestCase):
         self.assertRedirects(
             response,
             reverse('main:login') + '?next=' + self.url)
-    
+
     def test_student_view_get_login_no_student(self):
         """
         If user is not student, he is redirected to login page.
@@ -154,7 +154,7 @@ class StudentViewTests(TestCase):
         self.assertRedirects(
             response,
             reverse('main:login') + '?next=' + self.url)
-    
+
     def test_student_view_get_login_student(self):
         """
         If user is student, student page is shown.
@@ -163,7 +163,7 @@ class StudentViewTests(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'main/student.html')
-    
+
     def test_student_view_get_no_leases(self):
         """
         If no leases exist, no leases are shown.
@@ -171,7 +171,7 @@ class StudentViewTests(TestCase):
         self.client.login(**self.student_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['active_lease_list'], [])
-        
+
     def test_student_view_get_six_leases(self):
         """
         If 6 leases exist, all 6 leases are shown.
@@ -200,7 +200,7 @@ class StudentViewTests(TestCase):
         self.assertEqual(
             response.context['active_lease_list'][5].book.isbn,
             '9780000000057')
-    
+
     def test_student_view_get_anothers_leases(self):
         """
         If only another student leases exist, no leases are shown.
@@ -223,7 +223,7 @@ class StudentViewTests(TestCase):
         self.client.login(**self.student_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['active_lease_list'], [])
-    
+
     def test_student_view_get_ones_and_anothers_leases(self):
         """
         If 3 current student leases exist, only these 3 leases are
@@ -261,7 +261,7 @@ class StudentViewTests(TestCase):
         self.assertEqual(
             response.context['active_lease_list'][2].book.isbn,
             '9780000000026')
-    
+
     def test_student_view_get_returned_leases(self):
         """
         If all leases are returned, no leases are shown.
@@ -285,7 +285,7 @@ class StudentViewTests(TestCase):
         self.client.login(**self.student_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['active_lease_list'], [])
-    
+
     def test_student_view_get_active_and_returned_leases(self):
         """
         If 3 active leases exist, only these 3 leases are shown.
@@ -323,7 +323,7 @@ class StudentViewTests(TestCase):
         self.assertEqual(
             response.context['active_lease_list'][2].book.isbn,
             '9780000000026')
-        
+
     def test_student_view_get_leases_ordered(self):
         """
         Leases are shown in expire date order.
@@ -390,7 +390,7 @@ class LibrarianViewTests(TestCase):
         self.librarian_user.groups.add(group)
 
         self.url = reverse('main:librarian')
-    
+
     def test_librarian_view_get_no_login(self):
         """
         If user is not authenticated, he is redirected to login page.
@@ -399,7 +399,7 @@ class LibrarianViewTests(TestCase):
         self.assertRedirects(
             response,
             reverse('main:login') + '?next=' + self.url)
-    
+
     def test_librarian_view_get_login_no_librarian(self):
         """
         If user is not librarian, he is redirected to login page.
@@ -409,7 +409,7 @@ class LibrarianViewTests(TestCase):
         self.assertRedirects(
             response,
             reverse('main:login') + '?next=' + self.url)
-    
+
     def test_librarian_view_get_login_librarian(self):
         """
         If user is librarian, librarian page is shown.
@@ -418,7 +418,7 @@ class LibrarianViewTests(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'main/librarian.html')
-    
+
     def test_librarian_view_get_no_books(self):
         """
         If no books exist, no books are shown.
@@ -426,7 +426,7 @@ class LibrarianViewTests(TestCase):
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['latest_book_list'], [])
-    
+
     def test_librarian_view_get_three_books(self):
         """
         If 3 books exist, all 3 books are shown.
@@ -446,7 +446,7 @@ class LibrarianViewTests(TestCase):
             '<Book: Book object (9780000000019)>',
             '<Book: Book object (9780000000002)>'
         ])
-    
+
     def test_librarian_view_get_six_books(self):
         """
         If 6 books exist, 5 last created books are shown.
@@ -471,7 +471,7 @@ class LibrarianViewTests(TestCase):
             '<Book: Book object (9780000000026)>',
             '<Book: Book object (9780000000019)>'
         ])
-    
+
     def test_librarian_view_get_no_leases(self):
         """
         If no leases exist, no leases are shown.
@@ -479,7 +479,7 @@ class LibrarianViewTests(TestCase):
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['nearest_lease_list'], [])
-        
+
     def test_librarian_view_get_three_leases(self):
         """
         If 3 leases exist, all 3 leases are shown.
@@ -506,7 +506,7 @@ class LibrarianViewTests(TestCase):
         self.assertEqual(
             response.context['nearest_lease_list'][2].book.isbn,
             '9780000000026')
-    
+
     def test_librarian_view_get_six_leases(self):
         """
         If 6 leases exist, only 5 nearest leases are shown.
@@ -536,7 +536,7 @@ class LibrarianViewTests(TestCase):
         self.assertEqual(
             response.context['nearest_lease_list'][4].book.isbn,
             '9780000000040')
-        
+
     def test_librarian_view_get_returned_leases(self):
         """
         If all leases are returned, no leases are shown.
@@ -561,7 +561,7 @@ class LibrarianViewTests(TestCase):
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['nearest_lease_list'], [])
-    
+
     def test_librarian_view_get_active_and_returned_leases(self):
         """
         If 3 active leases exist, only these 3 leases are shown.
@@ -601,7 +601,7 @@ class LibrarianViewTests(TestCase):
         self.assertEqual(
             response.context['nearest_lease_list'][2].book.isbn,
             '9780000000026')
-        
+
     def test_librarian_view_get_leases_ordered(self):
         """
         Leases are shown in expire date order.
@@ -669,7 +669,7 @@ class NewBookViewTests(TestCase):
         self.assertRedirects(
             response,
             reverse('main:login') + '?next=' + self.url)
-    
+
     def test_new_book_view_get_login_no_librarian(self):
         """
         If user is not librarian, he is redirected to login page.
@@ -679,7 +679,7 @@ class NewBookViewTests(TestCase):
         self.assertRedirects(
             response,
             reverse('main:login') + '?next=' + self.url)
-    
+
     def test_new_book_view_get_login_librarian(self):
         """
         If user is librarian, new book form is shown.
@@ -688,7 +688,7 @@ class NewBookViewTests(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'main/new_book.html')
-    
+
     def test_new_book_view_post_adds_new_book(self):
         """
         If valid POST request is sent, new book is added.
@@ -727,7 +727,7 @@ class BookListViewTests(TestCase):
         self.librarian_user.groups.add(group)
 
         self.url = reverse('main:books')
-    
+
     def test_book_list_view_get_no_login(self):
         """
         If user is not authenticated, he is redirected to login page.
@@ -736,7 +736,7 @@ class BookListViewTests(TestCase):
         self.assertRedirects(
             response,
             reverse('main:login') + '?next=' + self.url)
-    
+
     def test_book_list_view_get_login_no_librarian(self):
         """
         If user is not librarian, he is redirected to login page.
@@ -746,7 +746,7 @@ class BookListViewTests(TestCase):
         self.assertRedirects(
             response,
             reverse('main:login') + '?next=' + self.url)
-    
+
     def test_book_list_view_get_login_librarian(self):
         """
         If user is librarian, book list page is shown.
@@ -755,7 +755,7 @@ class BookListViewTests(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'main/book_list.html')
-    
+
     def test_book_list_view_get_no_books(self):
         """
         If no books exist, no books are shown.
@@ -763,7 +763,7 @@ class BookListViewTests(TestCase):
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['book_list'], [])
-    
+
     def test_book_list_view_get_three_books(self):
         """
         If 3 books exist, all 3 books are shown.
@@ -784,7 +784,7 @@ class BookListViewTests(TestCase):
             '<Book: Book object (9780000000019)>',
             '<Book: Book object (9780000000002)>'
         ])
-    
+
     def test_book_list_view_get_six_books(self):
         """
         If 6 books exist, all 6 books are shown.
@@ -850,7 +850,7 @@ class BookDetailViewTests(TestCase):
         self.assertRedirects(
             response,
             reverse('main:login') + '?next=' + self.url)
-    
+
     def test_book_detail_view_get_login_no_librarian(self):
         """
         If user is not librarian, he is redirected to login page.
@@ -860,7 +860,7 @@ class BookDetailViewTests(TestCase):
         self.assertRedirects(
             response,
             reverse('main:login') + '?next=' + self.url)
-    
+
     def test_book_detail_view_get_login_librarian(self):
         """
         If user is librarian, book detail page is shown.
@@ -997,7 +997,7 @@ class LeaseListViewTests(TestCase):
                 isbn=isbn, name=isbn, count=1)
 
         self.url = reverse('main:leases')
-    
+
     def test_lease_list_view_get_no_login(self):
         """
         If user is not authenticated, he is redirected to login page.
@@ -1006,7 +1006,7 @@ class LeaseListViewTests(TestCase):
         self.assertRedirects(
             response,
             reverse('main:login') + '?next=' + self.url)
-    
+
     def test_lease_list_view_get_login_no_librarian(self):
         """
         If user is not librarian, he is redirected to login page.
@@ -1016,7 +1016,7 @@ class LeaseListViewTests(TestCase):
         self.assertRedirects(
             response,
             reverse('main:login') + '?next=' + self.url)
-    
+
     def test_lease_list_view_get_login_librarian(self):
         """
         If user is librarian, lease list page is shown.
@@ -1025,7 +1025,7 @@ class LeaseListViewTests(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'main/lease_list.html')
-    
+
     def test_lease_list_view_get_no_leases(self):
         """
         If no leases exist, no leases are shown.
@@ -1033,7 +1033,7 @@ class LeaseListViewTests(TestCase):
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['lease_list'], [])
-        
+
     def test_lease_list_view_get_six_leases(self):
         """
         If 6 leases exist, all 6 leases are shown.
@@ -1062,7 +1062,7 @@ class LeaseListViewTests(TestCase):
         self.assertEqual(
             response.context['lease_list'][5].book.isbn,
             '9780000000057')
-        
+
     def test_lease_list_view_get_leases_ordered(self):
         """
         Leases are shown in expire date order.
@@ -1150,7 +1150,7 @@ class LeaseDetailViewTests(TestCase):
         self.assertRedirects(
             response,
             reverse('main:login') + '?next=' + self.url)
-    
+
     def test_lease_detail_view_get_login_no_librarian(self):
         """
         If user is not librarian, he is redirected to login page.
@@ -1160,7 +1160,7 @@ class LeaseDetailViewTests(TestCase):
         self.assertRedirects(
             response,
             reverse('main:login') + '?next=' + self.url)
-    
+
     def test_lease_detail_view_get_login_librarian(self):
         """
         If user is librarian, lease detail page is shown.
@@ -1242,7 +1242,7 @@ class ReturnLeaseViewTests(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'main/return_lease.html')
-    
+
     def test_return_lease_view_get_already_returned_lease(self):
         """
         If lease is already returned, user is redirected to librarian
