@@ -82,7 +82,7 @@ class BookModelTests(TestCase):
         """
         If no books are available, 0 is returned.
         """
-        for i in range(2):
+        for _ in range(2):
             Lease.objects.create(
                 student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
@@ -111,7 +111,7 @@ class BookModelTests(TestCase):
         """
         If no books are available, false is returned.
         """
-        for i in range(2):
+        for _ in range(2):
             Lease.objects.create(
                 student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),

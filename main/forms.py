@@ -18,7 +18,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from django import forms
 from django.core.validators import MinValueValidator
-from django.utils import timezone
 
 import stdnum.isbn
 

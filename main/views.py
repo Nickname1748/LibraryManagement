@@ -17,7 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, request
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.forms import UserCreationForm
@@ -25,6 +25,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Group
 from django.views import generic
 from django.utils import timezone
+from django.utils.datastructures import MultiValueDictKeyError
 
 from .decorators import group_required
 from .models import Book, Lease
@@ -104,7 +105,7 @@ class BookListView(generic.ListView):
     def get_queryset(self):
         try:
             query = self.request.GET['q']
-        except:
+        except MultiValueDictKeyError:
             query = ''
 
         if query != '':
@@ -144,7 +145,7 @@ class LeaseListView(generic.ListView):
     def get_queryset(self):
         try:
             query = self.request.GET['q']
-        except:
+        except MultiValueDictKeyError:
             query = ''
 
         if query != '':
