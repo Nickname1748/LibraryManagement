@@ -1,24 +1,27 @@
+# Library Management System
+# Copyright (C) 2020 Andrey Shmaykhel, Alexander Solovyov, Timur Allayarov
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 """
-Library Management System
-Copyright (C) 2020 Andrey Shmaykhel, Alexander Solovyov, Timur Allayarov
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+This module contains tests of models in main app.
 """
 
 from django.test import TestCase
 from django.utils import timezone
-from django.contrib.auth.models import User, Group
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 
 from main.models import Book, Lease
 
@@ -43,76 +46,76 @@ class BookModelTests(TestCase):
             'username': 'student1',
             'password': 'testpass'
         }
-        self.student_user = User.objects.create_user(
+        self.student_user = get_user_model().objects.create_user(
             **self.student_credentials)
         group = Group.objects.get_or_create(name="Student")[0]
         self.student_user.groups.add(group)
-    
+
     def test_book_is_active_on_active_book(self):
         """
         If book is active, true is returned.
         """
         self.assertTrue(self.book1.is_active())
-    
+
     def test_book_is_active_on_inactive_book(self):
         """
         If book is active, false is returned.
         """
         self.assertFalse(self.book2.is_active())
-    
+
     def test_book_available_count_when_two_available(self):
         """
         If 2 books are available, 2 is returned.
         """
         self.assertEqual(self.book1.available_count(), 2)
-    
+
     def test_book_available_count_when_one_available(self):
         """
         If 1 book is available, 1 is returned.
         """
         Lease.objects.create(
-            student=User.objects.get_by_natural_key(
+            student=get_user_model().objects.get_by_natural_key(
                 self.student_credentials['username']),
             book=Book.objects.get(pk='9780000000002'),
             expire_date=timezone.now() + timezone.timedelta(days=30))
         self.assertEqual(self.book1.available_count(), 1)
-    
+
     def test_book_available_count_when_none_available(self):
         """
         If no books are available, 0 is returned.
         """
-        for i in range(2):
+        for _ in range(2):
             Lease.objects.create(
-                student=User.objects.get_by_natural_key(
+                student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
                 book=Book.objects.get(pk='9780000000002'),
                 expire_date=timezone.now() + timezone.timedelta(days=30))
         self.assertEqual(self.book1.available_count(), 0)
-    
+
     def test_book_is_available_when_two_available(self):
         """
         If 2 books are available, true is returned.
         """
         self.assertTrue(self.book1.is_available())
-    
+
     def test_book_is_available_when_one_available(self):
         """
         If 1 book is available, true is returned.
         """
         Lease.objects.create(
-            student=User.objects.get_by_natural_key(
+            student=get_user_model().objects.get_by_natural_key(
                 self.student_credentials['username']),
             book=Book.objects.get(pk='9780000000002'),
             expire_date=timezone.now() + timezone.timedelta(days=30))
         self.assertTrue(self.book1.is_available())
-    
+
     def test_book_is_available_when_none_available(self):
         """
         If no books are available, false is returned.
         """
-        for i in range(2):
+        for _ in range(2):
             Lease.objects.create(
-                student=User.objects.get_by_natural_key(
+                student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
                 book=Book.objects.get(pk='9780000000002'),
                 expire_date=timezone.now() + timezone.timedelta(days=30))
@@ -134,23 +137,23 @@ class LeaseModelTests(TestCase):
             'username': 'student1',
             'password': 'testpass'
         }
-        self.student_user = User.objects.create_user(
+        self.student_user = get_user_model().objects.create_user(
             **self.student_credentials)
         group = Group.objects.get_or_create(name="Student")[0]
         self.student_user.groups.add(group)
 
         self.lease = Lease.objects.create(
-            student=User.objects.get_by_natural_key(
+            student=get_user_model().objects.get_by_natural_key(
                 self.student_credentials['username']),
             book=Book.objects.get(pk='9780000000002'),
             expire_date=timezone.now() + timezone.timedelta(days=30))
-    
+
     def test_lease_is_active_on_active_lease(self):
         """
         If lease is active, true is returned.
         """
         self.assertTrue(self.lease.is_active())
-    
+
     def test_lease_is_active_on_returned_lease(self):
         """
         If lease is returned, false is returned.

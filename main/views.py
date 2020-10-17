@@ -1,23 +1,25 @@
+# Library Management System
+# Copyright (C) 2020 Andrey Shmaykhel, Alexander Solovyov, Timur Allayarov
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 """
-Library Management System
-Copyright (C) 2020 Andrey Shmaykhel, Alexander Solovyov, Timur Allayarov
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+This module contains all views in main app.
 """
 
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, request
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.forms import UserCreationForm
@@ -25,6 +27,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Group
 from django.views import generic
 from django.utils import timezone
+from django.utils.datastructures import MultiValueDictKeyError
 
 from .decorators import group_required
 from .models import Book, Lease
@@ -33,12 +36,18 @@ from .forms import BookCreationForm, LeaseCreationForm
 
 @login_required
 def index(request):
+    """
+    Temporary page that shows current user username.
+    """
     return HttpResponse(
         "Welcome to Library Management System! Your name is %s"
         % request.user.username)
 
 
 def register(request):
+    """
+    Register page allows registeration of new users.
+    """
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -60,6 +69,9 @@ def register(request):
 
 @group_required('Student')
 def student(request):
+    """
+    Main page of student UI.
+    """
     active_lease_list = Lease.objects\
         .filter(student__username__exact=request.user.username)\
         .filter(return_date__isnull=True).order_by('expire_date')
@@ -71,6 +83,9 @@ def student(request):
 
 @group_required('Librarian')
 def librarian(request):
+    """
+    Main page of librarian UI.
+    """
     nearest_lease_list = Lease.objects.filter(return_date__isnull=True)\
         .order_by('expire_date')[:5]
     latest_book_list = \
@@ -85,6 +100,9 @@ def librarian(request):
 
 @group_required('Librarian')
 def new_book(request):
+    """
+    Page that allow librarian to add new book.
+    """
     if request.method == 'POST':
         form = BookCreationForm(request.POST)
         if form.is_valid():
@@ -98,13 +116,16 @@ def new_book(request):
 
 @method_decorator(group_required('Librarian'), name='dispatch')
 class BookListView(generic.ListView):
+    """
+    Page that lists all books.
+    """
     model = Book
     paginate_by = 25
 
     def get_queryset(self):
         try:
             query = self.request.GET['q']
-        except:
+        except MultiValueDictKeyError:
             query = ''
 
         if query != '':
@@ -116,11 +137,17 @@ class BookListView(generic.ListView):
 
 @method_decorator(group_required('Librarian'), name='dispatch')
 class BookDetailView(generic.DetailView):
+    """
+    Page that shows details of book.
+    """
     model = Book
 
 
 @group_required('Librarian')
 def new_lease(request, book_id):
+    """
+    Page that allows to lease a book.
+    """
     if request.method == 'POST':
         form = LeaseCreationForm(request.POST)
         if form.is_valid():
@@ -138,13 +165,16 @@ def new_lease(request, book_id):
 
 @method_decorator(group_required('Librarian'), name='dispatch')
 class LeaseListView(generic.ListView):
+    """
+    Page that shows list of active leases.
+    """
     model = Lease
     paginate_by = 25
 
     def get_queryset(self):
         try:
             query = self.request.GET['q']
-        except:
+        except MultiValueDictKeyError:
             query = ''
 
         if query != '':
@@ -157,11 +187,17 @@ class LeaseListView(generic.ListView):
 
 @method_decorator(group_required('Librarian'), name='dispatch')
 class LeaseDetailView(generic.DetailView):
+    """
+    Page that shows lease details.
+    """
     model = Lease
 
 
 @group_required('Librarian')
 def return_lease(request, lease_id):
+    """
+    Page that allows to return leased book.
+    """
     lease = Lease.objects.get(pk=lease_id)
     if not lease.is_active():
         return redirect('main:librarian')
