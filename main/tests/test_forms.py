@@ -17,7 +17,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from django.test import TestCase
-from django.contrib.auth.models import User, Group
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.utils import timezone
 
 from main.forms import BookCreationForm, LeaseCreationForm
@@ -50,7 +51,7 @@ class BookCreationFormTests(TestCase):
             'count': 1
         })
         self.assertTrue(form.is_valid())
-        self.assertEquals(form.cleaned_data['isbn'], '9780000000002')
+        self.assertEqual(form.cleaned_data['isbn'], '9780000000002')
     
     def test_book_creation_form_no_data(self):
         """
@@ -133,7 +134,7 @@ class LeaseCreationFormTests(TestCase):
             'username': 'student1',
             'password': 'testpass'
         }
-        self.student_user = User.objects.create_user(
+        self.student_user = get_user_model().objects.create_user(
             **self.student_credentials)
         group = Group.objects.get_or_create(name="Student")[0]
         self.student_user.groups.add(group)
@@ -221,7 +222,7 @@ class LeaseCreationFormTests(TestCase):
         If book is unavailable, form is invalid.
         """
         Lease.objects.create(
-            student=User.objects.get_by_natural_key(
+            student=get_user_model().objects.get_by_natural_key(
                 self.student_credentials['username']),
             book=Book.objects.get(pk='9780000000002'),
             expire_date=timezone.now() + timezone.timedelta(days=30))

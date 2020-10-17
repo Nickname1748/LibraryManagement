@@ -21,7 +21,8 @@ import datetime
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
-from django.contrib.auth.models import User, Group
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 
 from main.models import Book, Lease
 
@@ -36,7 +37,7 @@ class IndexViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        self.user = User.objects.create_user(**self.credentials)
+        self.user = get_user_model().objects.create_user(**self.credentials)
         self.url = reverse('main:index')
 
     def test_index_view_get_no_login(self):
@@ -67,7 +68,7 @@ class RegisterViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        self.user = User.objects.create_user(**self.credentials)
+        self.user = get_user_model().objects.create_user(**self.credentials)
         self.url = reverse('main:register')
 
     def test_register_view_get(self):
@@ -90,7 +91,7 @@ class RegisterViewTests(TestCase):
         self.assertRedirects(response, reverse('main:index'))
         self.assertIn(
             Group.objects.get(name='Student'),
-            User.objects.get(username='testuser1').groups.all())
+            get_user_model().objects.get(username='testuser1').groups.all())
 
 
 class StudentViewTests(TestCase):
@@ -103,13 +104,13 @@ class StudentViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        self.user = User.objects.create_user(**self.credentials)
+        self.user = get_user_model().objects.create_user(**self.credentials)
 
         self.student_credentials = {
             'username': 'student1',
             'password': 'testpass'
         }
-        self.student_user = User.objects.create_user(
+        self.student_user = get_user_model().objects.create_user(
             **self.student_credentials)
         group = Group.objects.get_or_create(name="Student")[0]
         self.student_user.groups.add(group)
@@ -118,7 +119,7 @@ class StudentViewTests(TestCase):
             'username': 'student2',
             'password': 'testpass'
         }
-        self.another_student_user = User.objects.create_user(
+        self.another_student_user = get_user_model().objects.create_user(
             **self.another_student_credentials)
         group = Group.objects.get_or_create(name="Student")[0]
         self.another_student_user.groups.add(group)
@@ -187,7 +188,7 @@ class StudentViewTests(TestCase):
         ]
         for isbn in isbn_list:
             Lease.objects.create(
-                student=User.objects.get_by_natural_key(
+                student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=timezone.now() + timezone.timedelta(days=30))
@@ -216,7 +217,7 @@ class StudentViewTests(TestCase):
         ]
         for isbn in isbn_list:
             Lease.objects.create(
-                student=User.objects.get_by_natural_key(
+                student=get_user_model().objects.get_by_natural_key(
                     self.another_student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=timezone.now() + timezone.timedelta(days=30))
@@ -242,13 +243,13 @@ class StudentViewTests(TestCase):
         ]
         for isbn in isbn_list:
             Lease.objects.create(
-                student=User.objects.get_by_natural_key(
+                student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=timezone.now() + timezone.timedelta(days=30))
         for isbn in another_isbn_list:
             Lease.objects.create(
-                student=User.objects.get_by_natural_key(
+                student=get_user_model().objects.get_by_natural_key(
                     self.another_student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=timezone.now() + timezone.timedelta(days=30))
@@ -277,7 +278,7 @@ class StudentViewTests(TestCase):
         ]
         for isbn in isbn_list:
             Lease.objects.create(
-                student=User.objects.get_by_natural_key(
+                student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=timezone.now() + timezone.timedelta(days=30),
@@ -303,13 +304,13 @@ class StudentViewTests(TestCase):
         ]
         for isbn in isbn_list:
             Lease.objects.create(
-                student=User.objects.get_by_natural_key(
+                student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=timezone.now() + timezone.timedelta(days=30))
         for isbn in another_isbn_list:
             Lease.objects.create(
-                student=User.objects.get_by_natural_key(
+                student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=timezone.now() + timezone.timedelta(days=30),
@@ -339,7 +340,7 @@ class StudentViewTests(TestCase):
         ]
         for i, isbn in enumerate(isbn_list):
             Lease.objects.create(
-                student=User.objects.get_by_natural_key(
+                student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=
@@ -370,13 +371,13 @@ class LibrarianViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        self.user = User.objects.create_user(**self.credentials)
+        self.user = get_user_model().objects.create_user(**self.credentials)
 
         self.student_credentials = {
             'username': 'student1',
             'password': 'testpass'
         }
-        self.student_user = User.objects.create_user(
+        self.student_user = get_user_model().objects.create_user(
             **self.student_credentials)
         group = Group.objects.get_or_create(name="Student")[0]
         self.student_user.groups.add(group)
@@ -385,7 +386,7 @@ class LibrarianViewTests(TestCase):
             'username': 'librarian',
             'password': 'testpass'
         }
-        self.librarian_user = User.objects.create_user(
+        self.librarian_user = get_user_model().objects.create_user(
             **self.librarian_credentials)
         group = Group.objects.get_or_create(name="Librarian")[0]
         self.librarian_user.groups.add(group)
@@ -493,7 +494,7 @@ class LibrarianViewTests(TestCase):
         for isbn in isbn_list:
             Book.objects.create(isbn=isbn, name=isbn, count=1)
             Lease.objects.create(
-                student=User.objects.get_by_natural_key(
+                student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=timezone.now() + timezone.timedelta(days=30))
@@ -523,7 +524,7 @@ class LibrarianViewTests(TestCase):
         for isbn in isbn_list:
             Book.objects.create(isbn=isbn, name=isbn, count=1)
             Lease.objects.create(
-                student=User.objects.get_by_natural_key(
+                student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=timezone.now() + timezone.timedelta(days=30))
@@ -553,7 +554,7 @@ class LibrarianViewTests(TestCase):
         for isbn in isbn_list:
             Book.objects.create(isbn=isbn, name=isbn, count=1)
             Lease.objects.create(
-                student=User.objects.get_by_natural_key(
+                student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=timezone.now() + timezone.timedelta(days=30),
@@ -580,14 +581,14 @@ class LibrarianViewTests(TestCase):
         for isbn in isbn_list:
             Book.objects.create(isbn=isbn, name=isbn, count=1)
             Lease.objects.create(
-                student=User.objects.get_by_natural_key(
+                student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=timezone.now() + timezone.timedelta(days=30))
         for isbn in another_isbn_list:
             Book.objects.create(isbn=isbn, name=isbn, count=1)
             Lease.objects.create(
-                student=User.objects.get_by_natural_key(
+                student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=timezone.now() + timezone.timedelta(days=30),
@@ -618,7 +619,7 @@ class LibrarianViewTests(TestCase):
         for i, isbn in enumerate(isbn_list):
             Book.objects.create(isbn=isbn, name=isbn, count=1)
             Lease.objects.create(
-                student=User.objects.get_by_natural_key(
+                student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=
@@ -649,13 +650,13 @@ class NewBookViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        self.user = User.objects.create_user(**self.credentials)
+        self.user = get_user_model().objects.create_user(**self.credentials)
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
-        self.librarian_user = User.objects.create_user(
+        self.librarian_user = get_user_model().objects.create_user(
             **self.librarian_credentials)
         group = Group.objects.get_or_create(name="Librarian")[0]
         self.librarian_user.groups.add(group)
@@ -716,13 +717,13 @@ class BookListViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        self.user = User.objects.create_user(**self.credentials)
+        self.user = get_user_model().objects.create_user(**self.credentials)
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
-        self.librarian_user = User.objects.create_user(
+        self.librarian_user = get_user_model().objects.create_user(
             **self.librarian_credentials)
         group = Group.objects.get_or_create(name="Librarian")[0]
         self.librarian_user.groups.add(group)
@@ -824,13 +825,13 @@ class BookDetailViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        self.user = User.objects.create_user(**self.credentials)
+        self.user = get_user_model().objects.create_user(**self.credentials)
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
-        self.librarian_user = User.objects.create_user(
+        self.librarian_user = get_user_model().objects.create_user(
             **self.librarian_credentials)
         group = Group.objects.get_or_create(name="Librarian")[0]
         self.librarian_user.groups.add(group)
@@ -882,13 +883,13 @@ class NewLeaseViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        self.user = User.objects.create_user(**self.credentials)
+        self.user = get_user_model().objects.create_user(**self.credentials)
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
-        self.librarian_user = User.objects.create_user(
+        self.librarian_user = get_user_model().objects.create_user(
             **self.librarian_credentials)
         group = Group.objects.get_or_create(name="Librarian")[0]
         self.librarian_user.groups.add(group)
@@ -897,7 +898,7 @@ class NewLeaseViewTests(TestCase):
             'username': 'student1',
             'password': 'testpass'
         }
-        self.student_user = User.objects.create_user(
+        self.student_user = get_user_model().objects.create_user(
             **self.student_credentials)
         group = Group.objects.get_or_create(name="Student")[0]
         self.student_user.groups.add(group)
@@ -965,13 +966,13 @@ class LeaseListViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        self.user = User.objects.create_user(**self.credentials)
+        self.user = get_user_model().objects.create_user(**self.credentials)
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
-        self.librarian_user = User.objects.create_user(
+        self.librarian_user = get_user_model().objects.create_user(
             **self.librarian_credentials)
         group = Group.objects.get_or_create(name="Librarian")[0]
         self.librarian_user.groups.add(group)
@@ -980,7 +981,7 @@ class LeaseListViewTests(TestCase):
             'username': 'student1',
             'password': 'testpass'
         }
-        self.student_user = User.objects.create_user(
+        self.student_user = get_user_model().objects.create_user(
             **self.student_credentials)
         group = Group.objects.get_or_create(name="Student")[0]
         self.student_user.groups.add(group)
@@ -1049,7 +1050,7 @@ class LeaseListViewTests(TestCase):
         ]
         for isbn in isbn_list:
             Lease.objects.create(
-                student=User.objects.get_by_natural_key(
+                student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=timezone.now() + timezone.timedelta(days=30))
@@ -1078,7 +1079,7 @@ class LeaseListViewTests(TestCase):
         ]
         for i, isbn in enumerate(isbn_list):
             Lease.objects.create(
-                student=User.objects.get_by_natural_key(
+                student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=
@@ -1109,13 +1110,13 @@ class LeaseDetailViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        self.user = User.objects.create_user(**self.credentials)
+        self.user = get_user_model().objects.create_user(**self.credentials)
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
-        self.librarian_user = User.objects.create_user(
+        self.librarian_user = get_user_model().objects.create_user(
             **self.librarian_credentials)
         group = Group.objects.get_or_create(name="Librarian")[0]
         self.librarian_user.groups.add(group)
@@ -1124,7 +1125,7 @@ class LeaseDetailViewTests(TestCase):
             'username': 'student1',
             'password': 'testpass'
         }
-        self.student_user = User.objects.create_user(
+        self.student_user = get_user_model().objects.create_user(
             **self.student_credentials)
         group = Group.objects.get_or_create(name="Student")[0]
         self.student_user.groups.add(group)
@@ -1136,7 +1137,7 @@ class LeaseDetailViewTests(TestCase):
         )
 
         self.lease = Lease.objects.create(
-            student=User.objects.get_by_natural_key(
+            student=get_user_model().objects.get_by_natural_key(
                 self.student_credentials['username']),
             book=Book.objects.get(pk='9780000000002'),
             expire_date=timezone.now() + timezone.timedelta(days=30))
@@ -1182,13 +1183,13 @@ class ReturnLeaseViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        self.user = User.objects.create_user(**self.credentials)
+        self.user = get_user_model().objects.create_user(**self.credentials)
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
-        self.librarian_user = User.objects.create_user(
+        self.librarian_user = get_user_model().objects.create_user(
             **self.librarian_credentials)
         group = Group.objects.get_or_create(name="Librarian")[0]
         self.librarian_user.groups.add(group)
@@ -1197,7 +1198,7 @@ class ReturnLeaseViewTests(TestCase):
             'username': 'student1',
             'password': 'testpass'
         }
-        self.student_user = User.objects.create_user(
+        self.student_user = get_user_model().objects.create_user(
             **self.student_credentials)
         group = Group.objects.get_or_create(name="Student")[0]
         self.student_user.groups.add(group)
@@ -1209,7 +1210,7 @@ class ReturnLeaseViewTests(TestCase):
         )
 
         self.lease = Lease.objects.create(
-            student=User.objects.get_by_natural_key(
+            student=get_user_model().objects.get_by_natural_key(
                 self.student_credentials['username']),
             book=Book.objects.get(pk='9780000000002'),
             expire_date=timezone.now() + timezone.timedelta(days=30))

@@ -20,7 +20,7 @@ import uuid
 from django.db import models
 from django.utils import timezone
 from isbn_field import ISBNField
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 
 
@@ -44,7 +44,7 @@ class Book(models.Model):
 class Lease(models.Model):
     id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False)
-    student = models.ForeignKey(User, on_delete=models.PROTECT)
+    student = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
     book = models.ForeignKey(Book, on_delete=models.PROTECT)
     issue_date = models.DateTimeField(auto_now_add=True)
     expire_date = models.DateField(validators=[MinValueValidator(timezone.now().date())])
