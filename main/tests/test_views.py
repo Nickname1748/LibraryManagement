@@ -93,6 +93,14 @@ class RegisterViewTests(TestCase):
             Group.objects.get(name='Student'),
             get_user_model().objects.get(username='testuser1').groups.all())
 
+    def test_register_view_post_invalid_fails(self):
+        """
+        If invalid POST request is sent, errors are shown.
+        """
+        response = self.client.post(self.url, {})
+        self.assertEqual(response.status_code, 200)
+        self.assertGreater(len(response.context['form'].errors), 0)
+
 
 class StudentViewTests(TestCase):
     """
@@ -706,6 +714,15 @@ class NewBookViewTests(TestCase):
             Book.objects.get(isbn='9780000000002').name,
             'Test Book')
 
+    def test_new_book_view_post_invalid_fails(self):
+        """
+        If invalid POST request is sent, errors are shown.
+        """
+        self.client.login(**self.librarian_credentials)
+        response = self.client.post(self.url, {})
+        self.assertEqual(response.status_code, 200)
+        self.assertGreater(len(response.context['form'].errors), 0)
+
 
 class BookListViewTests(TestCase):
     """
@@ -954,6 +971,15 @@ class NewLeaseViewTests(TestCase):
         self.assertEqual(
             Lease.objects.get(book='9780000000002').student,
             self.student_user)
+
+    def test_new_lease_view_post_invalid_fails(self):
+        """
+        If invalid POST request is sent, errors are shown.
+        """
+        self.client.login(**self.librarian_credentials)
+        response = self.client.post(self.url, {})
+        self.assertEqual(response.status_code, 200)
+        self.assertGreater(len(response.context['form'].errors), 0)
 
 
 class LeaseListViewTests(TestCase):
