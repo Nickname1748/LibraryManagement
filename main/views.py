@@ -34,6 +34,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 from .decorators import group_required
 from .models import Book, Lease
 from .forms import BookCreationForm, LeaseCreationForm
+from .utils import build_xlsx
 
 
 @login_required
@@ -212,18 +213,38 @@ def return_lease(request, lease_id):
         'lease': lease
     })
 
+
 @group_required('Librarian')
 def books_report(request):
     """
     Returnes CSV report file for download.
     """
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename = "Book Report.csv"'
+    response['Content-Disposition'] =\
+        'attachment; filename = "Book Report.csv"'
 
     writer = csv.writer(response)
-    writer.writerow(['ISBN', 'Название книги', 'Дата добавления книги', 'Текущее количество'])
+    writer.writerow([
+        'ISBN',
+        'Название книги',
+        'Дата добавления книги',
+        'Текущее количество'])
     book_list = Book.objects.order_by('added_date')
     for book in book_list:
         writer.writerow([book.isbn, book.name, book.added_date, book.count])
+
+    return response
+
+
+@group_required('Librarian')
+def xlsx_report(request):
+    """
+    Returnes XLSX report file for downloa
+    """
+    response = HttpResponse(content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename = "Report.xlsx"'
+
+    workbook = build_xlsx()
+    workbook.save(response)
 
     return response
