@@ -22,7 +22,7 @@
                         <img class="card-img-top" src="https://pictures.abebooks.com/isbn/{{ lease.book.isbn }}-us.jpg" onerror="imgError(this);">
                         <div class="card-body d-flex flex-column justify-content-end">
                             <div class="card-text">
-                                <p><i class="fas fa-book mr-2"></i>{{ lease.book.name }}<br><i class="fas fa-user mr-2"></i>{{ lease.customer }}<br><i class="fas fa-calendar-day mr-2"></i>{{ lease.expire_date }}</p>
+                                <p><i class="fas fa-book mr-2"></i>{{ lease.book.name }}<br><i class="fas fa-user mr-2"></i>{{ lease.student }}<br><i class="fas fa-calendar-day mr-2"></i>{{ lease.expire_date }}</p>
                             </div>
                             <a href="{% url 'main:lease_detail' lease.id %}" class="btn btn-primary stretched-link">Подробнее</a>
                         </div>

@@ -1,0 +1,5 @@
+[DESIGN]
+max-parents=15
+
+[MESSAGES CONTROL]
+disable = locally-disabled
