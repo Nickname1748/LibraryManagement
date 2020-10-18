@@ -18,8 +18,6 @@
 This module contains all views in main app.
 """
 
-import csv
-
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -215,31 +213,9 @@ def return_lease(request, lease_id):
 
 
 @group_required('Librarian')
-def books_report(request):
-    """
-    Returnes CSV report file for download.
-    """
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] =\
-        'attachment; filename = "Book Report.csv"'
-
-    writer = csv.writer(response)
-    writer.writerow([
-        'ISBN',
-        'Название книги',
-        'Дата добавления книги',
-        'Текущее количество'])
-    book_list = Book.objects.order_by('added_date')
-    for book in book_list:
-        writer.writerow([book.isbn, book.name, book.added_date, book.count])
-
-    return response
-
-
-@group_required('Librarian')
 def xlsx_report(request):
     """
-    Returnes XLSX report file for downloa
+    Returnes XLSX report file for download.
     """
     response = HttpResponse(content_type='application/vnd.ms-excel')
     response['Content-Disposition'] = 'attachment; filename = "Report.xlsx"'

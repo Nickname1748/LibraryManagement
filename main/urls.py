@@ -40,6 +40,5 @@ urlpatterns = [
         name='lease_detail'),
     path('librarian/leases/<slug:lease_id>/return/', views.return_lease,
         name='return_lease'),
-    path('librarian/books_report/', views.books_report, name='books_report'),
     path('librarian/xlsx_report/', views.xlsx_report, name='xlsx_report')
 ]
