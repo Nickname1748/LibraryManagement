@@ -34,7 +34,7 @@ class BookCreationForm(forms.ModelForm):
 
     class Meta:
         model = Book
-        exclude = ['added_date']
+        fields = ['isbn', 'name', 'count']
 
     def clean_isbn(self):
         """
@@ -50,7 +50,7 @@ class LeaseCreationForm(forms.ModelForm):
 
     class Meta:
         model = Lease
-        exclude = ['issue_date', 'return_date']
+        fields = ['student', 'book', 'expire_date']
 
     def clean_book(self):
         """

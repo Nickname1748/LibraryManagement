@@ -122,12 +122,12 @@ class LeaseCreationFormTests(TestCase):
     """
 
     def setUp(self):
-        self.book1 = Book.objects.create(
+        Book.objects.create(
             isbn='9780000000002',
             name='Test Book',
             count=1)
 
-        self.book2 = Book.objects.create(
+        Book.objects.create(
             isbn='9780000000019',
             name='Test Book 2',
             count=0)

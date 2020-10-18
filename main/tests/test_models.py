@@ -46,10 +46,10 @@ class BookModelTests(TestCase):
             'username': 'student1',
             'password': 'testpass'
         }
-        self.student_user = get_user_model().objects.create_user(
+        student_user = get_user_model().objects.create_user(
             **self.student_credentials)
         group = Group.objects.get_or_create(name="Student")[0]
-        self.student_user.groups.add(group)
+        student_user.groups.add(group)
 
     def test_book_is_active_on_active_book(self):
         """
@@ -128,23 +128,23 @@ class LeaseModelTests(TestCase):
     """
 
     def setUp(self):
-        self.book = Book.objects.create(
+        Book.objects.create(
             isbn='9780000000002',
             name='Test Book',
             count=2)
 
-        self.student_credentials = {
+        student_credentials = {
             'username': 'student1',
             'password': 'testpass'
         }
-        self.student_user = get_user_model().objects.create_user(
-            **self.student_credentials)
+        student_user = get_user_model().objects.create_user(
+            **student_credentials)
         group = Group.objects.get_or_create(name="Student")[0]
-        self.student_user.groups.add(group)
+        student_user.groups.add(group)
 
         self.lease = Lease.objects.create(
             student=get_user_model().objects.get_by_natural_key(
-                self.student_credentials['username']),
+                student_credentials['username']),
             book=Book.objects.get(pk='9780000000002'),
             expire_date=timezone.now() + timezone.timedelta(days=30))
 
