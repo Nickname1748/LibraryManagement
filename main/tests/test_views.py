@@ -1284,3 +1284,58 @@ class ReturnLeaseViewTests(TestCase):
         response = self.client.post(self.url, {})
         self.assertRedirects(response, reverse('main:librarian'))
         self.assertFalse(Lease.objects.get(pk=self.lease.id).is_active())
+
+
+class XlsxReportViewTests(TestCase):
+    """
+    Tests checking XLSX report view functionality.
+    """
+
+    def setUp(self):
+        self.credentials = {
+            'username': 'testuser',
+            'password': 'testpass'
+        }
+        get_user_model().objects.create_user(**self.credentials)
+
+        self.librarian_credentials = {
+            'username': 'librarian',
+            'password': 'testpass'
+        }
+        librarian_user = get_user_model().objects.create_user(
+            **self.librarian_credentials)
+        group = Group.objects.get_or_create(name="Librarian")[0]
+        librarian_user.groups.add(group)
+
+        self.url = reverse('main:xlsx_report')
+
+    def test_xlsx_report_view_get_no_login(self):
+        """
+        If user is not authenticated, he is redirected to login page.
+        """
+        response = self.client.get(self.url)
+        self.assertRedirects(
+            response,
+            reverse('main:login') + '?next=' + self.url)
+
+    def test_xlsx_report_view_get_login_no_librarian(self):
+        """
+        If user is not librarian, he is redirected to login page.
+        """
+        self.client.login(**self.credentials)
+        response = self.client.get(self.url)
+        self.assertRedirects(
+            response,
+            reverse('main:login') + '?next=' + self.url)
+
+    def test_xlsx_report_view_get_login_librarian(self):
+        """
+        If user is librarian, xlsx report is returned.
+        """
+        self.client.login(**self.librarian_credentials)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['content-type'], 'application/vnd.ms-excel')
+        self.assertEqual(
+            response['Content-Disposition'],
+            'attachment; filename = "Report.xlsx"')
