@@ -21,7 +21,7 @@
         </script>
         <nav class="navbar navbar-expand-sm bg-dark text-white">
             <div class="container">
-                <div class="navbar-brand">Library Management System</div>
+                <div class="navbar-brand"><img src="{% static 'main/LibraryManagementLogoLongInlineDark.png' %}" style="height: 2em;"></div>
                 {% if user.is_authenticated %}
                 <div>
                     <i class="fas fa-user mr-2"></i>{{ user.get_username }}
