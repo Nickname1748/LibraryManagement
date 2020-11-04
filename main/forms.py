@@ -19,6 +19,7 @@ This module contains all forms of main app.
 """
 
 from django import forms
+from django.utils import timezone
 from django.core.validators import MinValueValidator
 
 import stdnum.isbn
@@ -34,7 +35,7 @@ class BookCreationForm(forms.ModelForm):
 
     class Meta:
         model = Book
-        fields = ['isbn', 'name', 'count']
+        fields = ['isbn', 'name', 'authors', 'count']
 
     def clean_isbn(self):
         """
@@ -60,3 +61,12 @@ class LeaseCreationForm(forms.ModelForm):
         if book.available_count() <= 0:
             raise forms.ValidationError('Book is not available')
         return book
+    
+    def clean_expire_date(self):
+        """
+        Expire date must be in future.
+        """
+        expire_date = self.cleaned_data['expire_date']
+        if expire_date <= timezone.now().date():
+            raise forms.ValidationError('Expire date must be in future')
+        return expire_date

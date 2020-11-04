@@ -22,19 +22,21 @@ import uuid
 from isbn_field import ISBNField
 
 from django.db import models
-from django.utils import timezone
 from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator
 
 
 class Book(models.Model):
     """
-    Book model describes book object in main app
+    Book model describes book object in main app.
     """
     isbn = ISBNField(primary_key=True)
     name = models.CharField(max_length=255)
+    authors = models.CharField(max_length=255)
     added_date = models.DateTimeField(auto_now_add=True)
     count = models.PositiveSmallIntegerField()
+
+    def __str__(self):
+        return self.name
 
     def is_active(self):
         """
@@ -60,15 +62,14 @@ class Book(models.Model):
 
 class Lease(models.Model):
     """
-    Lease model describes book lease object in main app
+    Lease model describes book lease object in main app.
     """
     id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False)
     student = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
     book = models.ForeignKey(Book, on_delete=models.PROTECT)
     issue_date = models.DateTimeField(auto_now_add=True)
-    expire_date = models.DateField(
-        validators=[MinValueValidator(timezone.now().date())])
+    expire_date = models.DateField()
     return_date = models.DateTimeField(null=True)
 
     def is_active(self):
