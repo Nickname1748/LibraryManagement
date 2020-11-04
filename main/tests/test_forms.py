@@ -39,6 +39,7 @@ class BookCreationFormTests(TestCase):
         form = BookCreationForm(data={
             'isbn': '9780000000002',
             'name': 'Test Book',
+            'authors': 'Author',
             'count': 1
         })
         self.assertTrue(form.is_valid())
@@ -50,6 +51,7 @@ class BookCreationFormTests(TestCase):
         form = BookCreationForm(data={
             'isbn': '0000000000',
             'name': 'Test Book',
+            'authors': 'Author',
             'count': 1
         })
         self.assertTrue(form.is_valid())
@@ -61,7 +63,7 @@ class BookCreationFormTests(TestCase):
         """
         form = BookCreationForm(data={})
         self.assertFalse(form.is_valid())
-        self.assertEqual(len(form.errors), 3)
+        self.assertEqual(len(form.errors), 4)
 
     def test_book_creation_form_no_isbn(self):
         """
@@ -69,6 +71,7 @@ class BookCreationFormTests(TestCase):
         """
         form = BookCreationForm(data={
             'name': 'Test Book',
+            'authors': 'Author',
             'count': 1
         })
         self.assertFalse(form.is_valid())
@@ -80,6 +83,7 @@ class BookCreationFormTests(TestCase):
         form = BookCreationForm(data={
             'isbn': '9780000000001',
             'name': 'Test Book',
+            'authors': 'Author',
             'count': 1
         })
         self.assertFalse(form.is_valid())
@@ -90,6 +94,7 @@ class BookCreationFormTests(TestCase):
         """
         form = BookCreationForm(data={
             'isbn': '9780000000002',
+            'authors': 'Author',
             'count': 1
         })
         self.assertFalse(form.is_valid())
@@ -100,7 +105,8 @@ class BookCreationFormTests(TestCase):
         """
         form = BookCreationForm(data={
             'isbn': '9780000000002',
-            'name': 'Test Book'
+            'name': 'Test Book',
+            'authors': 'Author'
         })
         self.assertFalse(form.is_valid())
 
@@ -111,6 +117,7 @@ class BookCreationFormTests(TestCase):
         form = BookCreationForm(data={
             'isbn': '9780000000002',
             'name': 'Test Book',
+            'authors': 'Author',
             'count': 0
         })
         self.assertFalse(form.is_valid())

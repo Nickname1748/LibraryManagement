@@ -136,7 +136,7 @@ class StudentViewTests(TestCase):
         ]
         for isbn in isbn_list:
             Book.objects.create(
-                isbn=isbn, name=isbn, count=1)
+                isbn=isbn, name=isbn, authors=isbn, count=1)
 
         self.url = reverse('main:student')
 
@@ -441,14 +441,14 @@ class LibrarianViewTests(TestCase):
             '9780000000026'
         ]
         for isbn in isbn_list:
-            Book.objects.create(isbn=isbn, name=isbn, count=1)
+            Book.objects.create(isbn=isbn, name=isbn, authors=isbn, count=1)
 
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['latest_book_list'], [
-            '<Book: Book object (9780000000026)>',
-            '<Book: Book object (9780000000019)>',
-            '<Book: Book object (9780000000002)>'
+            '<Book: 9780000000026>',
+            '<Book: 9780000000019>',
+            '<Book: 9780000000002>'
         ])
 
     def test_librarian_view_get_six_books(self):
@@ -464,16 +464,16 @@ class LibrarianViewTests(TestCase):
             '9780000000057'
         ]
         for isbn in isbn_list:
-            Book.objects.create(isbn=isbn, name=isbn, count=1)
+            Book.objects.create(isbn=isbn, name=isbn, authors=isbn, count=1)
 
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['latest_book_list'], [
-            '<Book: Book object (9780000000057)>',
-            '<Book: Book object (9780000000040)>',
-            '<Book: Book object (9780000000033)>',
-            '<Book: Book object (9780000000026)>',
-            '<Book: Book object (9780000000019)>'
+            '<Book: 9780000000057>',
+            '<Book: 9780000000040>',
+            '<Book: 9780000000033>',
+            '<Book: 9780000000026>',
+            '<Book: 9780000000019>'
         ])
 
     def test_librarian_view_get_no_leases(self):
@@ -494,7 +494,7 @@ class LibrarianViewTests(TestCase):
             '9780000000026'
         ]
         for isbn in isbn_list:
-            Book.objects.create(isbn=isbn, name=isbn, count=1)
+            Book.objects.create(isbn=isbn, name=isbn, authors=isbn, count=1)
             Lease.objects.create(
                 student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
@@ -524,7 +524,7 @@ class LibrarianViewTests(TestCase):
             '9780000000057'
         ]
         for isbn in isbn_list:
-            Book.objects.create(isbn=isbn, name=isbn, count=1)
+            Book.objects.create(isbn=isbn, name=isbn, authors=isbn, count=1)
             Lease.objects.create(
                 student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
@@ -554,7 +554,7 @@ class LibrarianViewTests(TestCase):
             '9780000000057'
         ]
         for isbn in isbn_list:
-            Book.objects.create(isbn=isbn, name=isbn, count=1)
+            Book.objects.create(isbn=isbn, name=isbn, authors=isbn, count=1)
             Lease.objects.create(
                 student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
@@ -581,14 +581,14 @@ class LibrarianViewTests(TestCase):
             '9780000000057'
         ]
         for isbn in isbn_list:
-            Book.objects.create(isbn=isbn, name=isbn, count=1)
+            Book.objects.create(isbn=isbn, name=isbn, authors=isbn, count=1)
             Lease.objects.create(
                 student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=timezone.now() + timezone.timedelta(days=30))
         for isbn in another_isbn_list:
-            Book.objects.create(isbn=isbn, name=isbn, count=1)
+            Book.objects.create(isbn=isbn, name=isbn, authors=isbn, count=1)
             Lease.objects.create(
                 student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
@@ -619,7 +619,7 @@ class LibrarianViewTests(TestCase):
             '9780000000057'
         ]
         for i, isbn in enumerate(isbn_list):
-            Book.objects.create(isbn=isbn, name=isbn, count=1)
+            Book.objects.create(isbn=isbn, name=isbn, authors=isbn, count=1)
             Lease.objects.create(
                 student=get_user_model().objects.get_by_natural_key(
                     self.student_credentials['username']),
@@ -701,6 +701,7 @@ class NewBookViewTests(TestCase):
         response = self.client.post(self.url, {
             'isbn': '9780000000002',
             'name': 'Test Book',
+            'authors': 'Author',
             'count': 1
         })
         self.assertRedirects(response, reverse('main:librarian'))
@@ -788,14 +789,14 @@ class BookListViewTests(TestCase):
         ]
         for isbn in isbn_list:
             Book.objects.create(
-                isbn=isbn, name=isbn, count=1)
+                isbn=isbn, name=isbn, authors=isbn, count=1)
 
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['book_list'], [
-            '<Book: Book object (9780000000026)>',
-            '<Book: Book object (9780000000019)>',
-            '<Book: Book object (9780000000002)>'
+            '<Book: 9780000000026>',
+            '<Book: 9780000000019>',
+            '<Book: 9780000000002>'
         ])
 
     def test_book_list_view_get_six_books(self):
@@ -812,17 +813,17 @@ class BookListViewTests(TestCase):
         ]
         for isbn in isbn_list:
             Book.objects.create(
-                isbn=isbn, name=isbn, count=1)
+                isbn=isbn, name=isbn, authors=isbn, count=1)
 
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['book_list'], [
-            '<Book: Book object (9780000000057)>',
-            '<Book: Book object (9780000000040)>',
-            '<Book: Book object (9780000000033)>',
-            '<Book: Book object (9780000000026)>',
-            '<Book: Book object (9780000000019)>',
-            '<Book: Book object (9780000000002)>'
+            '<Book: 9780000000057>',
+            '<Book: 9780000000040>',
+            '<Book: 9780000000033>',
+            '<Book: 9780000000026>',
+            '<Book: 9780000000019>',
+            '<Book: 9780000000002>'
         ])
 
 
@@ -850,6 +851,7 @@ class BookDetailViewTests(TestCase):
         Book.objects.create(
             isbn='9780000000002',
             name='Test Book',
+            authors='Author',
             count=1
         )
 
@@ -917,6 +919,7 @@ class NewLeaseViewTests(TestCase):
         Book.objects.create(
             isbn='9780000000002',
             name='Test Book',
+            authors='Author',
             count=1
         )
 
@@ -1016,7 +1019,7 @@ class LeaseListViewTests(TestCase):
         ]
         for isbn in isbn_list:
             Book.objects.create(
-                isbn=isbn, name=isbn, count=1)
+                isbn=isbn, name=isbn, authors=isbn, count=1)
 
         self.url = reverse('main:leases')
 
@@ -1153,6 +1156,7 @@ class LeaseDetailViewTests(TestCase):
         Book.objects.create(
             isbn='9780000000002',
             name='Test Book',
+            authors='Author',
             count=1
         )
 
@@ -1226,6 +1230,7 @@ class ReturnLeaseViewTests(TestCase):
         Book.objects.create(
             isbn='9780000000002',
             name='Test Book',
+            authors='Author',
             count=1
         )
 
