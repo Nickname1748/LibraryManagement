@@ -1,4 +1,4 @@
-{% extends "main/base.html" %}
+{% extends 'main/base.html' %}
 
 {% block title %}
 Библиотечный фонд
@@ -18,13 +18,7 @@
         {% if book_list %}
             <div class="d-flex flex-wrap">
                 {% for book in book_list %}
-                    <div class="card m-2" style="width: 12.8em;">
-                        <img class="card-img-top" src="https://pictures.abebooks.com/isbn/{{ book.isbn }}-us.jpg" onerror="imgError(this);">
-                        <div class="card-body d-flex flex-column justify-content-end">
-                            <h4 class="card-title">{{ book.name }}</h4>
-                            <a href="{% url 'main:book_detail' book.isbn %}" class="btn btn-primary stretched-link">Подробнее</a>
-                        </div>
-                    </div>
+                    {% include 'main/book_card.html' %}
                 {% endfor %}
             </div>
         {% else %}
