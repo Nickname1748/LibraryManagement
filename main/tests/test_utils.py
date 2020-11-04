@@ -26,7 +26,9 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
 from main.utils import build_xlsx, build_books_sheet, build_leases_sheet
-from main.models import Book, Lease
+from main.models import Book
+
+from .utils import isbn_list_6, student_credentials, create_student_lease
 
 
 class BuildXlsxFuncTests(TestCase):
@@ -67,15 +69,7 @@ class BuildBooksSheetFuncTests(TestCase):
         """
         If DB is not empty, books worksheet is not empty.
         """
-        isbn_list = [
-            '9780000000002',
-            '9780000000019',
-            '9780000000026',
-            '9780000000033',
-            '9780000000040',
-            '9780000000057'
-        ]
-        for count, isbn in enumerate(isbn_list, start=1):
+        for count, isbn in enumerate(isbn_list_6, start=1):
             Book.objects.create(
                 isbn=isbn, name=isbn, count=count)
 
@@ -118,31 +112,15 @@ class BuildLeasesSheetFuncTests(TestCase):
         """
         If DB is not empty, leases worksheet is not empty.
         """
-        student_credentials = {
-            'username': 'student1',
-            'password': 'testpass'
-        }
         student_user = get_user_model().objects.create_user(
             **student_credentials)
         student_group = Group.objects.get_or_create(name="Student")[0]
         student_user.groups.add(student_group)
 
-        isbn_list = [
-            '9780000000002',
-            '9780000000019',
-            '9780000000026',
-            '9780000000033',
-            '9780000000040',
-            '9780000000057'
-        ]
-        for count, isbn in enumerate(isbn_list, start=1):
+        for count, isbn in enumerate(isbn_list_6, start=1):
             Book.objects.create(
                 isbn=isbn, name=isbn, count=count)
-            Lease.objects.create(
-                student=get_user_model().objects.get_by_natural_key(
-                    student_credentials['username']),
-                book=Book.objects.get(pk=isbn),
-                expire_date=timezone.now() + timezone.timedelta(days=30))
+            create_student_lease(isbn)
 
         workbook = Workbook()
         worksheet = workbook.active

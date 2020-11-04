@@ -24,7 +24,9 @@ from django.contrib.auth.models import Group
 from django.utils import timezone
 
 from main.forms import BookCreationForm, LeaseCreationForm
-from main.models import Book, Lease
+from main.models import Book
+
+from .utils import student_credentials, create_student_lease
 
 
 class BookCreationFormTests(TestCase):
@@ -139,12 +141,8 @@ class LeaseCreationFormTests(TestCase):
             name='Test Book 2',
             count=0)
 
-        self.student_credentials = {
-            'username': 'student1',
-            'password': 'testpass'
-        }
         self.student_user = get_user_model().objects.create_user(
-            **self.student_credentials)
+            **student_credentials)
         group = Group.objects.get_or_create(name="Student")[0]
         self.student_user.groups.add(group)
 
@@ -230,11 +228,7 @@ class LeaseCreationFormTests(TestCase):
         """
         If book is unavailable, form is invalid.
         """
-        Lease.objects.create(
-            student=get_user_model().objects.get_by_natural_key(
-                self.student_credentials['username']),
-            book=Book.objects.get(pk='9780000000002'),
-            expire_date=timezone.now() + timezone.timedelta(days=30))
+        create_student_lease('9780000000002')
 
         form = LeaseCreationForm(data={
             'student': self.student_user.id,

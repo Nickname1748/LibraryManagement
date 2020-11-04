@@ -61,7 +61,7 @@ class LeaseCreationForm(forms.ModelForm):
         if book.available_count() <= 0:
             raise forms.ValidationError('Book is not available')
         return book
-    
+
     def clean_expire_date(self):
         """
         Expire date must be in future.
