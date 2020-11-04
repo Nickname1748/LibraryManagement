@@ -42,7 +42,7 @@ class BookCreationForm(forms.ModelForm):
         ISBN passed to model must be in ISBN-13 format.
         """
         return stdnum.isbn.to_isbn13(self.cleaned_data['isbn'])
-    
+
     def clean_count(self):
         """
         If book exists, count must be not less than leased book count.
@@ -51,7 +51,7 @@ class BookCreationForm(forms.ModelForm):
         try:
             book_isbn = self.cleaned_data['isbn']
         except KeyError:
-            raise forms.ValidationError('No ISBN is sent')
+            raise forms.ValidationError('No ISBN is sent') from KeyError
         if Book.objects.filter(pk=book_isbn).exists():
             book = Book.objects.get(pk=book_isbn)
             lease_count = book.lease_set.filter(return_date__isnull=True)\
