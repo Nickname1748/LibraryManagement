@@ -20,6 +20,7 @@ This module contains models in main app.
 
 import uuid
 from isbn_field import ISBNField
+from stdnum import isbn
 
 from django.db import models
 from django.contrib.auth import get_user_model
@@ -37,6 +38,12 @@ class Book(models.Model):
 
     def __str__(self):
         return self.name
+
+    def formatted_isbn(self):
+        """
+        Returns ISBN in proper format woth dashes.
+        """
+        return isbn.format(self.isbn)
 
     def is_active(self):
         """

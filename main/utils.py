@@ -19,7 +19,6 @@ This module contains utility functions in main app.
 """
 
 from openpyxl import Workbook
-from stdnum import isbn
 
 from .models import Book, Lease
 
@@ -50,7 +49,7 @@ def build_books_sheet(worksheet):
     worksheet.cell(row=1, column=4, value="Count")
     book_list = Book.objects.order_by('added_date')
     for row, book in enumerate(book_list, start=2):
-        worksheet.cell(row=row, column=1, value=isbn.format(book.isbn))
+        worksheet.cell(row=row, column=1, value=book.formatted_isbn())
         worksheet.cell(row=row, column=2, value=book.name)
         worksheet.cell(row=row, column=3, value=book.added_date)
         worksheet.cell(row=row, column=4, value=book.count)
@@ -74,7 +73,7 @@ def build_leases_sheet(worksheet):
     for row, lease in enumerate(lease_list, start=2):
         worksheet.cell(row=row, column=1, value=str(lease.id))
         worksheet.cell(row=row, column=2, value=str(lease.student))
-        worksheet.cell(row=row, column=3, value=isbn.format(lease.book.isbn))
+        worksheet.cell(row=row, column=3, value=lease.book.formatted_isbn())
         worksheet.cell(row=row, column=4, value=lease.issue_date)
         worksheet.cell(row=row, column=5, value=lease.expire_date)
         worksheet.cell(row=row, column=6, value=lease.return_date)
