@@ -19,6 +19,8 @@ This module contains URL matches in main app.
 """
 
 from django.urls import path, include
+from django.views.generic.base import RedirectView
+from django.contrib.staticfiles.storage import staticfiles_storage
 
 from . import views
 
@@ -26,6 +28,8 @@ app_name = 'main'
 urlpatterns = [
     path('', views.index, name='index'),
     path('', include('django.contrib.auth.urls')),
+    path('favicon.ico',
+        RedirectView.as_view(url=staticfiles_storage.url('main/favicon.ico'))),
     path('register/', views.register, name='register'),
     path('student/', views.student, name='student'),
     path('librarian/', views.librarian, name='librarian'),
