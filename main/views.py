@@ -18,7 +18,7 @@
 This module contains all views in main app.
 """
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -102,7 +102,7 @@ def librarian(request):
 @group_required('Librarian')
 def new_book(request):
     """
-    Page that allow librarian to add new book.
+    Page that allows librarian to add new book.
     """
     if request.method == 'POST':
         form = BookCreationForm(request.POST)
@@ -145,10 +145,31 @@ class BookDetailView(generic.DetailView):
 
 
 @group_required('Librarian')
+def edit_book(request, book_id):
+    """
+    Page that allows librarian to edit book.
+    """
+    book = get_object_or_404(Book, pk=book_id)
+    if request.method == 'POST':
+        form = BookCreationForm(request.POST, instance=book)
+        if form.is_valid():
+            form.save()
+            return redirect('main:librarian')
+    else:
+        form = BookCreationForm(instance=book)
+
+    return render(request, 'main/edit_book.html', {
+        'form': form,
+        'book_id': book_id
+    })
+
+
+@group_required('Librarian')
 def new_lease(request, book_id):
     """
     Page that allows to lease a book.
     """
+    book = get_object_or_404(Book, pk=book_id)
     if request.method == 'POST':
         form = LeaseCreationForm(request.POST)
         if form.is_valid():
@@ -160,7 +181,7 @@ def new_lease(request, book_id):
     return render(request, 'main/new_lease.html', {
         'form': form,
         'book_id': book_id,
-        'book_name': Book.objects.get(pk=book_id).name
+        'book_name': book.name
     })
 
 
@@ -199,7 +220,7 @@ def return_lease(request, lease_id):
     """
     Page that allows to return leased book.
     """
-    lease = Lease.objects.get(pk=lease_id)
+    lease = get_object_or_404(Lease, pk=lease_id)
     if not lease.is_active():
         return redirect('main:librarian')
     if request.method == 'POST':
