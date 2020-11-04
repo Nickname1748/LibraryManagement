@@ -61,8 +61,9 @@ class BuildBooksSheetFuncTests(TestCase):
         build_books_sheet(worksheet)
         self.assertEqual(worksheet['A1'].value, "ISBN")
         self.assertEqual(worksheet['B1'].value, "Name")
-        self.assertEqual(worksheet['C1'].value, "Added date")
-        self.assertEqual(worksheet['D1'].value, "Count")
+        self.assertEqual(worksheet['C1'].value, "Authors")
+        self.assertEqual(worksheet['D1'].value, "Added date")
+        self.assertEqual(worksheet['E1'].value, "Count")
         self.assertIsNone(worksheet['A2'].value)
 
     def test_build_books_sheet_on_nonempty_db(self):
@@ -71,21 +72,23 @@ class BuildBooksSheetFuncTests(TestCase):
         """
         for count, isbn in enumerate(isbn_list_6, start=1):
             Book.objects.create(
-                isbn=isbn, name=isbn, count=count)
+                isbn=isbn, name=isbn, authors=isbn, count=count)
 
         workbook = Workbook()
         worksheet = workbook.active
         build_books_sheet(worksheet)
         self.assertEqual(worksheet['A1'].value, "ISBN")
         self.assertEqual(worksheet['B1'].value, "Name")
-        self.assertEqual(worksheet['C1'].value, "Added date")
-        self.assertEqual(worksheet['D1'].value, "Count")
+        self.assertEqual(worksheet['C1'].value, "Authors")
+        self.assertEqual(worksheet['D1'].value, "Added date")
+        self.assertEqual(worksheet['E1'].value, "Count")
         self.assertEqual(worksheet['A2'].value, "978-0-00-000000-2")
         self.assertEqual(worksheet['B3'].value, "9780000000019")
+        self.assertEqual(worksheet['C4'].value, "9780000000026")
         self.assertGreater(
-            worksheet['C4'].value,
+            worksheet['D5'].value,
             timezone.now() - timezone.timedelta(minutes=1))
-        self.assertEqual(worksheet['D5'].value, 4)
+        self.assertEqual(worksheet['E6'].value, 5)
 
 
 class BuildLeasesSheetFuncTests(TestCase):

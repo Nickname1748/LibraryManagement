@@ -45,18 +45,21 @@ def build_books_sheet(worksheet):
     """
     worksheet.cell(row=1, column=1, value="ISBN")
     worksheet.cell(row=1, column=2, value="Name")
-    worksheet.cell(row=1, column=3, value="Added date")
-    worksheet.cell(row=1, column=4, value="Count")
+    worksheet.cell(row=1, column=3, value="Authors")
+    worksheet.cell(row=1, column=4, value="Added date")
+    worksheet.cell(row=1, column=5, value="Count")
     book_list = Book.objects.order_by('added_date')
     for row, book in enumerate(book_list, start=2):
         worksheet.cell(row=row, column=1, value=book.formatted_isbn())
         worksheet.cell(row=row, column=2, value=book.name)
-        worksheet.cell(row=row, column=3, value=book.added_date)
-        worksheet.cell(row=row, column=4, value=book.count)
+        worksheet.cell(row=row, column=3, value=book.authors)
+        worksheet.cell(row=row, column=4, value=book.added_date)
+        worksheet.cell(row=row, column=5, value=book.count)
     worksheet.column_dimensions['A'].width = 20
-    worksheet.column_dimensions['B'].width = 30
-    worksheet.column_dimensions['C'].width = 20
-    worksheet.column_dimensions['D'].width = 10
+    worksheet.column_dimensions['B'].width = 40
+    worksheet.column_dimensions['C'].width = 40
+    worksheet.column_dimensions['D'].width = 20
+    worksheet.column_dimensions['E'].width = 10
 
 
 def build_leases_sheet(worksheet):
