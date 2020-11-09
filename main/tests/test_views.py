@@ -36,11 +36,29 @@ class IndexViewTests(TestCase):
     """
 
     def setUp(self):
-        self.credentials = {
-            'username': 'testuser',
+        self.admin_credentials = {
+            'username': 'admin',
             'password': 'testpass'
         }
-        self.user = get_user_model().objects.create_user(**self.credentials)
+        admin = get_user_model().objects.create_user(
+            **self.admin_credentials)
+        admin.is_staff = True
+        admin.save()
+
+        self.librarian_credentials = {
+            'username': 'librarian',
+            'password': 'testpass'
+        }
+        librarian_user = get_user_model().objects.create_user(
+            **self.librarian_credentials)
+        librarian_group = Group.objects.get_or_create(name="Librarian")[0]
+        librarian_user.groups.add(librarian_group)
+
+        student_user = get_user_model().objects.create_user(
+            **student_credentials)
+        student_group = Group.objects.get_or_create(name="Student")[0]
+        student_user.groups.add(student_group)
+
         self.url = reverse('main:index')
 
     def test_index_view_get_no_login(self):
@@ -52,13 +70,37 @@ class IndexViewTests(TestCase):
             response,
             reverse('main:login') + '?next=' + self.url)
 
-    def test_index_view_get_login(self):
+    def test_index_view_get_login_admin(self):
         """
-        If user is authenticated, his username is shown.
+        If user is admin, he is redirected to admin page.
         """
-        self.client.login(**self.credentials)
+        self.client.login(**self.admin_credentials)
         response = self.client.get(self.url)
-        self.assertContains(response, self.user.username)
+        self.assertRedirects(response, reverse('main:admin'))
+
+    def test_index_view_get_login_librarian(self):
+        """
+        If user is librarian, he is redirected to librarian page.
+        """
+        self.client.login(**self.librarian_credentials)
+        response = self.client.get(self.url)
+        self.assertRedirects(response, reverse('main:librarian'))
+
+    def test_index_view_get_login_student(self):
+        """
+        If user is student, he is redirected to student page.
+        """
+        self.client.login(**student_credentials)
+        response = self.client.get(self.url)
+        self.assertRedirects(response, reverse('main:student'))
+
+    # def test_index_view_get_login(self):
+    #     """
+    #     If user is authenticated, his username is shown.
+    #     """
+    #     self.client.login(**self.credentials)
+    #     response = self.client.get(self.url)
+    #     self.assertContains(response, self.user.username)
 
 
 class RegisterViewTests(TestCase):
@@ -86,7 +128,10 @@ class RegisterViewTests(TestCase):
             'password1': 'sdfkjhsdaofoih',
             'password2': 'sdfkjhsdaofoih'
         })
-        self.assertRedirects(response, reverse('main:index'))
+        self.assertRedirects(
+            response,
+            reverse('main:index'),
+            target_status_code=302)
         self.assertIn(
             Group.objects.get(name='Student'),
             get_user_model().objects.get(username='testuser1').groups.all())
@@ -364,9 +409,9 @@ class LibrarianViewTests(TestCase):
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['latest_book_list'], [
-            '<Book: 9780000000026>',
-            '<Book: 9780000000019>',
-            '<Book: 9780000000002>'
+            '<Book: 9780000000026 [9780000000026]>',
+            '<Book: 9780000000019 [9780000000019]>',
+            '<Book: 9780000000002 [9780000000002]>'
         ])
 
     def test_librarian_view_get_six_books(self):
@@ -379,11 +424,11 @@ class LibrarianViewTests(TestCase):
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['latest_book_list'], [
-            '<Book: 9780000000057>',
-            '<Book: 9780000000040>',
-            '<Book: 9780000000033>',
-            '<Book: 9780000000026>',
-            '<Book: 9780000000019>'
+            '<Book: 9780000000057 [9780000000057]>',
+            '<Book: 9780000000040 [9780000000040]>',
+            '<Book: 9780000000033 [9780000000033]>',
+            '<Book: 9780000000026 [9780000000026]>',
+            '<Book: 9780000000019 [9780000000019]>'
         ])
 
     def test_librarian_view_get_no_leases(self):
@@ -648,9 +693,9 @@ class BookListViewTests(TestCase):
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['book_list'], [
-            '<Book: 9780000000026>',
-            '<Book: 9780000000019>',
-            '<Book: 9780000000002>'
+            '<Book: 9780000000026 [9780000000026]>',
+            '<Book: 9780000000019 [9780000000019]>',
+            '<Book: 9780000000002 [9780000000002]>'
         ])
 
     def test_book_list_view_get_six_books(self):
@@ -664,12 +709,12 @@ class BookListViewTests(TestCase):
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['book_list'], [
-            '<Book: 9780000000057>',
-            '<Book: 9780000000040>',
-            '<Book: 9780000000033>',
-            '<Book: 9780000000026>',
-            '<Book: 9780000000019>',
-            '<Book: 9780000000002>'
+            '<Book: 9780000000057 [9780000000057]>',
+            '<Book: 9780000000040 [9780000000040]>',
+            '<Book: 9780000000033 [9780000000033]>',
+            '<Book: 9780000000026 [9780000000026]>',
+            '<Book: 9780000000019 [9780000000019]>',
+            '<Book: 9780000000002 [9780000000002]>'
         ])
 
 
