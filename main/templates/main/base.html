@@ -24,8 +24,8 @@
                 <div class="navbar-brand"><a href="{% url 'main:index' %}"><img src="{% static 'main/LibraryManagementLogoLongInlineDark.png' %}" style="height: 2em;"></a></div>
                 {% if user.is_authenticated %}
                 <div>
-                    <i class="fas fa-user mr-2"></i>{{ user.get_username }}
-                    <a href="{% url 'main:logout' %}" class="btn btn-light ml-2">Выйти</a>
+                    <a href="{% url 'main:profile' %}" class="btn btn-dark"><i class="fas fa-user mr-2"></i>{{ user.get_username }}</a>
+                    <a href="{% url 'main:logout' %}" class="btn btn-light">Выйти</a>
                 </div>
                 {% endif %}
             </div>

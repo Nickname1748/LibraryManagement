@@ -1,0 +1,14 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+Профиль
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <h1 class="mt-3">Профиль</h1>
+        <h2 class="mt-2">{{ user.first_name }} {{ user.last_name }}</h2>
+        <p>Имя пользователя: {{ user.get_username }}</p>
+        <p>Дата регистрации: {{ user.date_joined }}</p>
+        <a href="{% url 'main:password_change' %}" class="btn btn-primary">Сменить пароль</a>
+    </div>
+{% endblock %}

@@ -22,6 +22,7 @@
             <input type="submit" class="btn btn-primary" value="Войти">
             <input type="hidden" name="next" value="{{ next }}">
         </form>
+        <p class="font-weight-light mt-2">Забыли пароль?<a class='ml-1' href="{% url 'main:password_reset' %}">Сбросить пароль</a></p>
         <p class="font-weight-light mt-2">Нет аккаунта?<a class='ml-1' href="{% url 'main:register' %}">Регистрация</a></p>
     </div>
 {% endblock %}

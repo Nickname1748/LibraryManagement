@@ -25,7 +25,6 @@ from django.utils.decorators import method_decorator
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Group
 from django.views import generic
@@ -34,7 +33,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 
 from .decorators import group_required
 from .models import Book, Lease
-from .forms import BookCreationForm, LeaseCreationForm
+from .forms import RegisterForm, BookCreationForm, LeaseCreationForm
 from .utils import build_xlsx
 
 
@@ -56,7 +55,7 @@ def register(request):
     Register page allows registeration of new users.
     """
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
             username = request.POST['username']
@@ -68,10 +67,18 @@ def register(request):
 
             return redirect('main:index')
     else:
-        form = UserCreationForm()
+        form = RegisterForm()
 
     context = {'form': form}
     return render(request, 'registration/register.html', context=context)
+
+
+@login_required
+def profile(request):
+    """
+    User profile page.
+    """
+    return render(request, 'main/profile.html')
 
 
 @staff_member_required

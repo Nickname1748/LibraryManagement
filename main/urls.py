@@ -18,18 +18,46 @@
 This module contains URL matches in main app.
 """
 
-from django.urls import path, include
+from django.urls import path, include, reverse_lazy
 from django.views.generic.base import RedirectView
 from django.contrib.staticfiles.storage import staticfiles_storage
+from django.contrib.auth import views as auth_views
 
 from . import views
 
 app_name = 'main'
+
+auth_urlpatterns = [
+    path('login/', auth_views.LoginView.as_view(), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+
+    path('password_change/',
+        auth_views.PasswordChangeView.as_view(
+            success_url=reverse_lazy('main:password_change_done')),
+        name='password_change'),
+    path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(),
+        name='password_change_done'),
+
+    path('password_reset/',
+        auth_views.PasswordResetView.as_view(
+            success_url=reverse_lazy('main:password_reset_done')),
+        name='password_reset',),
+    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(),
+        name='password_reset_done'),
+    path('reset/<uidb64>/<token>/',
+        auth_views.PasswordResetConfirmView.as_view(
+            success_url=reverse_lazy('main:password_reset_complete')),
+        name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(),
+        name='password_reset_complete'),
+]
+
 urlpatterns = [
     path('', views.index, name='index'),
-    path('', include('django.contrib.auth.urls')),
+    path('', include(auth_urlpatterns)),
     path('favicon.ico',
         RedirectView.as_view(url=staticfiles_storage.url('main/favicon.ico'))),
+    path('profile/', views.profile, name='profile'),
     path('admin/', views.admin, name='admin'),
     path('register/', views.register, name='register'),
     path('student/', views.student, name='student'),
