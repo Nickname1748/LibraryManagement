@@ -22,6 +22,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.admin.models import LogEntry, ADDITION, CHANGE
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Group
@@ -38,11 +41,14 @@ from .utils import build_xlsx
 @login_required
 def index(request):
     """
-    Temporary page that shows current user username.
+    Default page that redirects users to role specific pages.
     """
-    return HttpResponse(
-        "Welcome to Library Management System! Your name is %s"
-        % request.user.username)
+    if request.user.is_staff:
+        return redirect('main:admin')
+    if request.user.groups.filter(name='Librarian').exists():
+        return redirect('main:librarian')
+    return redirect('main:student')
+
 
 
 def register(request):
@@ -66,6 +72,16 @@ def register(request):
 
     context = {'form': form}
     return render(request, 'registration/register.html', context=context)
+
+
+@staff_member_required
+def admin(request):
+    """
+    Admin panel.
+    """
+    logs = LogEntry.objects.all()
+    context = {'logs': logs}
+    return render(request, 'main/admin.html', context=context)
 
 
 @group_required('Student')
@@ -108,6 +124,13 @@ def new_book(request):
         form = BookCreationForm(request.POST)
         if form.is_valid():
             form.save()
+            LogEntry.objects.log_action(
+                request.user.id,
+                ContentType.objects.get(app_label='main', model='book').id,
+                form.instance.isbn,
+                repr(form.instance),
+                action_flag=ADDITION,
+                change_message="New book")
             return redirect('main:librarian')
     else:
         form = BookCreationForm()
@@ -154,6 +177,13 @@ def edit_book(request, book_id):
         form = BookCreationForm(request.POST, instance=book)
         if form.is_valid():
             form.save()
+            LogEntry.objects.log_action(
+                request.user.id,
+                ContentType.objects.get(app_label='main', model='book').id,
+                form.instance.isbn,
+                repr(form.instance),
+                action_flag=CHANGE,
+                change_message="Book edited")
             return redirect('main:librarian')
     else:
         form = BookCreationForm(instance=book)
@@ -174,6 +204,13 @@ def new_lease(request, book_id):
         form = LeaseCreationForm(request.POST)
         if form.is_valid():
             form.save()
+            LogEntry.objects.log_action(
+                request.user.id,
+                ContentType.objects.get(app_label='main', model='lease').id,
+                form.instance.id,
+                repr(form.instance),
+                action_flag=ADDITION,
+                change_message="New lease")
             return redirect('main:librarian')
     else:
         form = LeaseCreationForm(initial={'book': book_id})
@@ -226,6 +263,13 @@ def return_lease(request, lease_id):
     if request.method == 'POST':
         lease.return_date = timezone.now()
         lease.save()
+        LogEntry.objects.log_action(
+            request.user.id,
+            ContentType.objects.get(app_label='main', model='lease').id,
+            lease_id,
+            repr(lease),
+            action_flag=CHANGE,
+            change_message="Lease returned")
         return redirect('main:librarian')
 
     return render(request, 'main/return_lease.html', {

@@ -30,6 +30,7 @@ urlpatterns = [
     path('', include('django.contrib.auth.urls')),
     path('favicon.ico',
         RedirectView.as_view(url=staticfiles_storage.url('main/favicon.ico'))),
+    path('admin/', views.admin, name='admin'),
     path('register/', views.register, name='register'),
     path('student/', views.student, name='student'),
     path('librarian/', views.librarian, name='librarian'),

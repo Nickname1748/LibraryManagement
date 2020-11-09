@@ -37,7 +37,7 @@ class Book(models.Model):
     count = models.PositiveSmallIntegerField()
 
     def __str__(self):
-        return self.name
+        return "{} [{}]".format(self.name, self.authors)
 
     def formatted_isbn(self):
         """
