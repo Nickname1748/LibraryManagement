@@ -18,8 +18,10 @@
 This module contains URL matches in main app.
 """
 
+from django_registration.backends.activation import views as registration_views
+
 from django.urls import path, include, reverse_lazy
-from django.views.generic.base import RedirectView
+from django.views.generic.base import RedirectView, TemplateView
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.contrib.auth import views as auth_views
 
@@ -58,15 +60,57 @@ auth_urlpatterns = [
         name='password_reset_complete'),
 ]
 
+registration_urlpatterns = [
+    path(
+        "activate/complete/",
+        TemplateView.as_view(
+            template_name="django_registration/activation_complete.html"
+        ),
+        name="activation_complete",
+    ),
+    path(
+        "activate/<str:activation_key>/",
+        registration_views.ActivationView.as_view(
+            success_url=reverse_lazy(
+                'main:activation_complete')
+        ),
+        name="activate",
+    ),
+    path(
+        "register/",
+        views.RegisterView.as_view(),
+        name="register",
+    ),
+    path(
+        "register/complete/",
+        TemplateView.as_view(
+            template_name="django_registration/registration_complete.html"
+        ),
+        name="registration_complete",
+    ),
+    path(
+        "register/closed/",
+        TemplateView.as_view(
+            template_name="django_registration/registration_closed.html"
+        ),
+        name="registration_disallowed",
+    ),
+]
+
 urlpatterns = [
     path('', views.index, name='index'),
     path('', include(auth_urlpatterns)),
+    path('', include(registration_urlpatterns)),
     path(
         'favicon.ico',
         RedirectView.as_view(url=staticfiles_storage.url('main/favicon.ico'))),
     path('profile/', views.profile, name='profile'),
     path('admin/', views.admin, name='admin'),
-    path('register/', views.register, name='register'),
+    path(
+        'admin/register_librarian/',
+        views.LibrarianRegisterView.as_view(),
+        name='register_librarian'),
+    # path('register/', views.register, name='register'),
     path('student/', views.student, name='student'),
     path('librarian/', views.librarian, name='librarian'),
     path('librarian/books/', views.BookListView.as_view(), name='books'),

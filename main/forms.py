@@ -19,17 +19,18 @@ This module contains all forms of main app.
 """
 
 import stdnum.isbn
+from django_registration.forms import RegistrationForm
 
 from django import forms
 from django.utils import timezone
 from django.core.validators import MinValueValidator
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
+
 
 from .models import Book, Lease
 
 
-class RegisterForm(UserCreationForm):
+class RegisterForm(RegistrationForm):
     """
     The form used for user registration.
     """
@@ -47,6 +48,31 @@ class RegisterForm(UserCreationForm):
             'password1',
             'password2'
         ]
+
+
+class LibrarianRegisterForm(RegistrationForm):
+    """
+    The form used for librarian registration.
+    """
+    first_name = forms.CharField(max_length=30)
+    last_name = forms.CharField(max_length=30)
+    email = forms.EmailField()
+
+    class Meta:
+        model = get_user_model()
+        fields = [
+            'username',
+            'first_name',
+            'last_name',
+            'email'
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['password1'].widget = forms.HiddenInput()
+        self.fields['password2'].widget = forms.HiddenInput()
+        self.fields['password1'].required = False
+        self.fields['password2'].required = False
 
 
 class BookCreationForm(forms.ModelForm):

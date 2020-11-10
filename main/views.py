@@ -18,6 +18,8 @@
 This module contains all views in main app.
 """
 
+from django_registration.backends.activation.views import RegistrationView
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -25,15 +27,17 @@ from django.utils.decorators import method_decorator
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Group
+from django.contrib.auth import get_user_model
 from django.views import generic
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
+from django.urls import reverse_lazy
 
 from .decorators import group_required
 from .models import Book, Lease
-from .forms import RegisterForm, BookCreationForm, LeaseCreationForm
+from .forms import (
+    RegisterForm, LibrarianRegisterForm, BookCreationForm, LeaseCreationForm)
 from .utils import build_xlsx
 
 
@@ -49,27 +53,45 @@ def index(request):
     return redirect('main:student')
 
 
-def register(request):
+class RegisterView(RegistrationView):
     """
-    Register page allows registeration of new users.
+    Register page allows registration of new users.
     """
-    if request.method == 'POST':
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = request.POST['username']
-            password = request.POST['password1']
-            user = authenticate(request, username=username, password=password)
-            group = Group.objects.get_or_create(name="Student")[0]
-            user.groups.add(group)
-            login(request, user)
 
-            return redirect('main:index')
-    else:
-        form = RegisterForm()
+    form_class = RegisterForm
+    success_url = reverse_lazy('main:registration_complete')
+    disallowed_url = reverse_lazy('main:registration_disallowed')
 
-    context = {'form': form}
-    return render(request, 'registration/register.html', context=context)
+    def create_inactive_user(self, form):
+        new_user = super().create_inactive_user(form)
+        group = Group.objects.get_or_create(name="Student")[0]
+        new_user.groups.add(group)
+        new_user.save()
+
+        return new_user
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class LibrarianRegisterView(RegistrationView):
+    """
+    Register page allows registration of new librarians.
+    """
+
+    form_class = LibrarianRegisterForm
+    success_url = reverse_lazy('main:admin')
+    disallowed_url = reverse_lazy('main:registration_disallowed')
+    template_name = 'main/librarian_registration.html'
+
+    def create_inactive_user(self, form):
+        new_user = form.save(commit=False)
+        new_user.is_active = False
+        new_user.set_password(get_user_model().objects.make_random_password())
+        new_user.save()
+        group = Group.objects.get_or_create(name="Librarian")[0]
+        new_user.groups.add(group)
+        new_user.save()
+
+        return new_user
 
 
 @login_required
