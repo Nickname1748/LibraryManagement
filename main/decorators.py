@@ -20,6 +20,7 @@ This module contains custom decorators used in main app.
 
 from django.contrib.auth.decorators import user_passes_test
 
+
 def group_required(*group_names):
     """
     Decorator for views that checks that the user is a member of given

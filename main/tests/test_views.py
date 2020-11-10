@@ -26,8 +26,9 @@ from django.contrib.auth.models import Group
 
 from main.models import Book, Lease
 
-from .utils import (isbn_list_6, isbn_list_3_1, isbn_list_3_2,
-    student_credentials, create_student_lease)
+from .utils import (
+    isbn_list_6, isbn_list_3_1, isbn_list_3_2, student_credentials,
+    create_student_lease)
 
 
 class IndexViewTests(TestCase):
@@ -312,9 +313,9 @@ class StudentViewTests(TestCase):
                 student=get_user_model().objects.get_by_natural_key(
                     student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
-                expire_date=
+                expire_date=(
                     timezone.now()
-                    + timezone.timedelta(days=30-i))
+                    + timezone.timedelta(days=30-i)))
 
         self.client.login(**student_credentials)
         response = self.client.get(self.url)
@@ -523,9 +524,9 @@ class LibrarianViewTests(TestCase):
                 student=get_user_model().objects.get_by_natural_key(
                     student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
-                expire_date=
+                expire_date=(
                     timezone.now()
-                    + timezone.timedelta(days=30-i))
+                    + timezone.timedelta(days=30-i)))
 
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
@@ -955,9 +956,9 @@ class LeaseListViewTests(TestCase):
                 student=get_user_model().objects.get_by_natural_key(
                     student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
-                expire_date=
+                expire_date=(
                     timezone.now()
-                    + timezone.timedelta(days=30-i))
+                    + timezone.timedelta(days=30-i)))
 
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)

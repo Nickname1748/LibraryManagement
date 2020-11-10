@@ -56,8 +56,10 @@ class Book(models.Model):
         """
         Returns count - leased books count.
         """
-        return max(self.count
-            - self.lease_set.filter(return_date__isnull=True).count(), 0)
+        return max(
+            self.count
+            - self.lease_set.filter(return_date__isnull=True).count(),
+            0)
 
     def is_available(self):
         """

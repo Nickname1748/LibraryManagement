@@ -136,13 +136,14 @@ class BuildLeasesSheetFuncTests(TestCase):
         self.assertEqual(worksheet['F1'].value, "Return date")
         self.assertEqual(
             worksheet['A2'].value,
-            str(Book.objects.get(pk='9780000000002')\
-                .lease_set.get(student=get_user_model()\
+            str(Book.objects.get(pk='9780000000002')
+                .lease_set.get(student=get_user_model()
                 .objects.get_by_natural_key(
                     student_credentials['username'])).id))
         self.assertEqual(worksheet['B3'].value, "student1")
         self.assertEqual(worksheet['C4'].value, "978-0-00-000002-6")
-        self.assertGreater(worksheet['D5'].value,
+        self.assertGreater(
+            worksheet['D5'].value,
             timezone.now() - timezone.timedelta(minutes=1))
         self.assertEqual(
             worksheet['E6'].value,

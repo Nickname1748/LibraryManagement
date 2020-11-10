@@ -48,6 +48,7 @@ class RegisterForm(UserCreationForm):
             'password2'
         ]
 
+
 class BookCreationForm(forms.ModelForm):
     """
     The form which allows to create new Book instance.
@@ -79,7 +80,8 @@ class BookCreationForm(forms.ModelForm):
                 .count()
             if count < lease_count:
                 raise forms.ValidationError(
-                    '{0} books are leased, so minimum allowed book count is {0}'\
+                    ('{0} books are leased, '
+                        'so minimum allowed book count is {0}')
                     .format(lease_count))
         return count
 

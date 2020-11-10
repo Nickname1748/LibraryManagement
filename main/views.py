@@ -49,7 +49,6 @@ def index(request):
     return redirect('main:student')
 
 
-
 def register(request):
     """
     Register page allows registeration of new users.
