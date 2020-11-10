@@ -94,14 +94,6 @@ class IndexViewTests(TestCase):
         response = self.client.get(self.url)
         self.assertRedirects(response, reverse('main:student'))
 
-    # def test_index_view_get_login(self):
-    #     """
-    #     If user is authenticated, his username is shown.
-    #     """
-    #     self.client.login(**self.credentials)
-    #     response = self.client.get(self.url)
-    #     self.assertContains(response, self.user.username)
-
 
 class RegisterViewTests(TestCase):
     """
@@ -125,6 +117,9 @@ class RegisterViewTests(TestCase):
         """
         response = self.client.post(self.url, {
             'username': 'testuser1',
+            'first_name': 'Test',
+            'last_name': 'Testov',
+            'email': 'test@example.com',
             'password1': 'sdfkjhsdaofoih',
             'password2': 'sdfkjhsdaofoih'
         })
