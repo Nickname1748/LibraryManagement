@@ -96,49 +96,50 @@ class IndexViewTests(TestCase):
         self.assertRedirects(response, reverse('main:student'))
 
 
-class RegisterViewTests(TestCase):
-    """
-    Tests checking register view functionality.
-    """
+# TODO: Replace this with new view tests
+# class RegisterViewTests(TestCase):
+#     """
+#     Tests checking register view functionality.
+#     """
 
-    def setUp(self):
-        self.url = reverse('main:register')
+#     def setUp(self):
+#         self.url = reverse('main:register')
 
-    def test_register_view_get(self):
-        """
-        If GET request is sent, register form is shown.
-        """
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'registration/register.html')
+#     def test_register_view_get(self):
+#         """
+#         If GET request is sent, register form is shown.
+#         """
+#         response = self.client.get(self.url)
+#         self.assertEqual(response.status_code, 200)
+#         self.assertTemplateUsed(response, 'registration/register.html')
 
-    def test_register_view_post_adds_new_user(self):
-        """
-        If valid POST request is sent, new Student user is added.
-        """
-        response = self.client.post(self.url, {
-            'username': 'testuser1',
-            'first_name': 'Test',
-            'last_name': 'Testov',
-            'email': 'test@example.com',
-            'password1': 'sdfkjhsdaofoih',
-            'password2': 'sdfkjhsdaofoih'
-        })
-        self.assertRedirects(
-            response,
-            reverse('main:index'),
-            target_status_code=302)
-        self.assertIn(
-            Group.objects.get(name='Student'),
-            get_user_model().objects.get(username='testuser1').groups.all())
+#     def test_register_view_post_adds_new_user(self):
+#         """
+#         If valid POST request is sent, new Student user is added.
+#         """
+#         response = self.client.post(self.url, {
+#             'username': 'testuser1',
+#             'first_name': 'Test',
+#             'last_name': 'Testov',
+#             'email': 'test@example.com',
+#             'password1': 'sdfkjhsdaofoih',
+#             'password2': 'sdfkjhsdaofoih'
+#         })
+#         self.assertRedirects(
+#             response,
+#             reverse('main:index'),
+#             target_status_code=302)
+#         self.assertIn(
+#             Group.objects.get(name='Student'),
+#             get_user_model().objects.get(username='testuser1').groups.all())
 
-    def test_register_view_post_invalid_fails(self):
-        """
-        If invalid POST request is sent, errors are shown.
-        """
-        response = self.client.post(self.url, {})
-        self.assertEqual(response.status_code, 200)
-        self.assertGreater(len(response.context['form'].errors), 0)
+#     def test_register_view_post_invalid_fails(self):
+#         """
+#         If invalid POST request is sent, errors are shown.
+#         """
+#         response = self.client.post(self.url, {})
+#         self.assertEqual(response.status_code, 200)
+#         self.assertGreater(len(response.context['form'].errors), 0)
 
 
 class StudentViewTests(TestCase):
