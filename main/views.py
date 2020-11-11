@@ -18,7 +18,8 @@
 This module contains all views in main app.
 """
 
-from django_registration.backends.activation.views import RegistrationView
+from django_registration.backends.activation.views import (
+    RegistrationView, ActivationView)
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
@@ -28,7 +29,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Group
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, login
 from django.views import generic
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
@@ -81,17 +82,42 @@ class LibrarianRegisterView(RegistrationView):
     success_url = reverse_lazy('main:admin')
     disallowed_url = reverse_lazy('main:registration_disallowed')
     template_name = 'main/librarian_registration.html'
+    email_body_template = "main/librarian_email_body.txt"
+
+    def __init__(self):
+        super().__init__()
+        self.password = get_user_model().objects.make_random_password()
 
     def create_inactive_user(self, form):
         new_user = form.save(commit=False)
         new_user.is_active = False
-        new_user.set_password(get_user_model().objects.make_random_password())
+        new_user.set_password(self.password)
         new_user.save()
         group = Group.objects.get_or_create(name="Librarian")[0]
         new_user.groups.add(group)
         new_user.save()
 
+        self.send_activation_email(new_user)
+
         return new_user
+
+    def get_email_context(self, activation_key):
+        context = super().get_email_context(activation_key)
+        context['password'] = self.password
+        return context
+
+
+class LibrarianActivationView(ActivationView):
+    """
+    Activates librarian user and redirects to password change view.
+    """
+
+    success_url = reverse_lazy('main:password_change')
+
+    def activate(self, *args, **kwargs):
+        user = super().activate(*args, **kwargs)
+        login(self.request, user)
+        return user
 
 
 @login_required

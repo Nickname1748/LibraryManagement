@@ -110,6 +110,11 @@ urlpatterns = [
         'admin/register_librarian/',
         views.LibrarianRegisterView.as_view(),
         name='register_librarian'),
+    path(
+        "activate_librarian/<str:activation_key>/",
+        views.LibrarianActivationView.as_view(),
+        name="activate_librarian",
+    ),
     # path('register/', views.register, name='register'),
     path('student/', views.student, name='student'),
     path('librarian/', views.librarian, name='librarian'),

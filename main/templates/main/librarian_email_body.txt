@@ -1,0 +1,15 @@
+{% autoescape off %}
+Hello,
+
+Your account has been successfully created. To activate your librarian account, click the link below.
+
+{{ scheme }}://{{ site }}{% url 'main:activate_librarian' activation_key=activation_key %}
+
+Your temporary password: {{ password }}
+
+If you did not register, you can simply ignore this email.
+
+Sincerely,
+The Website Team
+
+{% endautoescape %}
