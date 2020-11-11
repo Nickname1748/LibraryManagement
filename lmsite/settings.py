@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'widget_tweaks',
     'isbn_field',
+    'django_createuser',
 ]
 
 MIDDLEWARE = [
