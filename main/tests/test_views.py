@@ -42,7 +42,8 @@ class IndexViewTests(TestCase):
             'password': 'testpass'
         }
         admin = get_user_model().objects.create_user(
-            **self.admin_credentials)
+            **self.admin_credentials,
+            email='admin@example.com')
         admin.is_staff = True
         admin.save()
 
@@ -51,12 +52,14 @@ class IndexViewTests(TestCase):
             'password': 'testpass'
         }
         librarian_user = get_user_model().objects.create_user(
-            **self.librarian_credentials)
+            **self.librarian_credentials,
+            email='librarian@example.com')
         librarian_group = Group.objects.get_or_create(name="Librarian")[0]
         librarian_user.groups.add(librarian_group)
 
         student_user = get_user_model().objects.create_user(
-            **student_credentials)
+            **student_credentials,
+            email='student@example.com')
         student_group = Group.objects.get_or_create(name="Student")[0]
         student_user.groups.add(student_group)
 
@@ -152,10 +155,13 @@ class StudentViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        get_user_model().objects.create_user(**self.credentials)
+        get_user_model().objects.create_user(
+            **self.credentials,
+            email='test@example.com')
 
         student_user = get_user_model().objects.create_user(
-            **student_credentials)
+            **student_credentials,
+            email='student@example.com')
         student_group = Group.objects.get_or_create(name="Student")[0]
         student_user.groups.add(student_group)
 
@@ -164,7 +170,8 @@ class StudentViewTests(TestCase):
             'password': 'testpass'
         }
         another_student_user = get_user_model().objects.create_user(
-            **self.another_student_credentials)
+            **self.another_student_credentials,
+            email='student2@example.com')
         another_student_user.groups.add(student_group)
 
         for isbn in isbn_list_6:
@@ -342,10 +349,13 @@ class LibrarianViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        get_user_model().objects.create_user(**self.credentials)
+        get_user_model().objects.create_user(
+            **self.credentials,
+            email='test@example.com')
 
         student_user = get_user_model().objects.create_user(
-            **student_credentials)
+            **student_credentials,
+            email='student@example.com')
         student_group = Group.objects.get_or_create(name="Student")[0]
         student_user.groups.add(student_group)
 
@@ -354,7 +364,8 @@ class LibrarianViewTests(TestCase):
             'password': 'testpass'
         }
         librarian_user = get_user_model().objects.create_user(
-            **self.librarian_credentials)
+            **self.librarian_credentials,
+            email='librarian@example.com')
         librarian_group = Group.objects.get_or_create(name="Librarian")[0]
         librarian_user.groups.add(librarian_group)
 
@@ -553,14 +564,17 @@ class NewBookViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        get_user_model().objects.create_user(**self.credentials)
+        get_user_model().objects.create_user(
+            **self.credentials,
+            email='test@example.com')
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
         librarian_user = get_user_model().objects.create_user(
-            **self.librarian_credentials)
+            **self.librarian_credentials,
+            email='librarian@example.com')
         group = Group.objects.get_or_create(name="Librarian")[0]
         librarian_user.groups.add(group)
 
@@ -630,14 +644,17 @@ class BookListViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        get_user_model().objects.create_user(**self.credentials)
+        get_user_model().objects.create_user(
+            **self.credentials,
+            email='test@example.com')
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
         librarian_user = get_user_model().objects.create_user(
-            **self.librarian_credentials)
+            **self.librarian_credentials,
+            email='librarian@example.com')
         group = Group.objects.get_or_create(name="Librarian")[0]
         librarian_user.groups.add(group)
 
@@ -725,14 +742,17 @@ class BookDetailViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        get_user_model().objects.create_user(**self.credentials)
+        get_user_model().objects.create_user(
+            **self.credentials,
+            email='test@example.com')
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
         librarian_user = get_user_model().objects.create_user(
-            **self.librarian_credentials)
+            **self.librarian_credentials,
+            email='librarian@example.com')
         group = Group.objects.get_or_create(name="Librarian")[0]
         librarian_user.groups.add(group)
 
@@ -784,19 +804,23 @@ class NewLeaseViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        get_user_model().objects.create_user(**self.credentials)
+        get_user_model().objects.create_user(
+            **self.credentials,
+            email='test@example.com')
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
         librarian_user = get_user_model().objects.create_user(
-            **self.librarian_credentials)
+            **self.librarian_credentials,
+            email='librarian@example.com')
         librarian_group = Group.objects.get_or_create(name="Librarian")[0]
         librarian_user.groups.add(librarian_group)
 
         self.student_user = get_user_model().objects.create_user(
-            **student_credentials)
+            **student_credentials,
+            email='student@example.com')
         student_group = Group.objects.get_or_create(name="Student")[0]
         self.student_user.groups.add(student_group)
 
@@ -873,19 +897,23 @@ class LeaseListViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        get_user_model().objects.create_user(**self.credentials)
+        get_user_model().objects.create_user(
+            **self.credentials,
+            email='test@example.com')
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
         librarian_user = get_user_model().objects.create_user(
-            **self.librarian_credentials)
+            **self.librarian_credentials,
+            email='librarian@example.com')
         librarian_group = Group.objects.get_or_create(name="Librarian")[0]
         librarian_user.groups.add(librarian_group)
 
         student_user = get_user_model().objects.create_user(
-            **student_credentials)
+            **student_credentials,
+            email='student@example.com')
         student_group = Group.objects.get_or_create(name="Student")[0]
         student_user.groups.add(student_group)
 
@@ -985,19 +1013,23 @@ class LeaseDetailViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        get_user_model().objects.create_user(**self.credentials)
+        get_user_model().objects.create_user(
+            **self.credentials,
+            email='test@example.com')
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
         librarian_user = get_user_model().objects.create_user(
-            **self.librarian_credentials)
+            **self.librarian_credentials,
+            email='librarian@example.com')
         librarian_group = Group.objects.get_or_create(name="Librarian")[0]
         librarian_user.groups.add(librarian_group)
 
         student_user = get_user_model().objects.create_user(
-            **student_credentials)
+            **student_credentials,
+            email='student@example.com')
         student_group = Group.objects.get_or_create(name="Student")[0]
         student_user.groups.add(student_group)
 
@@ -1051,19 +1083,23 @@ class ReturnLeaseViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        get_user_model().objects.create_user(**self.credentials)
+        get_user_model().objects.create_user(
+            **self.credentials,
+            email='test@example.com')
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
         librarian_user = get_user_model().objects.create_user(
-            **self.librarian_credentials)
+            **self.librarian_credentials,
+            email='librarian@example.com')
         librarian_group = Group.objects.get_or_create(name="Librarian")[0]
         librarian_user.groups.add(librarian_group)
 
         student_user = get_user_model().objects.create_user(
-            **student_credentials)
+            **student_credentials,
+            email='student@example.com')
         student_group = Group.objects.get_or_create(name="Student")[0]
         student_user.groups.add(student_group)
 
@@ -1137,14 +1173,17 @@ class XlsxReportViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        get_user_model().objects.create_user(**self.credentials)
+        get_user_model().objects.create_user(
+            **self.credentials,
+            email='test@example.com')
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
         librarian_user = get_user_model().objects.create_user(
-            **self.librarian_credentials)
+            **self.librarian_credentials,
+            email='librarian@example.com')
         group = Group.objects.get_or_create(name="Librarian")[0]
         librarian_user.groups.add(group)
 

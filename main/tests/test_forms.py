@@ -112,15 +112,15 @@ class BookCreationFormTests(TestCase):
         })
         self.assertFalse(form.is_valid())
 
-    def test_book_creation_form_count_is_zero(self):
+    def test_book_creation_form_count_is_negative(self):
         """
-        If book count is 0, form is invalid.
+        If book count is negative, form is invalid.
         """
         form = BookCreationForm(data={
             'isbn': '9780000000002',
             'name': 'Test Book',
             'authors': 'Author',
-            'count': 0
+            'count': -1
         })
         self.assertFalse(form.is_valid())
 
