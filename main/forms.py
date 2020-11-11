@@ -79,7 +79,7 @@ class BookCreationForm(forms.ModelForm):
     """
     The form which allows to create new Book instance.
     """
-    count = forms.IntegerField(validators=[MinValueValidator(1)], min_value=1)
+    count = forms.IntegerField(validators=[MinValueValidator(0)], min_value=0)
 
     class Meta:
         model = Book
