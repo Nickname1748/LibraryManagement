@@ -6342,14 +6342,16 @@ button.bg-light:focus {
   background-color: #dae0e5 !important;
 }
 
-.bg-dark, .card, footer, nav {
+.bg-dark, .form-control, .card, footer, nav {
   background-color: #212529 !important;
 }
 
-a.bg-dark:hover, a.card:hover, a.bg-dark:focus, a.card:focus,
+a.bg-dark:hover, a.form-control:hover, a.card:hover, a.bg-dark:focus, a.form-control:focus, a.card:focus,
 button.bg-dark:hover,
+button.form-control:hover,
 button.card:hover,
 button.bg-dark:focus,
+button.form-control:focus,
 button.card:focus {
   background-color: #0a0c0d !important;
 }
@@ -6430,7 +6432,7 @@ button.card:focus {
   border-color: #f8f9fa !important;
 }
 
-.border-dark {
+.border-dark, .form-control {
   border-color: #212529 !important;
 }
 
@@ -9961,7 +9963,7 @@ button.card:focus {
   font-style: italic !important;
 }
 
-.text-white, footer, nav {
+.text-white, .form-control, footer, nav {
   color: #fff !important;
 }
 

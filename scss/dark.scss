@@ -151,3 +151,9 @@ footer {
 .alert-danger, .alert-warning {
     @extend .alert;
 }
+
+.form-control {
+    @extend .bg-dark;
+    @extend .border-dark;
+    @extend .text-white;
+}
