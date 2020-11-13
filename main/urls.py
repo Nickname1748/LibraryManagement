@@ -107,6 +107,10 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('admin/', views.admin, name='admin'),
     path(
+        'admin/select_theme/',
+        views.SelectThemeView.as_view(),
+        name='select_theme'),
+    path(
         'admin/register_librarian/',
         views.LibrarianRegisterView.as_view(),
         name='register_librarian'),

@@ -6,6 +6,8 @@
 {% block content %}
     <h1>Панель администратора</h1>
     <h2>Пользователи</h2>
+    <a href="{% url 'main:select_theme' %}" class="btn-action">Сменить тему</a>
+    <h2>Пользователи</h2>
     <a href="{% url 'main:register_librarian' %}" class="btn-action">Зарегистрировать библиотекаря</a>
     <h2>Мониторинг действий</h2>
     <table class="log-table">

@@ -18,6 +18,8 @@
 This module contains all views in main app.
 """
 
+import os
+
 from django_registration.backends.activation.views import (
     RegistrationView, ActivationView)
 
@@ -34,11 +36,13 @@ from django.views import generic
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError
 from django.urls import reverse_lazy
+from django.conf import settings
 
 from .decorators import group_required
 from .models import Book, Lease
 from .forms import (
-    RegisterForm, LibrarianRegisterForm, BookCreationForm, LeaseCreationForm)
+    RegisterForm, LibrarianRegisterForm, ThemeSelectionForm,
+    BookCreationForm, LeaseCreationForm)
 from .utils import build_xlsx
 
 
@@ -136,6 +140,29 @@ def admin(request):
     logs = LogEntry.objects.all()
     context = {'logs': logs}
     return render(request, 'main/admin.html', context=context)
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class SelectThemeView(generic.edit.FormView):
+    """
+    Page that allows to change theme.
+    """
+    template_name = 'main/select_theme.html'
+    form_class = ThemeSelectionForm
+    success_url = reverse_lazy('main:admin')
+
+    def form_valid(self, form):
+        base_dir = str(getattr(settings, 'BASE_DIR'))
+        theme_path = (
+            base_dir
+            + '/main/static/main/css/'
+            + form.cleaned_data['theme']
+            + '.css')
+        active_path = base_dir + '/main/static/main/css/active.css'
+        if os.path.exists(active_path):
+            os.remove(active_path)
+        os.symlink(theme_path, active_path)
+        return super().form_valid(form)
 
 
 @group_required('Student')

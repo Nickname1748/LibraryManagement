@@ -1,0 +1,20 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+Сменить тему
+{% endblock %}
+{% block content %}
+
+{% load widget_tweaks %}
+    <h1>Сменить тему</h1>
+    <form method="POST">
+        {% csrf_token %}
+        {% for field in form.visible_fields %}
+        <div class="form-group">
+            {{ field.label_tag }}
+            {% render_field field class="form-control" %}
+        </div>
+        {% endfor %}
+        <input type="submit" class="btn btn-primary" value="Применить">
+    </form>
+{% endblock %}

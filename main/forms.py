@@ -75,6 +75,19 @@ class LibrarianRegisterForm(RegistrationForm):
         self.fields['password2'].required = False
 
 
+THEMES = (
+    ('default', "Light (Default)"),
+    ('dark', "Dark")
+)
+
+
+class ThemeSelectionForm(forms.Form):
+    """
+    The form which allows to select visual theme.
+    """
+    theme = forms.ChoiceField(choices=THEMES)
+
+
 class BookCreationForm(forms.ModelForm):
     """
     The form which allows to create new Book instance.

@@ -6,7 +6,7 @@
 {% block content %}
 
 {% load widget_tweaks %}
-    <h1 class="mt-3">Регистрация библиотекаря</h1>
+    <h1>Регистрация библиотекаря</h1>
     {% if form.errors %}
         {% for field in form %}
             {% for error in field.errors %}
@@ -14,7 +14,7 @@
             {% endfor %}
         {% endfor %}
     {% endif %}
-    <form class="mt-3" method="POST" action="{% url 'main:register_librarian' %}">
+    <form method="POST" action="{% url 'main:register_librarian' %}">
         {% csrf_token %}
         {% for field in form.visible_fields %}
         <div class="form-group">
@@ -22,6 +22,6 @@
             {% render_field field class="form-control" %}
         </div>
         {% endfor %}
-        <input type="submit" class="btn btn-primary" value="Зарегистрировать">
+        <input type="submit" class="btn-action" value="Зарегистрировать">
     </form>
 {% endblock %}
