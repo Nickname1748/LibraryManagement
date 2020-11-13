@@ -4,8 +4,6 @@
 Аккаунт активирован
 {% endblock %}
 {% block content %}
-    <div class="container">
-        <h1 class="mt-3">Аккаунт активирован</h1>
-        <a href="{% url 'main:login' %}" class="btn btn-primary">Войти</a>
-    </div>
+    <h1>Аккаунт активирован</h1>
+    <a href="{% url 'main:login' %}" class="btn-action">Войти</a>
 {% endblock %}
