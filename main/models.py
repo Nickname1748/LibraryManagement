@@ -32,7 +32,7 @@ class User(AbstractUser):
     """
     Custom user model for main app.
     """
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, verbose_name=gettext_lazy("Email"))
 
 
 class Book(models.Model):

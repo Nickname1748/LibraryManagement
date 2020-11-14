@@ -1,0 +1,144 @@
+# Library Management System
+# Copyright (C) 2020 Andrey Shmaykhel, Alexander Solovyov, Timur Allayarov
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-11-14 16:35+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
+"%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: forms.py:38 forms.py:58
+msgid "First name"
+msgstr "Имя"
+
+#: forms.py:39 forms.py:59
+msgid "Last name"
+msgstr "Фамилия"
+
+#: forms.py:40 forms.py:60 models.py:35
+msgid "Email"
+msgstr "Адрес электронной почты"
+
+#: forms.py:95
+msgid "Light (Default)"
+msgstr "Светлая (По умолчанию)"
+
+#: forms.py:96
+msgid "Dark"
+msgstr "Тёмная"
+
+#: forms.py:112 models.py:49 utils.py:52
+msgid "Count"
+msgstr "Количество"
+
+#: forms.py:132
+msgid "No ISBN is sent"
+msgstr "Пустое поле ISBN"
+
+#: forms.py:140
+#, python-brace-format
+msgid "{0} book is leased, so minimum allowed book count is {0}"
+msgid_plural "{0} books are leased, so minimum allowed book count is {0}"
+msgstr[0] "Выдана {0} книга, поэтому минимальное количество книг — {0}"
+msgstr[1] "Выдано {0} книги, поэтому минимальное количество книг — {0}"
+msgstr[2] "Выдано {0} книг, поэтому минимальное количество книг — {0}"
+msgstr[3] "Выдано {0} книг, поэтому минимальное количество книг — {0}"
+
+#: forms.py:164
+msgid "Book is not available for leasing"
+msgstr "Книга недоступна для выдачи"
+
+#: forms.py:173
+msgid "Expire date must be in future"
+msgstr "Ожидаемая дата возврата должна быть в будущем"
+
+#: models.py:43 utils.py:49
+msgid "Name"
+msgstr "Имя"
+
+#: models.py:45 utils.py:50
+msgid "Authors"
+msgstr "Авторы"
+
+#: models.py:47 utils.py:51
+msgid "Added date"
+msgstr "Дата добавления"
+
+#: models.py:92 utils.py:71
+msgid "ID"
+msgstr "Идентификатор"
+
+#: models.py:96 utils.py:72
+msgid "Student"
+msgstr "Школьник"
+
+#: models.py:98
+msgid "Book"
+msgstr "Книга"
+
+#: models.py:100 utils.py:74
+msgid "Issue date"
+msgstr "Дата выдачи"
+
+#: models.py:101 utils.py:75
+msgid "Expire date"
+msgstr "Ожидаемая дата возврата"
+
+#: models.py:103 utils.py:76
+msgid "Return date"
+msgstr "Дата возврата"
+
+#: utils.py:35
+msgid "Books"
+msgstr "Книги"
+
+#: utils.py:38
+msgid "Leases"
+msgstr "Выдачи"
+
+#: utils.py:73
+msgid "Book ISBN"
+msgstr "ISBN книги"
+
+#: views.py:234
+msgid "New book"
+msgstr "Новая книга"
+
+#: views.py:287
+msgid "Book edited"
+msgstr "Книга изменена"
+
+#: views.py:314
+msgid "New lease"
+msgstr "Новая выдача"
+
+#: views.py:373
+msgid "Lease returned"
+msgstr "Книга возвращена"
+
+#~ msgid "Report"
+#~ msgstr "Отчёт"

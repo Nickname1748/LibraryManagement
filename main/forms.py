@@ -23,7 +23,7 @@ from django_registration.forms import RegistrationForm
 
 from django import forms
 from django.utils import timezone
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, ngettext
 from django.core.validators import MinValueValidator
 from django.contrib.auth import get_user_model
 
@@ -35,9 +35,9 @@ class RegisterForm(RegistrationForm):
     """
     The form used for user registration.
     """
-    first_name = forms.CharField(max_length=30)
-    last_name = forms.CharField(max_length=30)
-    email = forms.EmailField()
+    first_name = forms.CharField(max_length=30, label=_("First name"))
+    last_name = forms.CharField(max_length=30,  label=_("Last name"))
+    email = forms.EmailField(label=_("Email"))
 
     class Meta:
         model = get_user_model()
@@ -55,9 +55,9 @@ class LibrarianRegisterForm(RegistrationForm):
     """
     The form used for librarian registration.
     """
-    first_name = forms.CharField(max_length=30)
-    last_name = forms.CharField(max_length=30)
-    email = forms.EmailField()
+    first_name = forms.CharField(max_length=30, label=_("First name"))
+    last_name = forms.CharField(max_length=30,  label=_("Last name"))
+    email = forms.EmailField(label=_("Email"))
 
     class Meta:
         model = get_user_model()
@@ -108,7 +108,8 @@ class BookCreationForm(forms.ModelForm):
     """
     The form which allows to create new Book instance.
     """
-    count = forms.IntegerField(validators=[MinValueValidator(0)], min_value=0)
+    count = forms.IntegerField(
+        validators=[MinValueValidator(0)], min_value=0, label=_("Count"))
 
     class Meta:
         model = Book
@@ -135,8 +136,12 @@ class BookCreationForm(forms.ModelForm):
                 .count()
             if count < lease_count:
                 raise forms.ValidationError(
-                    (_('{0} books are leased, '
-                        'so minimum allowed book count is {0}'))
+                    (ngettext(
+                        '{0} book is leased, '
+                        'so minimum allowed book count is {0}',
+                        '{0} books are leased, '
+                        'so minimum allowed book count is {0}',
+                        lease_count))
                     .format(lease_count))
         return count
 

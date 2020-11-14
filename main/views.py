@@ -384,9 +384,8 @@ def xlsx_report(request):
     Returnes XLSX report file for download.
     """
     response = HttpResponse(content_type='application/vnd.ms-excel')
-    file_name = _("Report")
     response['Content-Disposition'] = (
-        'attachment; filename = "{}.xlsx"'.format(file_name))
+        'attachment; filename = "Report.xlsx"')
 
     workbook = build_xlsx()
     workbook.save(response)
