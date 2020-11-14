@@ -18,7 +18,6 @@
 This module contains all forms of main app.
 """
 
-from django.forms import fields
 import stdnum.isbn
 from django_registration.forms import RegistrationForm
 

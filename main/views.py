@@ -134,6 +134,9 @@ def profile(request):
 
 @login_required
 def edit_profile(request):
+    """
+    Edit profile page.
+    """
     if request.method == 'POST':
         form = EditProfileForm(request.POST, instance=request.user)
         if form.is_valid():
@@ -141,7 +144,7 @@ def edit_profile(request):
             return redirect('main:profile')
     else:
         form = EditProfileForm(instance=request.user)
-    
+
     context = {
         'form': form
     }
