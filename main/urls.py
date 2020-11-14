@@ -105,6 +105,7 @@ urlpatterns = [
         'favicon.ico',
         RedirectView.as_view(url=staticfiles_storage.url('main/favicon.ico'))),
     path('profile/', views.profile, name='profile'),
+    path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('admin/', views.admin, name='admin'),
     path(
         'admin/select_theme/',

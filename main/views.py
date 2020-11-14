@@ -41,8 +41,8 @@ from django.conf import settings
 from .decorators import group_required
 from .models import Book, Lease
 from .forms import (
-    RegisterForm, LibrarianRegisterForm, ThemeSelectionForm,
-    BookCreationForm, LeaseCreationForm)
+    RegisterForm, LibrarianRegisterForm, EditProfileForm,
+    ThemeSelectionForm, BookCreationForm, LeaseCreationForm)
 from .utils import build_xlsx
 
 
@@ -130,6 +130,22 @@ def profile(request):
     User profile page.
     """
     return render(request, 'main/profile.html')
+
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('main:profile')
+    else:
+        form = EditProfileForm(instance=request.user)
+    
+    context = {
+        'form': form
+    }
+    return render(request, 'main/edit_profile.html', context=context)
 
 
 @staff_member_required

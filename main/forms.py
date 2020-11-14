@@ -18,6 +18,7 @@
 This module contains all forms of main app.
 """
 
+from django.forms import fields
 import stdnum.isbn
 from django_registration.forms import RegistrationForm
 
@@ -75,6 +76,21 @@ class LibrarianRegisterForm(RegistrationForm):
         self.fields['password2'].required = False
 
 
+class EditProfileForm(forms.ModelForm):
+    """
+    The form used to edit profile.
+    """
+
+    class Meta:
+        model = get_user_model()
+        fields = [
+            'username',
+            'first_name',
+            'last_name',
+            'email'
+        ]
+
+
 THEMES = (
     ('default', "Light (Default)"),
     ('dark', "Dark")
@@ -112,7 +128,7 @@ class BookCreationForm(forms.ModelForm):
         try:
             book_isbn = self.cleaned_data['isbn']
         except KeyError:
-            raise forms.ValidationError('No ISBN is sent') from KeyError
+            raise forms.ValidationError('No ISBN is sent') from None
         if Book.objects.filter(pk=book_isbn).exists():
             book = Book.objects.get(pk=book_isbn)
             lease_count = book.lease_set.filter(return_date__isnull=True)\
