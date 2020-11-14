@@ -1644,23 +1644,24 @@ pre code {
     margin-left: 91.6666666667%;
   }
 }
-.table, .log-table {
+.table, .log-table, .user-table {
   width: 100%;
   margin-bottom: 1rem;
   color: #fff;
 }
-.table th, .log-table th,
+.table th, .log-table th, .user-table th,
 .table td,
-.log-table td {
+.log-table td,
+.user-table td {
   padding: 0.75rem;
   vertical-align: top;
   border-top: 1px solid #dee2e6;
 }
-.table thead th, .log-table thead th {
+.table thead th, .log-table thead th, .user-table thead th {
   vertical-align: bottom;
   border-bottom: 2px solid #dee2e6;
 }
-.table tbody + tbody, .log-table tbody + tbody {
+.table tbody + tbody, .log-table tbody + tbody, .user-table tbody + tbody {
   border-top: 2px solid #dee2e6;
 }
 
@@ -1688,11 +1689,11 @@ pre code {
   border: 0;
 }
 
-.table-striped tbody tr:nth-of-type(odd), .log-table tbody tr:nth-of-type(odd) {
+.table-striped tbody tr:nth-of-type(odd), .log-table tbody tr:nth-of-type(odd), .user-table tbody tr:nth-of-type(odd) {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-.table-hover tbody tr:hover, .log-table tbody tr:hover {
+.table-hover tbody tr:hover, .log-table tbody tr:hover, .user-table tbody tr:hover {
   color: #fff;
   background-color: rgba(0, 0, 0, 0.075);
 }
@@ -1709,12 +1710,13 @@ pre code {
   border-color: #7abaff;
 }
 
-.table-hover .table-primary:hover, .log-table .table-primary:hover {
+.table-hover .table-primary:hover, .log-table .table-primary:hover, .user-table .table-primary:hover {
   background-color: #9fcdff;
 }
-.table-hover .table-primary:hover > td, .log-table .table-primary:hover > td,
+.table-hover .table-primary:hover > td, .log-table .table-primary:hover > td, .user-table .table-primary:hover > td,
 .table-hover .table-primary:hover > th,
-.log-table .table-primary:hover > th {
+.log-table .table-primary:hover > th,
+.user-table .table-primary:hover > th {
   background-color: #9fcdff;
 }
 
@@ -1730,12 +1732,13 @@ pre code {
   border-color: #b3b7bb;
 }
 
-.table-hover .table-secondary:hover, .log-table .table-secondary:hover {
+.table-hover .table-secondary:hover, .log-table .table-secondary:hover, .user-table .table-secondary:hover {
   background-color: #c8cbcf;
 }
-.table-hover .table-secondary:hover > td, .log-table .table-secondary:hover > td,
+.table-hover .table-secondary:hover > td, .log-table .table-secondary:hover > td, .user-table .table-secondary:hover > td,
 .table-hover .table-secondary:hover > th,
-.log-table .table-secondary:hover > th {
+.log-table .table-secondary:hover > th,
+.user-table .table-secondary:hover > th {
   background-color: #c8cbcf;
 }
 
@@ -1751,12 +1754,13 @@ pre code {
   border-color: #8fd19e;
 }
 
-.table-hover .table-success:hover, .log-table .table-success:hover {
+.table-hover .table-success:hover, .log-table .table-success:hover, .user-table .table-success:hover {
   background-color: #b1dfbb;
 }
-.table-hover .table-success:hover > td, .log-table .table-success:hover > td,
+.table-hover .table-success:hover > td, .log-table .table-success:hover > td, .user-table .table-success:hover > td,
 .table-hover .table-success:hover > th,
-.log-table .table-success:hover > th {
+.log-table .table-success:hover > th,
+.user-table .table-success:hover > th {
   background-color: #b1dfbb;
 }
 
@@ -1772,12 +1776,13 @@ pre code {
   border-color: #86cfda;
 }
 
-.table-hover .table-info:hover, .log-table .table-info:hover {
+.table-hover .table-info:hover, .log-table .table-info:hover, .user-table .table-info:hover {
   background-color: #abdde5;
 }
-.table-hover .table-info:hover > td, .log-table .table-info:hover > td,
+.table-hover .table-info:hover > td, .log-table .table-info:hover > td, .user-table .table-info:hover > td,
 .table-hover .table-info:hover > th,
-.log-table .table-info:hover > th {
+.log-table .table-info:hover > th,
+.user-table .table-info:hover > th {
   background-color: #abdde5;
 }
 
@@ -1793,12 +1798,13 @@ pre code {
   border-color: #ffdf7e;
 }
 
-.table-hover .table-warning:hover, .log-table .table-warning:hover {
+.table-hover .table-warning:hover, .log-table .table-warning:hover, .user-table .table-warning:hover {
   background-color: #ffe8a1;
 }
-.table-hover .table-warning:hover > td, .log-table .table-warning:hover > td,
+.table-hover .table-warning:hover > td, .log-table .table-warning:hover > td, .user-table .table-warning:hover > td,
 .table-hover .table-warning:hover > th,
-.log-table .table-warning:hover > th {
+.log-table .table-warning:hover > th,
+.user-table .table-warning:hover > th {
   background-color: #ffe8a1;
 }
 
@@ -1814,12 +1820,13 @@ pre code {
   border-color: #ed969e;
 }
 
-.table-hover .table-danger:hover, .log-table .table-danger:hover {
+.table-hover .table-danger:hover, .log-table .table-danger:hover, .user-table .table-danger:hover {
   background-color: #f1b0b7;
 }
-.table-hover .table-danger:hover > td, .log-table .table-danger:hover > td,
+.table-hover .table-danger:hover > td, .log-table .table-danger:hover > td, .user-table .table-danger:hover > td,
 .table-hover .table-danger:hover > th,
-.log-table .table-danger:hover > th {
+.log-table .table-danger:hover > th,
+.user-table .table-danger:hover > th {
   background-color: #f1b0b7;
 }
 
@@ -1835,12 +1842,13 @@ pre code {
   border-color: #fbfcfc;
 }
 
-.table-hover .table-light:hover, .log-table .table-light:hover {
+.table-hover .table-light:hover, .log-table .table-light:hover, .user-table .table-light:hover {
   background-color: #ececf6;
 }
-.table-hover .table-light:hover > td, .log-table .table-light:hover > td,
+.table-hover .table-light:hover > td, .log-table .table-light:hover > td, .user-table .table-light:hover > td,
 .table-hover .table-light:hover > th,
-.log-table .table-light:hover > th {
+.log-table .table-light:hover > th,
+.user-table .table-light:hover > th {
   background-color: #ececf6;
 }
 
@@ -1856,12 +1864,13 @@ pre code {
   border-color: #8c8e90;
 }
 
-.table-hover .table-dark:hover, .log-table .table-dark:hover {
+.table-hover .table-dark:hover, .log-table .table-dark:hover, .user-table .table-dark:hover {
   background-color: #b4b5b6;
 }
-.table-hover .table-dark:hover > td, .log-table .table-dark:hover > td,
+.table-hover .table-dark:hover > td, .log-table .table-dark:hover > td, .user-table .table-dark:hover > td,
 .table-hover .table-dark:hover > th,
-.log-table .table-dark:hover > th {
+.log-table .table-dark:hover > th,
+.user-table .table-dark:hover > th {
   background-color: #b4b5b6;
 }
 
@@ -1871,21 +1880,22 @@ pre code {
   background-color: rgba(0, 0, 0, 0.075);
 }
 
-.table-hover .table-active:hover, .log-table .table-active:hover {
+.table-hover .table-active:hover, .log-table .table-active:hover, .user-table .table-active:hover {
   background-color: rgba(0, 0, 0, 0.075);
 }
-.table-hover .table-active:hover > td, .log-table .table-active:hover > td,
+.table-hover .table-active:hover > td, .log-table .table-active:hover > td, .user-table .table-active:hover > td,
 .table-hover .table-active:hover > th,
-.log-table .table-active:hover > th {
+.log-table .table-active:hover > th,
+.user-table .table-active:hover > th {
   background-color: rgba(0, 0, 0, 0.075);
 }
 
-.table .thead-dark th, .log-table .thead-dark th {
+.table .thead-dark th, .log-table .thead-dark th, .user-table .thead-dark th {
   color: #fff;
   background-color: #343a40;
   border-color: #454d55;
 }
-.table .thead-light th, .log-table .thead-light th {
+.table .thead-light th, .log-table .thead-light th, .user-table .thead-light th {
   color: #495057;
   background-color: #e9ecef;
   border-color: #dee2e6;
@@ -1903,10 +1913,10 @@ pre code {
 .table-dark.table-bordered {
   border: 0;
 }
-.table-dark.table-striped tbody tr:nth-of-type(odd), .table-dark.log-table tbody tr:nth-of-type(odd) {
+.table-dark.table-striped tbody tr:nth-of-type(odd), .table-dark.log-table tbody tr:nth-of-type(odd), .table-dark.user-table tbody tr:nth-of-type(odd) {
   background-color: rgba(255, 255, 255, 0.05);
 }
-.table-dark.table-hover tbody tr:hover, .table-dark.log-table tbody tr:hover {
+.table-dark.table-hover tbody tr:hover, .table-dark.log-table tbody tr:hover, .table-dark.user-table tbody tr:hover {
   color: #fff;
   background-color: rgba(255, 255, 255, 0.075);
 }
@@ -7717,12 +7727,12 @@ button.card:focus {
   margin: 0.5rem !important;
 }
 
-.mt-2, .help-text, .btn-main, .btn-more, .card-btn, .btn-cancel, .btn-action, h3,
+.mt-2, .paginator, .help-text, .btn-main, .btn-more, .card-btn, .btn-cancel, .btn-action, h3,
 .my-2 {
   margin-top: 0.5rem !important;
 }
 
-.mr-2, .icon, .fas, .fab,
+.mr-2,
 .mx-2 {
   margin-right: 0.5rem !important;
 }
@@ -10142,12 +10152,13 @@ h3 {
     border: 1px solid #000;
   }
 
-  .table, .log-table {
+  .table, .log-table, .user-table {
     border-collapse: collapse !important;
   }
-  .table td, .log-table td,
+  .table td, .log-table td, .user-table td,
 .table th,
-.log-table th {
+.log-table th,
+.user-table th {
     background-color: #fff !important;
   }
 
@@ -10166,7 +10177,7 @@ h3 {
     border-color: #dee2e6;
   }
 
-  .table .thead-dark th, .log-table .thead-dark th {
+  .table .thead-dark th, .log-table .thead-dark th, .user-table .thead-dark th {
     color: inherit;
     border-color: #dee2e6;
   }

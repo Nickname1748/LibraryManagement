@@ -15,11 +15,13 @@
     </form>
     <a href="{% url 'main:new_book' %}" class="btn-action">Добавить новую книгу</a>
     {% if book_list %}
+        {% include 'main/paginator.html' %}
         <div class="card-list">
             {% for book in book_list %}
                 {% include 'main/book_card.html' %}
             {% endfor %}
         </div>
+        {% include 'main/paginator.html' %}
     {% else %}
             <p>По вашему запросу книг не найдено.</p>
     {% endif %}

@@ -107,6 +107,19 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('admin/', views.admin, name='admin'),
+    path('admin/profile/', views.UserListView.as_view(), name='user_list'),
+    path(
+        'admin/profile/<slug:pk>/',
+        views.AdminProfileView.as_view(),
+        name='admin_profile'),
+    path(
+        'admin/profile/<slug:user_id>/block/',
+        views.block_user,
+        name='block_user'),
+    path(
+        'admin/profile/<slug:user_id>/unblock/',
+        views.unblock_user,
+        name='unblock_user'),
     path(
         'admin/select_theme/',
         views.SelectThemeView.as_view(),

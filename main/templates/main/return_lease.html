@@ -5,9 +5,9 @@
 {% endblock %}
 {% block content %}
     <a href="{% url 'main:lease_detail' lease.id %}" class="btn-more">Назад</a>
-    <h1 class="mt-3">Вернуть {{ lease.book.name }}</h1>
+    <h1>Вернуть {{ lease.book.name }}</h1>
     <p>Вы уверены, что хотите вернуть книгу?</p>
-    <form class="mt-3" method="POST">
+    <form method="POST">
         {% csrf_token %}
         <input type="submit" class="btn-action" value="Вернуть">
         <a href="{% url 'main:lease_detail' lease.id %}" class="btn-cancel">Отмена</a>

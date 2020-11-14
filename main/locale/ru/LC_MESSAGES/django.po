@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-14 16:35+0300\n"
+"POT-Creation-Date: 2020-11-14 21:06+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,7 +51,7 @@ msgstr "Светлая (По умолчанию)"
 msgid "Dark"
 msgstr "Тёмная"
 
-#: forms.py:112 models.py:49 utils.py:52
+#: forms.py:112 models.py:59 utils.py:52
 msgid "Count"
 msgstr "Количество"
 
@@ -76,39 +76,47 @@ msgstr "Книга недоступна для выдачи"
 msgid "Expire date must be in future"
 msgstr "Ожидаемая дата возврата должна быть в будущем"
 
-#: models.py:43 utils.py:49
-msgid "Name"
-msgstr "Имя"
+#: models.py:42
+msgid "Administrator"
+msgstr "Администратор"
 
-#: models.py:45 utils.py:50
-msgid "Authors"
-msgstr "Авторы"
+#: models.py:44
+msgid "Librarian"
+msgstr "Библиотекарь"
 
-#: models.py:47 utils.py:51
-msgid "Added date"
-msgstr "Дата добавления"
-
-#: models.py:92 utils.py:71
-msgid "ID"
-msgstr "Идентификатор"
-
-#: models.py:96 utils.py:72
+#: models.py:45 models.py:106 utils.py:72
 msgid "Student"
 msgstr "Школьник"
 
-#: models.py:98
+#: models.py:53 utils.py:49
+msgid "Name"
+msgstr "Имя"
+
+#: models.py:55 utils.py:50
+msgid "Authors"
+msgstr "Авторы"
+
+#: models.py:57 utils.py:51
+msgid "Added date"
+msgstr "Дата добавления"
+
+#: models.py:102 utils.py:71
+msgid "ID"
+msgstr "Идентификатор"
+
+#: models.py:108
 msgid "Book"
 msgstr "Книга"
 
-#: models.py:100 utils.py:74
+#: models.py:110 utils.py:74
 msgid "Issue date"
 msgstr "Дата выдачи"
 
-#: models.py:101 utils.py:75
+#: models.py:111 utils.py:75
 msgid "Expire date"
 msgstr "Ожидаемая дата возврата"
 
-#: models.py:103 utils.py:76
+#: models.py:113 utils.py:76
 msgid "Return date"
 msgstr "Дата возврата"
 
@@ -124,19 +132,31 @@ msgstr "Выдачи"
 msgid "Book ISBN"
 msgstr "ISBN книги"
 
-#: views.py:234
+#: views.py:110
+msgid "New librarian added"
+msgstr "Добавлен библиотекарь"
+
+#: views.py:213
+msgid "User blocked"
+msgstr "Пользователь заблокирован"
+
+#: views.py:238
+msgid "User unblocked"
+msgstr "Пользователь разблокирован"
+
+#: views.py:315
 msgid "New book"
 msgstr "Новая книга"
 
-#: views.py:287
+#: views.py:368
 msgid "Book edited"
 msgstr "Книга изменена"
 
-#: views.py:314
+#: views.py:395
 msgid "New lease"
 msgstr "Новая выдача"
 
-#: views.py:373
+#: views.py:454
 msgid "Lease returned"
 msgstr "Книга возвращена"
 

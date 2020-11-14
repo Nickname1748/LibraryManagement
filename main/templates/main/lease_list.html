@@ -14,6 +14,7 @@
         <input type="submit" class="btn-action" value="Найти">
     </form>
     {% if lease_list %}
+        {% include 'main/paginator.html' %}
         <div class="card-list">
             {% for lease in lease_list %}
                 {% if lease.is_active %}
@@ -21,6 +22,7 @@
                 {% endif %}
             {% endfor %}
         </div>
+        {% include 'main/paginator.html' %}
     {% else %}
             <p>По вашему запросу выдач не найдено.</p>
     {% endif %}

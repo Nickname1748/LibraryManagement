@@ -34,7 +34,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model, login
 from django.views import generic
 from django.utils import timezone
-from django.utils.translation import gettext as _, gettext_lazy
+from django.utils.translation import gettext_lazy
 from django.utils.datastructures import MultiValueDictKeyError
 from django.urls import reverse_lazy
 from django.conf import settings
@@ -101,6 +101,13 @@ class LibrarianRegisterView(RegistrationView):
         group = Group.objects.get_or_create(name="Librarian")[0]
         new_user.groups.add(group)
         new_user.save()
+        LogEntry.objects.log_action(
+            self.request.user.id,
+            ContentType.objects.get(app_label='main', model='user').id,
+            new_user.id,
+            repr(new_user),
+            action_flag=ADDITION,
+            change_message=gettext_lazy("New librarian added"))
 
         self.send_activation_email(new_user)
 
@@ -157,9 +164,87 @@ def admin(request):
     """
     Admin panel.
     """
-    logs = LogEntry.objects.all()
+    logs = LogEntry.objects.all().order_by('-action_time')[:15]
     context = {'logs': logs}
     return render(request, 'main/admin.html', context=context)
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class UserListView(generic.ListView):
+    """
+    User list view.
+    """
+    model = get_user_model()
+    paginate_by = 10
+
+    def get_queryset(self):
+        return self.model.objects.order_by('-last_login')
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class AdminProfileView(generic.DetailView):
+    """
+    Profile view for admins.
+    """
+    model = get_user_model()
+    template_name = 'main/admin_profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = {}
+        if self.object:
+            context['object'] = self.object
+        context.update(kwargs)
+        return context
+
+
+@staff_member_required
+def block_user(request, user_id):
+    """
+    Page that allows to block user.
+    """
+    user = get_object_or_404(get_user_model(), pk=user_id)
+    if not user.is_active:
+        return redirect('main:admin_profile', pk=user_id)
+    if request.method == 'POST':
+        user.is_active = False
+        user.save()
+        LogEntry.objects.log_action(
+            request.user.id,
+            ContentType.objects.get(app_label='main', model='user').id,
+            user.id,
+            repr(user),
+            action_flag=CHANGE,
+            change_message=gettext_lazy("User blocked"))
+        return redirect('main:admin_profile', pk=user_id)
+
+    return render(request, 'main/block_user.html', {
+        'object': user
+    })
+
+
+@staff_member_required
+def unblock_user(request, user_id):
+    """
+    Page that allows to unblock user.
+    """
+    user = get_object_or_404(get_user_model(), pk=user_id)
+    if user.is_active:
+        return redirect('main:admin_profile', pk=user_id)
+    if request.method == 'POST':
+        user.is_active = True
+        user.save()
+        LogEntry.objects.log_action(
+            request.user.id,
+            ContentType.objects.get(app_label='main', model='user').id,
+            user.id,
+            repr(user),
+            action_flag=CHANGE,
+            change_message=gettext_lazy("User unblocked"))
+        return redirect('main:admin_profile', pk=user_id)
+
+    return render(request, 'main/unblock_user.html', {
+        'object': user
+    })
 
 
 @method_decorator(staff_member_required, name='dispatch')
@@ -245,7 +330,7 @@ class BookListView(generic.ListView):
     Page that lists all books.
     """
     model = Book
-    paginate_by = 25
+    paginate_by = 10
 
     def get_queryset(self):
         try:
@@ -329,7 +414,7 @@ class LeaseListView(generic.ListView):
     Page that shows list of active leases.
     """
     model = Lease
-    paginate_by = 25
+    paginate_by = 10
 
     def get_queryset(self):
         try:

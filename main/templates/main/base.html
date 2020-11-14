@@ -25,7 +25,7 @@
                 <div class="navbar-brand"><a href="{% url 'main:index' %}"><img src="{% static 'main/LibraryManagementLogoLongInlineTransparent.png' %}" class="navbar-logo"></a></div>
                 {% if user.is_authenticated %}
                 <div>
-                    <a href="{% url 'main:profile' %}" class="profile-link"><i class="fas fa-user"></i>{{ user.get_username }}</a>
+                    <a href="{% url 'main:profile' %}" class="profile-link"><i class="fas fa-user mr-2"></i>{{ user.get_username }}</a>
                     <a href="{% url 'main:logout' %}" class="logout-link">Выйти</a>
                 </div>
                 {% endif %}

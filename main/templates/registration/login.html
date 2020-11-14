@@ -6,12 +6,12 @@
 {% block content %}
     <h1>Авторизация</h1>
     {% if form.errors %}
-    <div class="alert-warning">Неверный Email или пароль</div>
+    <div class="alert-warning">Неверный логин или пароль</div>
     {% endif %}
     <form method="POST">
         {% csrf_token %}
         <div class="form-group">
-            <label for="id_username">Имя пользователя</label>
+            <label for="id_username">Логин</label>
             <input type="text" class="form-control" id="id_username" name="username" autofocus="" autocapitalize="none">
         </div>
         <div class="form-group">

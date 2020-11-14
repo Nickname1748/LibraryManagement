@@ -1,0 +1,14 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+Разблокировать {{ object.username }}
+{% endblock %}
+{% block content %}
+    <h1>Разблокировать {{ object.username }}</h1>
+    <p>Вы уверены, что хотите разблокировать пользователя?</p>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="submit" class="btn-action" value="Разблокировать">
+        <a href="{% url 'main:admin_profile' object.id %}" class="btn-cancel">Отмена</a>
+    </form>
+{% endblock %}

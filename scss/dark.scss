@@ -19,14 +19,6 @@ body {
     height: 100%;
 }
 
-.icon {
-    @extend .mr-2;
-}
-
-.fas, .fab {
-    @extend .icon;
-}
-
 nav {
     @extend .navbar;
     @extend .navbar-expand-sm;
@@ -106,7 +98,11 @@ footer {
     height: 2em;
 }
 
-.log-table {
+.paginator {
+    @extend .mt-2;
+}
+
+.log-table, .user-table {
     @extend .table;
     @extend .table-striped;
     @extend .table-hover;

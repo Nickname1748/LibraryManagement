@@ -34,6 +34,16 @@ class User(AbstractUser):
     """
     email = models.EmailField(unique=True, verbose_name=gettext_lazy("Email"))
 
+    def role(self):
+        """
+        Returns role of user.
+        """
+        if self.is_staff:
+            return gettext_lazy("Administrator")
+        if self.groups.filter(name='Librarian').exists():
+            return gettext_lazy("Librarian")
+        return gettext_lazy("Student")
+
 
 class Book(models.Model):
     """
