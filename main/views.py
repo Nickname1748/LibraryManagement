@@ -34,6 +34,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model, login
 from django.views import generic
 from django.utils import timezone
+from django.utils.translation import gettext as _, gettext_lazy
 from django.utils.datastructures import MultiValueDictKeyError
 from django.urls import reverse_lazy
 from django.conf import settings
@@ -230,7 +231,7 @@ def new_book(request):
                 form.instance.isbn,
                 repr(form.instance),
                 action_flag=ADDITION,
-                change_message="New book")
+                change_message=gettext_lazy("New book"))
             return redirect('main:librarian')
     else:
         form = BookCreationForm()
@@ -283,7 +284,7 @@ def edit_book(request, book_id):
                 form.instance.isbn,
                 repr(form.instance),
                 action_flag=CHANGE,
-                change_message="Book edited")
+                change_message=gettext_lazy("Book edited"))
             return redirect('main:librarian')
     else:
         form = BookCreationForm(instance=book)
@@ -310,7 +311,7 @@ def new_lease(request, book_id):
                 form.instance.id,
                 repr(form.instance),
                 action_flag=ADDITION,
-                change_message="New lease")
+                change_message=gettext_lazy("New lease"))
             return redirect('main:librarian')
     else:
         form = LeaseCreationForm(initial={'book': book_id})
@@ -369,7 +370,7 @@ def return_lease(request, lease_id):
             lease_id,
             repr(lease),
             action_flag=CHANGE,
-            change_message="Lease returned")
+            change_message=gettext_lazy("Lease returned"))
         return redirect('main:librarian')
 
     return render(request, 'main/return_lease.html', {
@@ -383,7 +384,9 @@ def xlsx_report(request):
     Returnes XLSX report file for download.
     """
     response = HttpResponse(content_type='application/vnd.ms-excel')
-    response['Content-Disposition'] = 'attachment; filename = "Report.xlsx"'
+    file_name = _("Report")
+    response['Content-Disposition'] = (
+        'attachment; filename = "{}.xlsx"'.format(file_name))
 
     workbook = build_xlsx()
     workbook.save(response)

@@ -23,6 +23,7 @@ from isbn_field import ISBNField
 from stdnum import isbn
 
 from django.db import models
+from django.utils.translation import gettext_lazy
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 
@@ -39,10 +40,13 @@ class Book(models.Model):
     Book model describes book object in main app.
     """
     isbn = ISBNField(primary_key=True)
-    name = models.CharField(max_length=255)
-    authors = models.CharField(max_length=255)
-    added_date = models.DateTimeField(auto_now_add=True)
-    count = models.PositiveSmallIntegerField()
+    name = models.CharField(max_length=255, verbose_name=gettext_lazy("Name"))
+    authors = models.CharField(
+        max_length=255, verbose_name=gettext_lazy("Authors"))
+    added_date = models.DateTimeField(
+        auto_now_add=True, verbose_name=gettext_lazy("Added date"))
+    count = models.PositiveSmallIntegerField(
+        verbose_name=gettext_lazy("Count"))
 
     def __str__(self):
         return "{} [{}]".format(self.name, self.authors)
@@ -82,12 +86,21 @@ class Lease(models.Model):
     Lease model describes book lease object in main app.
     """
     id = models.UUIDField(
-        primary_key=True, default=uuid.uuid4, editable=False)
-    student = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
-    book = models.ForeignKey(Book, on_delete=models.PROTECT)
-    issue_date = models.DateTimeField(auto_now_add=True)
-    expire_date = models.DateField()
-    return_date = models.DateTimeField(null=True)
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+        verbose_name=gettext_lazy("ID"))
+    student = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.PROTECT,
+        verbose_name=gettext_lazy("Student"))
+    book = models.ForeignKey(
+        Book, on_delete=models.PROTECT, verbose_name=gettext_lazy("Book"))
+    issue_date = models.DateTimeField(
+        auto_now_add=True, verbose_name=gettext_lazy("Issue date"))
+    expire_date = models.DateField(verbose_name=gettext_lazy("Expire date"))
+    return_date = models.DateTimeField(
+        null=True, verbose_name=gettext_lazy("Return date"))
 
     def is_active(self):
         """

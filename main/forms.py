@@ -23,6 +23,7 @@ from django_registration.forms import RegistrationForm
 
 from django import forms
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.core.validators import MinValueValidator
 from django.contrib.auth import get_user_model
 
@@ -91,8 +92,8 @@ class EditProfileForm(forms.ModelForm):
 
 
 THEMES = (
-    ('default', "Light (Default)"),
-    ('dark', "Dark")
+    ('default', _("Light (Default)")),
+    ('dark', _("Dark"))
 )
 
 
@@ -127,15 +128,15 @@ class BookCreationForm(forms.ModelForm):
         try:
             book_isbn = self.cleaned_data['isbn']
         except KeyError:
-            raise forms.ValidationError('No ISBN is sent') from None
+            raise forms.ValidationError(_('No ISBN is sent')) from None
         if Book.objects.filter(pk=book_isbn).exists():
             book = Book.objects.get(pk=book_isbn)
             lease_count = book.lease_set.filter(return_date__isnull=True)\
                 .count()
             if count < lease_count:
                 raise forms.ValidationError(
-                    ('{0} books are leased, '
-                        'so minimum allowed book count is {0}')
+                    (_('{0} books are leased, '
+                        'so minimum allowed book count is {0}'))
                     .format(lease_count))
         return count
 
@@ -155,7 +156,7 @@ class LeaseCreationForm(forms.ModelForm):
         """
         book = self.cleaned_data['book']
         if book.available_count() <= 0:
-            raise forms.ValidationError('Book is not available')
+            raise forms.ValidationError(_('Book is not available for leasing'))
         return book
 
     def clean_expire_date(self):
@@ -164,5 +165,5 @@ class LeaseCreationForm(forms.ModelForm):
         """
         expire_date = self.cleaned_data['expire_date']
         if expire_date <= timezone.now().date():
-            raise forms.ValidationError('Expire date must be in future')
+            raise forms.ValidationError(_('Expire date must be in future'))
         return expire_date
