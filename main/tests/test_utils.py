@@ -24,6 +24,7 @@ from django.test import TestCase
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.utils.translation import gettext as _
 
 from main.utils import build_xlsx, build_books_sheet, build_leases_sheet
 from main.models import Book
@@ -43,8 +44,8 @@ class BuildXlsxFuncTests(TestCase):
         """
         workbook = build_xlsx()
         self.assertEqual(len(workbook.sheetnames), 2)
-        self.assertEqual(workbook.sheetnames[0], "Books")
-        self.assertEqual(workbook.sheetnames[1], "Leases")
+        self.assertEqual(workbook.sheetnames[0], _("Books"))
+        self.assertEqual(workbook.sheetnames[1], _("Leases"))
 
 
 class BuildBooksSheetFuncTests(TestCase):
@@ -60,10 +61,10 @@ class BuildBooksSheetFuncTests(TestCase):
         worksheet = workbook.active
         build_books_sheet(worksheet)
         self.assertEqual(worksheet['A1'].value, "ISBN")
-        self.assertEqual(worksheet['B1'].value, "Name")
-        self.assertEqual(worksheet['C1'].value, "Authors")
-        self.assertEqual(worksheet['D1'].value, "Added date")
-        self.assertEqual(worksheet['E1'].value, "Count")
+        self.assertEqual(worksheet['B1'].value, _("Name"))
+        self.assertEqual(worksheet['C1'].value, _("Authors"))
+        self.assertEqual(worksheet['D1'].value, _("Added date"))
+        self.assertEqual(worksheet['E1'].value, _("Count"))
         self.assertIsNone(worksheet['A2'].value)
 
     def test_build_books_sheet_on_nonempty_db(self):
@@ -78,10 +79,10 @@ class BuildBooksSheetFuncTests(TestCase):
         worksheet = workbook.active
         build_books_sheet(worksheet)
         self.assertEqual(worksheet['A1'].value, "ISBN")
-        self.assertEqual(worksheet['B1'].value, "Name")
-        self.assertEqual(worksheet['C1'].value, "Authors")
-        self.assertEqual(worksheet['D1'].value, "Added date")
-        self.assertEqual(worksheet['E1'].value, "Count")
+        self.assertEqual(worksheet['B1'].value, _("Name"))
+        self.assertEqual(worksheet['C1'].value, _("Authors"))
+        self.assertEqual(worksheet['D1'].value, _("Added date"))
+        self.assertEqual(worksheet['E1'].value, _("Count"))
         self.assertEqual(worksheet['A2'].value, "978-0-00-000000-2")
         self.assertEqual(worksheet['B3'].value, "9780000000019")
         self.assertEqual(worksheet['C4'].value, "9780000000026")
@@ -103,12 +104,12 @@ class BuildLeasesSheetFuncTests(TestCase):
         workbook = Workbook()
         worksheet = workbook.active
         build_leases_sheet(worksheet)
-        self.assertEqual(worksheet['A1'].value, "ID")
-        self.assertEqual(worksheet['B1'].value, "Student")
-        self.assertEqual(worksheet['C1'].value, "Book ISBN")
-        self.assertEqual(worksheet['D1'].value, "Issue date")
-        self.assertEqual(worksheet['E1'].value, "Expire date")
-        self.assertEqual(worksheet['F1'].value, "Return date")
+        self.assertEqual(worksheet['A1'].value, _("ID"))
+        self.assertEqual(worksheet['B1'].value, _("Student"))
+        self.assertEqual(worksheet['C1'].value, _("Book ISBN"))
+        self.assertEqual(worksheet['D1'].value, _("Issue date"))
+        self.assertEqual(worksheet['E1'].value, _("Expire date"))
+        self.assertEqual(worksheet['F1'].value, _("Return date"))
         self.assertIsNone(worksheet['A2'].value)
 
     def test_build_leases_sheet_on_nonempty_db(self):
@@ -128,12 +129,12 @@ class BuildLeasesSheetFuncTests(TestCase):
         workbook = Workbook()
         worksheet = workbook.active
         build_leases_sheet(worksheet)
-        self.assertEqual(worksheet['A1'].value, "ID")
-        self.assertEqual(worksheet['B1'].value, "Student")
-        self.assertEqual(worksheet['C1'].value, "Book ISBN")
-        self.assertEqual(worksheet['D1'].value, "Issue date")
-        self.assertEqual(worksheet['E1'].value, "Expire date")
-        self.assertEqual(worksheet['F1'].value, "Return date")
+        self.assertEqual(worksheet['A1'].value, _("ID"))
+        self.assertEqual(worksheet['B1'].value, _("Student"))
+        self.assertEqual(worksheet['C1'].value, _("Book ISBN"))
+        self.assertEqual(worksheet['D1'].value, _("Issue date"))
+        self.assertEqual(worksheet['E1'].value, _("Expire date"))
+        self.assertEqual(worksheet['F1'].value, _("Return date"))
         self.assertEqual(
             worksheet['A2'].value,
             str(Book.objects.get(pk='9780000000002')

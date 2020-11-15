@@ -42,7 +42,7 @@ from django.conf import settings
 from .decorators import group_required
 from .models import Book, Lease
 from .forms import (
-    RegisterForm, LibrarianRegisterForm, EditProfileForm,
+    BookUpdateForm, RegisterForm, LibrarianRegisterForm, EditProfileForm,
     ThemeSelectionForm, BookCreationForm, LeaseCreationForm)
 from .utils import build_xlsx
 
@@ -301,27 +301,24 @@ def librarian(request):
     return render(request, 'main/librarian.html', context=context)
 
 
-@group_required('Librarian')
-def new_book(request):
+@method_decorator(group_required('Librarian'), name='dispatch')
+class BookCreateView(generic.edit.CreateView):
     """
     Page that allows librarian to add new book.
     """
-    if request.method == 'POST':
-        form = BookCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            LogEntry.objects.log_action(
-                request.user.id,
-                ContentType.objects.get(app_label='main', model='book').id,
-                form.instance.isbn,
-                repr(form.instance),
-                action_flag=ADDITION,
-                change_message=gettext_lazy("New book"))
-            return redirect('main:librarian')
-    else:
-        form = BookCreationForm()
+    template_name = 'main/new_book.html'
+    form_class = BookCreationForm
 
-    return render(request, 'main/new_book.html', {'form': form})
+    def form_valid(self, form):
+        form.save()
+        LogEntry.objects.log_action(
+            self.request.user.id,
+            ContentType.objects.get(app_label='main', model='book').id,
+            form.instance.isbn,
+            repr(form.instance),
+            action_flag=ADDITION,
+            change_message=gettext_lazy("New book"))
+        return redirect('main:librarian')
 
 
 @method_decorator(group_required('Librarian'), name='dispatch')
@@ -353,59 +350,50 @@ class BookDetailView(generic.DetailView):
     model = Book
 
 
-@group_required('Librarian')
-def edit_book(request, book_id):
+@method_decorator(group_required('Librarian'), name='dispatch')
+class BookEditView(generic.edit.UpdateView):
     """
     Page that allows librarian to edit book.
     """
-    book = get_object_or_404(Book, pk=book_id)
-    if request.method == 'POST':
-        form = BookCreationForm(request.POST, instance=book)
-        if form.is_valid():
-            form.save()
-            LogEntry.objects.log_action(
-                request.user.id,
-                ContentType.objects.get(app_label='main', model='book').id,
-                form.instance.isbn,
-                repr(form.instance),
-                action_flag=CHANGE,
-                change_message=gettext_lazy("Book edited"))
-            return redirect('main:librarian')
-    else:
-        form = BookCreationForm(instance=book)
+    template_name = 'main/edit_book.html'
+    form_class = BookUpdateForm
+    model = Book
 
-    return render(request, 'main/edit_book.html', {
-        'form': form,
-        'book_id': book_id
-    })
+    def form_valid(self, form):
+        form.save()
+        LogEntry.objects.log_action(
+            self.request.user.id,
+            ContentType.objects.get(app_label='main', model='book').id,
+            form.instance.isbn,
+            repr(form.instance),
+            action_flag=CHANGE,
+            change_message=gettext_lazy("Book edited"))
+        return redirect('main:librarian')
 
 
-@group_required('Librarian')
-def new_lease(request, book_id):
+@method_decorator(group_required('Librarian'), name='dispatch')
+class LeaseCreateView(generic.edit.CreateView):
     """
     Page that allows to lease a book.
     """
-    book = get_object_or_404(Book, pk=book_id)
-    if request.method == 'POST':
-        form = LeaseCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            LogEntry.objects.log_action(
-                request.user.id,
-                ContentType.objects.get(app_label='main', model='lease').id,
-                form.instance.id,
-                repr(form.instance),
-                action_flag=ADDITION,
-                change_message=gettext_lazy("New lease"))
-            return redirect('main:librarian')
-    else:
-        form = LeaseCreationForm(initial={'book': book_id})
+    template_name = 'main/new_lease.html'
+    form_class = LeaseCreationForm
 
-    return render(request, 'main/new_lease.html', {
-        'form': form,
-        'book_id': book_id,
-        'book_name': book.name
-    })
+    def get_initial(self, **kwargs):
+        initial = super().get_initial(**kwargs)
+        initial.update({'book': self.kwargs['book_id']})
+        return initial
+
+    def form_valid(self, form):
+        form.save()
+        LogEntry.objects.log_action(
+            self.request.user.id,
+            ContentType.objects.get(app_label='main', model='lease').id,
+            form.instance.id,
+            repr(form.instance),
+            action_flag=ADDITION,
+            change_message=gettext_lazy("New lease"))
+        return redirect('main:librarian')
 
 
 @method_decorator(group_required('Librarian'), name='dispatch')

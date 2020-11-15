@@ -109,6 +109,24 @@ class BookCreationForm(forms.ModelForm):
     The form which allows to create new Book instance.
     """
     count = forms.IntegerField(
+        validators=[MinValueValidator(1)], min_value=1, label=_("Count"))
+
+    class Meta:
+        model = Book
+        fields = ['isbn', 'name', 'authors', 'count']
+
+    def clean_isbn(self):
+        """
+        ISBN passed to model must be in ISBN-13 format.
+        """
+        return stdnum.isbn.to_isbn13(self.cleaned_data['isbn'])
+
+
+class BookUpdateForm(forms.ModelForm):
+    """
+    The form which allows to update a Book instance.
+    """
+    count = forms.IntegerField(
         validators=[MinValueValidator(0)], min_value=0, label=_("Count"))
 
     class Meta:
@@ -123,7 +141,7 @@ class BookCreationForm(forms.ModelForm):
 
     def clean_count(self):
         """
-        If book exists, count must be not less than leased book count.
+        Count must be not less than leased book count.
         """
         count = self.cleaned_data['count']
         try:

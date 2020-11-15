@@ -136,15 +136,19 @@ urlpatterns = [
     path('student/', views.student, name='student'),
     path('librarian/', views.librarian, name='librarian'),
     path('librarian/books/', views.BookListView.as_view(), name='books'),
-    path('librarian/new_book/', views.new_book, name='new_book'),
+    path(
+        'librarian/new_book/',
+        views.BookCreateView.as_view(),
+        name='new_book'),
     path(
         'librarian/books/<slug:pk>/', views.BookDetailView.as_view(),
         name='book_detail'),
     path(
-        'librarian/books/<slug:book_id>/edit/', views.edit_book,
+        'librarian/books/<slug:pk>/edit/', views.BookEditView.as_view(),
         name='edit_book'),
     path(
-        'librarian/books/<slug:book_id>/new_lease/', views.new_lease,
+        'librarian/books/<slug:book_id>/new_lease/',
+        views.LeaseCreateView.as_view(),
         name='new_lease'),
     path('librarian/leases/', views.LeaseListView.as_view(), name='leases'),
     path(

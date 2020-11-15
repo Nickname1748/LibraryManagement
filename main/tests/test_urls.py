@@ -92,7 +92,7 @@ class UrlsTests(SimpleTestCase):
         main:new_book URL resolves to new_book view.
         """
         url = reverse('main:new_book')
-        self.assertEqual(resolve(url).func, views.new_book)
+        self.assertEqual(resolve(url).func.view_class, views.BookCreateView)
 
     def test_book_list_view_resolves(self):
         """
@@ -113,7 +113,7 @@ class UrlsTests(SimpleTestCase):
         main:new_lease URL resolves to new_lease view.
         """
         url = reverse('main:new_lease', args=['9780000000002'])
-        self.assertEqual(resolve(url).func, views.new_lease)
+        self.assertEqual(resolve(url).func.view_class, views.LeaseCreateView)
 
     def test_lease_list_view_resolves(self):
         """
