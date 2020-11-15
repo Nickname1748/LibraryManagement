@@ -9993,11 +9993,11 @@ a.text-secondary:hover, a.text-secondary:focus {
   color: #494f54 !important;
 }
 
-.text-success {
+.text-success, .returned {
   color: #28a745 !important;
 }
 
-a.text-success:hover, a.text-success:focus {
+a.text-success:hover, a.returned:hover, a.text-success:focus, a.returned:focus {
   color: #19692c !important;
 }
 

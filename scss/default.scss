@@ -122,6 +122,10 @@ footer {
     @extend .justify-content-end;
 }
 
+.returned {
+    @extend .text-success;
+}
+
 .expiring {
     @extend .text-warning;
 }

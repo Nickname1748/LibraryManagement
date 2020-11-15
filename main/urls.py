@@ -134,6 +134,10 @@ urlpatterns = [
         name="activate_librarian",
     ),
     path('student/', views.student, name='student'),
+    path(
+        'student/lease_history',
+        views.LeaseHistoryView.as_view(),
+        name='lease_history'),
     path('librarian/', views.librarian, name='librarian'),
     path('librarian/books/', views.BookListView.as_view(), name='books'),
     path(

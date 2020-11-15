@@ -1,11 +1,11 @@
 {% extends 'main/base.html' %}
 
 {% block title %}
-Выдачи книг
+История
 {% endblock %}
 {% block content %}
-    <a href="{% url 'main:librarian' %}" class="btn-more">Назад</a>
-    <h1>Выдачи книг</h1>
+    <a href="{% url 'main:student' %}" class="btn-more">Назад</a>
+    <h1>История</h1>
     <form method="GET">
         <div class="form-group">
             <label for="query">Поиск</label>
@@ -17,7 +17,7 @@
         {% include 'main/paginator.html' %}
         <div class="card-list">
             {% for lease in lease_list %}
-                {% include 'main/lease_card.html' %}
+                {% include 'main/lease_card_student.html' %}
             {% endfor %}
         </div>
         {% include 'main/paginator.html' %}

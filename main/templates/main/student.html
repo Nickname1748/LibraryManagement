@@ -6,26 +6,14 @@
 {% block content %}
     <h1>Личный кабинет</h1>
     <h2>Выдачи книг</h2>
+    <a href="{% url 'main:lease_history' %}" class="btn-more"><i class="fas fa-history mr-2"></i>История</a>
     <div class="card-list">
         {% if active_lease_list %}
             {% for lease in active_lease_list %}
-                <div class="card">
-                    <img class="card-img-top" src="https://pictures.abebooks.com/isbn/{{ lease.book.isbn }}-us.jpg" onerror="imgError(this);">
-                    <div class="card-contents">
-                        <div class="card-text">
-                            {% if lease.is_expired %}
-                            <p><i class="fas fa-book mr-2"></i>{{ lease.book.name }}<br><span class="expired"><i class="fas fa-calendar-day mr-2"></i>{{ lease.expire_date }}</span></p>
-                            {% elif lease.is_expiring %}
-                            <p><i class="fas fa-book mr-2"></i>{{ lease.book.name }}<br><span class="expiring"><i class="fas fa-calendar-day mr-2"></i>{{ lease.expire_date }}</span></p>
-                            {% else %}
-                            <p><i class="fas fa-book mr-2"></i>{{ lease.book.name }}<br><i class="fas fa-calendar-day mr-2"></i>{{ lease.expire_date }}</p>
-                            {% endif %}
-                        </div>
-                        <!-- <a href="#" class="card-btn">Подробнее</a> -->
-                    </div>
-                </div>
+                {% include 'main/lease_card_student.html' %}
             {% endfor %}
+        {% else %}
+        <p>На данный момент нет активных выдачей.</p>
         {% endif %}
     </div>
-    <!-- <a href="#" class="btn-action">Все выдачи</a> -->
 {% endblock %}

@@ -143,3 +143,15 @@ class Lease(models.Model):
         if self.expire_date < soon:
             return True
         return False
+
+    def status(self):
+        """
+        Returns lease status in human format.
+        """
+        if not self.is_active():
+            return gettext_lazy("Returned")
+        if self.is_expired():
+            return gettext_lazy("Expired")
+        if self.is_expiring():
+            return gettext_lazy("Expiring")
+        return gettext_lazy("Active")

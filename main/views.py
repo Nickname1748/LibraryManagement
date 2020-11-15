@@ -284,6 +284,34 @@ def student(request):
     return render(request, 'main/student.html', context=context)
 
 
+@method_decorator(group_required('Student'), name='dispatch')
+class LeaseHistoryView(generic.ListView):
+    """
+    Page that shows lease history.
+    """
+    model = Lease
+    paginate_by = 10
+    template_name = 'main/lease_list_student.html'
+
+    def get_queryset(self):
+        try:
+            query = self.request.GET['q']
+        except MultiValueDictKeyError:
+            query = ''
+
+        if query != '':
+            return (
+                self.model.objects
+                .filter(student__username__exact=self.request.user.username)
+                .filter(name__icontains=query)
+                .order_by('-issue_date'))
+
+        return (
+            self.model.objects
+            .filter(student__username__exact=self.request.user.username)
+            .order_by('-issue_date'))
+
+
 @group_required('Librarian')
 def librarian(request):
     """

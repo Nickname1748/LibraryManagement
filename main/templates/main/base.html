@@ -26,7 +26,7 @@
                 {% if user.is_authenticated %}
                 <div>
                     <a href="{% url 'main:profile' %}" class="profile-link"><i class="fas fa-user mr-2"></i>{{ user.get_username }}</a>
-                    <a href="{% url 'main:logout' %}" class="logout-link">Выйти</a>
+                    <a href="{% url 'main:logout' %}" class="logout-link">Выйти<i class="fas fa-sign-out-alt ml-2"></i></a>
                 </div>
                 {% endif %}
             </div>
