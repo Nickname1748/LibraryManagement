@@ -122,6 +122,14 @@ footer {
     @extend .justify-content-end;
 }
 
+.expiring {
+    @extend .text-warning;
+}
+
+.expired {
+    @extend .text-danger;
+}
+
 .card-btn {
     @extend .btn-more;
     @extend .stretched-link;

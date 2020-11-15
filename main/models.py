@@ -23,6 +23,7 @@ from isbn_field import ISBNField
 from stdnum import isbn
 
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
@@ -69,7 +70,7 @@ class Book(models.Model):
 
     def is_active(self):
         """
-        Returns True if count is greater than 0. Otherwise returnes
+        Returns True if count is greater than 0. Otherwise returns
         False.
         """
         return self.count > 0
@@ -86,7 +87,7 @@ class Book(models.Model):
     def is_available(self):
         """
         Returns True if self.available_count() is greater than 0.
-        Otherwise returnes False.
+        Otherwise returns False.
         """
         return self.count > 0 and self.available_count() > 0
 
@@ -115,6 +116,30 @@ class Lease(models.Model):
     def is_active(self):
         """
         Returns True if book is not returned (self.return_date is Null).
-        Otherwise returnesFalse.
+        Otherwise returns False.
         """
         return not bool(self.return_date)
+
+    def is_expired(self):
+        """
+        Returns True if active and expire date is in the past. Otherwise
+        returns False.
+        """
+        if not self.is_active():
+            return False
+        today = timezone.now().date()
+        if self.expire_date < today:
+            return True
+        return False
+
+    def is_expiring(self):
+        """
+        Returns True if active and expire date is today. Otherwise
+        returns False.
+        """
+        if not self.is_active():
+            return False
+        soon = (timezone.now() + timezone.timedelta(days=2)).date()
+        if self.expire_date < soon:
+            return True
+        return False

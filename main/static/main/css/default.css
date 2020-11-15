@@ -10005,19 +10005,19 @@ a.text-info:hover, a.text-info:focus {
   color: #0f6674 !important;
 }
 
-.text-warning {
+.text-warning, .expiring {
   color: #ffc107 !important;
 }
 
-a.text-warning:hover, a.text-warning:focus {
+a.text-warning:hover, a.expiring:hover, a.text-warning:focus, a.expiring:focus {
   color: #ba8b00 !important;
 }
 
-.text-danger {
+.text-danger, .expired {
   color: #dc3545 !important;
 }
 
-a.text-danger:hover, a.text-danger:focus {
+a.text-danger:hover, a.expired:hover, a.text-danger:focus, a.expired:focus {
   color: #a71d2a !important;
 }
 
