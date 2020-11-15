@@ -318,7 +318,7 @@ class BookCreateView(generic.edit.CreateView):
             repr(form.instance),
             action_flag=ADDITION,
             change_message=gettext_lazy("New book"))
-        return redirect('main:librarian')
+        return redirect('main:book_detail', pk=form.instance.isbn)
 
 
 @method_decorator(group_required('Librarian'), name='dispatch')
@@ -368,7 +368,7 @@ class BookEditView(generic.edit.UpdateView):
             repr(form.instance),
             action_flag=CHANGE,
             change_message=gettext_lazy("Book edited"))
-        return redirect('main:librarian')
+        return redirect('main:book_detail', pk=form.instance.isbn)
 
 
 @method_decorator(group_required('Librarian'), name='dispatch')
@@ -393,7 +393,7 @@ class LeaseCreateView(generic.edit.CreateView):
             repr(form.instance),
             action_flag=ADDITION,
             change_message=gettext_lazy("New lease"))
-        return redirect('main:librarian')
+        return redirect('main:lease_detail', pk=form.instance.id)
 
 
 @method_decorator(group_required('Librarian'), name='dispatch')

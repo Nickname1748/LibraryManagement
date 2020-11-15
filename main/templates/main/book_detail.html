@@ -17,7 +17,7 @@
             {% if book.is_available %}
             <a href="{% url 'main:new_lease' book.isbn %}" class="btn-action">Выдать книгу</a>
             {% endif %}
-            <a href="{% url 'main:edit_book' book.isbn %}" class="btn-action">Изменить книгу</a>
+            <a href="{% url 'main:edit_book' book.isbn %}" class="btn-action">Изменить книгу (списать, добавить)</a>
         </div>
     </div>
 {% endblock %}

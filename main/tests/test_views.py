@@ -619,7 +619,8 @@ class NewBookViewTests(TestCase):
             'authors': 'Author',
             'count': 1
         })
-        self.assertRedirects(response, reverse('main:librarian'))
+        self.assertRedirects(
+            response, reverse('main:book_detail', args=['9780000000002']))
         self.assertEqual(
             Book.objects.get(isbn='9780000000002').name,
             'Test Book')
@@ -872,7 +873,9 @@ class NewLeaseViewTests(TestCase):
             'expire_date': str(
                 (timezone.now()+timezone.timedelta(days=30)).date())
         })
-        self.assertRedirects(response, reverse('main:librarian'))
+        lease_id = Lease.objects.filter(book_id='9780000000002')[0].id
+        self.assertRedirects(
+            response, reverse('main:lease_detail', args=[lease_id]))
         self.assertEqual(
             Lease.objects.get(book='9780000000002').student,
             self.student_user)
