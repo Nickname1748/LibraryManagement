@@ -8,6 +8,13 @@
     {% if form.errors %}
     <div class="alert-warning">Неверный логин или пароль</div>
     {% endif %}
+    {% if next %}
+    {% if user.is_authenticated %}
+    <div class="alert-warning">У вашего аккаунта нет доступа к этой странице. Чтобы продолжить, зайдите под аккаунтом, имеющим доступ.</div>
+    {% else %}
+    <div class="alert-warning">Авторизуйтесь, чтобы увидеть эту страницу.</div>
+    {% endif %}
+{% endif %}
     <form method="POST">
         {% csrf_token %}
         <div class="form-group">
