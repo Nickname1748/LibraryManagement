@@ -35,6 +35,10 @@ class User(AbstractUser):
     """
     email = models.EmailField(unique=True, verbose_name=gettext_lazy("Email"))
 
+    def __str__(self):
+        return "{} {} [{}]".format(
+            self.first_name, self.last_name, self.username)
+
     def role(self):
         """
         Returns role of user.
@@ -67,6 +71,18 @@ class Book(models.Model):
         Returns ISBN in proper format woth dashes.
         """
         return isbn.format(self.isbn)
+
+    def truncated_name(self):
+        """
+        Returns shortened name for displaying in lists and cards.
+        """
+        if len(self.name) <= 100:
+            return self.name
+
+        short_name = self.name[:100]
+        words = short_name.split(' ')[:-1]
+
+        return ' '.join(words) + '…'
 
     def is_active(self):
         """

@@ -9,8 +9,31 @@
     <form method="GET">
         <div class="form-group">
             <label for="query">Поиск</label>
-            <input type="text" class="form-control" id="query" name="q">
+            <input type="text" class="form-control" id="query" name="q" value="{{ q }}">
         </div>
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            <label class="btn btn-more">
+                {% if active == 'all' %}
+                <input type="radio" name="active" id="all" value="all" checked> Все
+                {% else %}
+                <input type="radio" name="active" id="all" value="all"> Все
+                {% endif %}
+            </label>
+            <label class="btn btn-more">
+                {% if active == 'yes' %}
+                <input type="radio" name="active" id="yes" value="yes" checked> Активные
+                {% else %}
+                <input type="radio" name="active" id="yes" value="yes"> Активные
+                {% endif %}
+            </label>
+            <label class="btn btn-more">
+                {% if active == 'no' %}
+                <input type="radio" name="active" id="no" value="no" checked> Возвращённые
+                {% else %}
+                <input type="radio" name="active" id="no" value="no"> Возвращённые
+                {% endif %}
+            </label>
+        </div><br>
         <input type="submit" class="btn-action" value="Найти">
     </form>
     {% if lease_list %}

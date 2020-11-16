@@ -165,3 +165,7 @@ footer {
     @extend .border-dark;
     @extend .text-white;
 }
+
+form {
+    @extend .mb-4
+}

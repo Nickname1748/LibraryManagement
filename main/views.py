@@ -35,9 +35,9 @@ from django.contrib.auth import get_user_model, login
 from django.views import generic
 from django.utils import timezone
 from django.utils.translation import gettext_lazy
-from django.utils.datastructures import MultiValueDictKeyError
 from django.urls import reverse_lazy
 from django.conf import settings
+from django.db.models import Q
 
 from .decorators import group_required
 from .models import Book, Lease
@@ -293,23 +293,36 @@ class LeaseHistoryView(generic.ListView):
     paginate_by = 10
     template_name = 'main/lease_list_student.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'q': self.request.GET.get('q', ''),
+            'active': self.request.GET.get('active', 'all')
+        })
+        return context
+
     def get_queryset(self):
-        try:
-            query = self.request.GET['q']
-        except MultiValueDictKeyError:
-            query = ''
+        query = self.request.GET.get('q', '')
+
+        queryset = (
+            self.model.objects
+            .filter(student__username__exact=self.request.user.username))
 
         if query != '':
-            return (
-                self.model.objects
-                .filter(student__username__exact=self.request.user.username)
-                .filter(name__icontains=query)
-                .order_by('-issue_date'))
+            queryset = queryset.filter(
+                Q(book__name__icontains=query)
+                | Q(book__authors__icontains=query))
 
-        return (
-            self.model.objects
-            .filter(student__username__exact=self.request.user.username)
-            .order_by('-issue_date'))
+        active = self.request.GET.get('active', 'all')
+
+        if active == 'yes':
+            queryset = queryset.filter(return_date__isnull=True)
+        elif active == 'no':
+            queryset = queryset.filter(return_date__isnull=False)
+
+        queryset = queryset.order_by('-issue_date')
+
+        return queryset
 
 
 @group_required('Librarian')
@@ -357,17 +370,26 @@ class BookListView(generic.ListView):
     model = Book
     paginate_by = 10
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'q': self.request.GET.get('q', '')
+        })
+        return context
+
     def get_queryset(self):
-        try:
-            query = self.request.GET['q']
-        except MultiValueDictKeyError:
-            query = ''
+        query = self.request.GET.get('q', '')
+
+        queryset = self.model.objects.all()
 
         if query != '':
-            return self.model.objects.filter(name__icontains=query)\
-                .order_by('-added_date')
+            queryset = queryset.filter(
+                Q(name__icontains=query)
+                | Q(authors__icontains=query))
 
-        return self.model.objects.order_by('-added_date')
+        queryset = queryset.order_by('-added_date')
+
+        return queryset
 
 
 @method_decorator(group_required('Librarian'), name='dispatch')
@@ -407,9 +429,18 @@ class LeaseCreateView(generic.edit.CreateView):
     template_name = 'main/new_lease.html'
     form_class = LeaseCreationForm
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'book_name': Book.objects.get(pk=self.kwargs['book_id']).name
+        })
+        return context
+
     def get_initial(self, **kwargs):
         initial = super().get_initial(**kwargs)
-        initial.update({'book': self.kwargs['book_id']})
+        initial.update({
+            'book': self.kwargs['book_id']
+            })
         return initial
 
     def form_valid(self, form):
@@ -432,18 +463,37 @@ class LeaseListView(generic.ListView):
     model = Lease
     paginate_by = 10
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'q': self.request.GET.get('q', ''),
+            'active': self.request.GET.get('active', 'all')
+        })
+        return context
+
     def get_queryset(self):
-        try:
-            query = self.request.GET['q']
-        except MultiValueDictKeyError:
-            query = ''
+        query = self.request.GET.get('q', '')
+
+        queryset = self.model.objects.all()
 
         if query != '':
-            return self.model.objects\
-                .filter(student__username__icontains=query)\
-                .order_by('expire_date')
+            queryset = queryset.filter(
+                Q(student__username__icontains=query)
+                | Q(student__first_name__icontains=query)
+                | Q(student__last_name__icontains=query)
+                | Q(book__name__icontains=query)
+                | Q(book__authors__icontains=query))
 
-        return self.model.objects.order_by('expire_date')
+        active = self.request.GET.get('active', 'all')
+
+        if active == 'yes':
+            queryset = queryset.filter(return_date__isnull=True)
+        elif active == 'no':
+            queryset = queryset.filter(return_date__isnull=False)
+
+        queryset = queryset.order_by('-issue_date')
+
+        return queryset
 
 
 @method_decorator(group_required('Librarian'), name='dispatch')

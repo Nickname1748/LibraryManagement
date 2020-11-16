@@ -155,3 +155,7 @@ footer {
 .alert-danger, .alert-warning {
     @extend .alert;
 }
+
+form {
+    @extend .mb-4
+}

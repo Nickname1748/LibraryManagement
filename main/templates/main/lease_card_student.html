@@ -3,16 +3,16 @@
     <div class="card-contents">
         <div class="card-text">
             {% if not lease.is_active %}
-            <p><i class="fas fa-book mr-2"></i>{{ lease.book.name }}<br>
+            <p><i class="fas fa-book mr-2"></i>{{ lease.book.truncated_name }}<br>
                 <i class="fas fa-calendar-day mr-2"></i>{{ lease.expire_date }}<br><span class="returned"><i class="fas fa-clock mr-2"></i>{{ lease.status }}</span></p>
             {% elif lease.is_expired %}
-            <p><i class="fas fa-book mr-2"></i>{{ lease.book.name }}<br>
+            <p><i class="fas fa-book mr-2"></i>{{ lease.book.truncated_name }}<br>
                 <span class="expired"><i class="fas fa-calendar-day mr-2"></i>{{ lease.expire_date }}<br><i class="fas fa-clock mr-2"></i>{{ lease.status }}</span></p>
             {% elif lease.is_expiring %}
-            <p><i class="fas fa-book mr-2"></i>{{ lease.book.name }}<br>
+            <p><i class="fas fa-book mr-2"></i>{{ lease.book.truncated_name }}<br>
                 <span class="expiring"><i class="fas fa-calendar-day mr-2"></i>{{ lease.expire_date }}<br><i class="fas fa-clock mr-2"></i>{{ lease.status }}</span></p>
             {% else %}
-            <p><i class="fas fa-book mr-2"></i>{{ lease.book.name }}<br>
+            <p><i class="fas fa-book mr-2"></i>{{ lease.book.truncated_name }}<br>
                 <i class="fas fa-calendar-day mr-2"></i>{{ lease.expire_date }}<br><i class="fas fa-clock mr-2"></i>{{ lease.status }}</p>
             {% endif %}
         </div>

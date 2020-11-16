@@ -12,6 +12,7 @@
             <h1>{{ book.name }}</h1>
             <p>Авторы: {{ book.authors }}</p>
             <p>ISBN: {{ book.formatted_isbn }}</p>
+            <p>Добавлено {{ book.added_date }}</p>
             <p>Общее количество: {{ book.count }}</p>
             <p>Количество доступно: {{ book.available_count }}</p>
             {% if book.is_available %}

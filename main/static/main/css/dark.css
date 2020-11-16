@@ -7785,7 +7785,7 @@ button.card:focus {
   margin-right: 1.5rem !important;
 }
 
-.mb-4,
+.mb-4, form,
 .my-4 {
   margin-bottom: 1.5rem !important;
 }
