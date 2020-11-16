@@ -19,6 +19,19 @@ This module contains custom decorators used in main app.
 """
 
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.admin.views.decorators import staff_member_required
+
+
+def admin_required(view_func=None, redirect_field_name=REDIRECT_FIELD_NAME):
+    """
+    Decorator for views that checks that the user is staff, redirecting
+    to the login page if necessary.
+    """
+    return staff_member_required(
+        view_func=view_func,
+        redirect_field_name=redirect_field_name,
+        login_url='main:login')
 
 
 def group_required(*group_names):

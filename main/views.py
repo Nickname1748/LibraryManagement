@@ -27,7 +27,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Group
@@ -39,7 +38,7 @@ from django.urls import reverse_lazy
 from django.conf import settings
 from django.db.models import Q
 
-from .decorators import group_required
+from .decorators import admin_required, group_required
 from .models import Book, Lease
 from .forms import (
     BookUpdateForm, RegisterForm, LibrarianRegisterForm, EditProfileForm,
@@ -77,7 +76,7 @@ class RegisterView(RegistrationView):
         return new_user
 
 
-@method_decorator(staff_member_required, name='dispatch')
+@method_decorator(admin_required, name='dispatch')
 class LibrarianRegisterView(RegistrationView):
     """
     Register page allows registration of new librarians.
@@ -159,7 +158,7 @@ def edit_profile(request):
     return render(request, 'main/edit_profile.html', context=context)
 
 
-@staff_member_required
+@admin_required
 def admin(request):
     """
     Admin panel.
@@ -169,7 +168,7 @@ def admin(request):
     return render(request, 'main/admin.html', context=context)
 
 
-@method_decorator(staff_member_required, name='dispatch')
+@method_decorator(admin_required, name='dispatch')
 class UserListView(generic.ListView):
     """
     User list view.
@@ -181,7 +180,7 @@ class UserListView(generic.ListView):
         return self.model.objects.order_by('-last_login')
 
 
-@method_decorator(staff_member_required, name='dispatch')
+@method_decorator(admin_required, name='dispatch')
 class AdminProfileView(generic.DetailView):
     """
     Profile view for admins.
@@ -197,7 +196,7 @@ class AdminProfileView(generic.DetailView):
         return context
 
 
-@staff_member_required
+@admin_required
 def block_user(request, user_id):
     """
     Page that allows to block user.
@@ -222,7 +221,7 @@ def block_user(request, user_id):
     })
 
 
-@staff_member_required
+@admin_required
 def unblock_user(request, user_id):
     """
     Page that allows to unblock user.
@@ -247,7 +246,7 @@ def unblock_user(request, user_id):
     })
 
 
-@method_decorator(staff_member_required, name='dispatch')
+@method_decorator(admin_required, name='dispatch')
 class SelectThemeView(generic.edit.FormView):
     """
     Page that allows to change theme.
