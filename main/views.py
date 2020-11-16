@@ -258,15 +258,13 @@ class SelectThemeView(generic.edit.FormView):
 
     def form_valid(self, form):
         base_dir = str(getattr(settings, 'BASE_DIR'))
-        theme_path = (
-            base_dir
-            + '/main/static/main/css/'
-            + form.cleaned_data['theme']
+        theme_file = (
+            form.cleaned_data['theme']
             + '.css')
         active_path = base_dir + '/main/static/main/css/active.css'
         if os.path.exists(active_path):
             os.remove(active_path)
-        os.symlink(theme_path, active_path)
+        os.symlink(theme_file, active_path)
         return super().form_valid(form)
 
 
