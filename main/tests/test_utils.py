@@ -117,7 +117,9 @@ class BuildLeasesSheetFuncTests(TestCase):
         If DB is not empty, leases worksheet is not empty.
         """
         student_user = get_user_model().objects.create_user(
-            **student_credentials)
+            **student_credentials,
+            first_name="Student",
+            last_name="Smith")
         student_group = Group.objects.get_or_create(name="Student")[0]
         student_user.groups.add(student_group)
 
@@ -141,7 +143,7 @@ class BuildLeasesSheetFuncTests(TestCase):
                 .lease_set.get(student=get_user_model()
                 .objects.get_by_natural_key(
                     student_credentials['username'])).id))
-        self.assertEqual(worksheet['B3'].value, "student1")
+        self.assertEqual(worksheet['B3'].value, "Student Smith [student1]")
         self.assertEqual(worksheet['C4'].value, "978-0-00-000002-6")
         self.assertGreater(
             worksheet['D5'].value,

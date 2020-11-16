@@ -320,7 +320,7 @@ class LeaseHistoryView(generic.ListView):
         elif active == 'no':
             queryset = queryset.filter(return_date__isnull=False)
 
-        queryset = queryset.order_by('-issue_date')
+        queryset = queryset.order_by('return_date', 'expire_date')
 
         return queryset
 
@@ -491,7 +491,7 @@ class LeaseListView(generic.ListView):
         elif active == 'no':
             queryset = queryset.filter(return_date__isnull=False)
 
-        queryset = queryset.order_by('-issue_date')
+        queryset = queryset.order_by('return_date', 'expire_date')
 
         return queryset
 
