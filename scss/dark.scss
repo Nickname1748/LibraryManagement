@@ -108,6 +108,10 @@ footer {
     @extend .table-hover;
 }
 
+.log-table {
+    @extend .mt-2
+}
+
 .card-list {
     @extend .d-flex;
     @extend .flex-wrap;

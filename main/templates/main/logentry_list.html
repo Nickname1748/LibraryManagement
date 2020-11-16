@@ -1,0 +1,27 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+Список действий
+{% endblock %}
+{% block content %}
+    <h1>Список действий</h1>
+    <h2>Мониторинг действий</h2>
+    {% include 'main/paginator.html' %}
+    <table class="log-table">
+        <tr>
+            <th>Время</th>
+            <th>Пользователь</th>
+            <th>Объект</th>
+            <th>Сообщение</th>
+        </tr>
+        {% for entry in logentry_list %}
+        <tr>
+            <td>{{ entry.action_time }}</td>
+            <td>{{ entry.user }}</td>
+            <td>{{ entry.object_repr }}</td>
+            <td>{{ entry.change_message }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% include 'main/paginator.html' %}
+{% endblock %}

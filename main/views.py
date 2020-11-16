@@ -168,6 +168,18 @@ def admin(request):
     return render(request, 'main/admin.html', context=context)
 
 
+class LogListView(generic.ListView):
+    """
+    Log list view.
+    """
+    model = LogEntry
+    paginate_by = 15
+    template_name = 'main/logentry_list.html'
+
+    def get_queryset(self):
+        return self.model.objects.order_by('-action_time')
+
+
 @method_decorator(admin_required, name='dispatch')
 class UserListView(generic.ListView):
     """

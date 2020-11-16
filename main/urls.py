@@ -107,6 +107,7 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('admin/', views.admin, name='admin'),
+    path('admin/logs', views.LogListView.as_view(), name='log_list'),
     path('admin/profile/', views.UserListView.as_view(), name='user_list'),
     path(
         'admin/profile/<slug:pk>/',

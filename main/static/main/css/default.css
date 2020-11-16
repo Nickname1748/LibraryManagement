@@ -7723,7 +7723,7 @@ button.bg-dark:focus {
   margin: 0.5rem !important;
 }
 
-.mt-2, .paginator, .help-text, .btn-main, .btn-more, .card-btn, .btn-cancel, .btn-action, h3,
+.mt-2, .log-table, .paginator, .help-text, .btn-main, .btn-more, .card-btn, .btn-cancel, .btn-action, h3,
 .my-2 {
   margin-top: 0.5rem !important;
 }
