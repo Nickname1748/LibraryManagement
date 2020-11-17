@@ -1,13 +1,13 @@
 {% autoescape off %}
-Hello,
+Здравствуйте,
 
-Your account has been successfully created. To activate your account, click the link below.
+Ваш аккаунт был успешно создан. Чтобы активировать его, перейдите по ссылке ниже.
 
 {{ scheme }}://{{ site }}{% url 'main:activate' activation_key=activation_key %}
 
-If you did not register, you can simply ignore this email.
+Если вы не совершали регистрацию, проигнорируйте это письмо.
 
-Sincerely,
-The Website Team
+С уважением,
+Команда Library Management System
 
 {% endautoescape %}
