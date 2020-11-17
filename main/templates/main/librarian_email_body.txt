@@ -1,0 +1,13 @@
+{% autoescape off %}
+Здравствуйте,
+
+Администратор создал ваш аккаунт библиотекаря. Чтобы активировать его, перейдите по ссылке ниже.
+
+{{ scheme }}://{{ site }}{% url 'main:activate_librarian' activation_key=activation_key %}
+
+Ваш временный пароль: {{ password }}
+
+С уважением,
+Команда Library Management System
+
+{% endautoescape %}

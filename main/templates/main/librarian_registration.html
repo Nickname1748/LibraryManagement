@@ -1,0 +1,27 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+Регистрация библиотекаря
+{% endblock %}
+{% block content %}
+
+{% load widget_tweaks %}
+    <h1>Регистрация библиотекаря</h1>
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert alert-danger">{{ error|escape }}</div>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+    <form method="POST" action="{% url 'main:register_librarian' %}">
+        {% csrf_token %}
+        {% for field in form.visible_fields %}
+        <div class="form-group">
+            {{ field.label_tag }}
+            {% render_field field class="form-control" %}
+        </div>
+        {% endfor %}
+        <input type="submit" class="btn-action" value="Зарегистрировать">
+    </form>
+{% endblock %}

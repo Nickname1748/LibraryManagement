@@ -1,46 +1,30 @@
-{% extends "main/base.html" %}
+{% extends 'main/base.html' %}
 
 {% block title %}
 Управление библиотекой
 {% endblock %}
 {% block content %}
-    <div class="container">
-        <h1 class="mt-3">Управление библиотекой</h1>
-        <h2 class="mt-2">Выдачи книг</h2>
-        <div class="d-flex flex-wrap">
-            {% if nearest_lease_list %}
-                {% for lease in nearest_lease_list %}
-                    <div class="card m-2" style="width: 12.8em;">
-                        <img class="card-img-top" src="https://pictures.abebooks.com/isbn/{{ lease.book.isbn }}-us.jpg" onerror="imgError(this);">
-                        <div class="card-body d-flex flex-column justify-content-end">
-                            <div class="card-text">
-                                <p><i class="fas fa-book mr-2"></i>{{ lease.book.name }}<br><i class="fas fa-user mr-2"></i>{{ lease.student }}<br><i class="fas fa-calendar-day mr-2"></i>{{ lease.expire_date }}</p>
-                            </div>
-                            <a href="{% url 'main:lease_detail' lease.id %}" class="btn btn-primary stretched-link">Подробнее</a>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        </div>
-        <a href="{% url 'main:leases' %}" class="btn btn-primary mt-3">Больше выдач</a>
-        <h2 class="mt-2">Библиотечный фонд</h2>
-        <h3 class="mt-2">Последние добавленные книги</h3>
-        <div class="d-flex flex-wrap">
-            {% if latest_book_list %}
-                {% for book in latest_book_list %}
-                    <div class="card m-2" style="width: 12.8em;">
-                        <img class="card-img-top" src="https://pictures.abebooks.com/isbn/{{ book.isbn }}-us.jpg" onerror="imgError(this);">
-                        <div class="card-body d-flex flex-column justify-content-end">
-                            <h4 class="card-title">{{ book.name }}</h4>
-                            <a href="{% url 'main:book_detail' book.isbn %}" class="btn btn-primary stretched-link">Подробнее</a>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        </div>
-        <a href="{% url 'main:books' %}" class="btn btn-primary mt-3">Больше книг</a><br>
-        <a href="{% url 'main:new_book' %}" class="btn btn-primary mt-3">Добавить новую книгу</a>
-        <h3 class="mt-2">Отчёты</h3>
-        <a href="{% url 'main:xlsx_report' %}" class="btn btn-success mt-3">Получить отчёт в формате MS Excel</a>
+    <h1 class="first-header">Управление библиотекой</h1>
+    <h2>Выдачи книг</h2>
+    <div class="card-list">
+        {% if nearest_lease_list %}
+            {% for lease in nearest_lease_list %}
+                {% include 'main/lease_card.html' %}
+            {% endfor %}
+        {% endif %}
     </div>
+    <a href="{% url 'main:leases' %}" class="btn-more">Больше выдач</a>
+    <h2>Библиотечный фонд</h2>
+    <h3>Последние добавленные книги</h3>
+    <div class="card-list">
+        {% if latest_book_list %}
+            {% for book in latest_book_list %}
+                {% include 'main/book_card.html' %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <a href="{% url 'main:books' %}" class="btn-more">Больше книг</a><br>
+    <a href="{% url 'main:new_book' %}" class="btn-action">Добавить новую книгу</a>
+    <h3>Отчёты</h3>
+    <a href="{% url 'main:xlsx_report' %}" class="btn-action">Получить отчёт в формате MS Excel</a>
 {% endblock %}

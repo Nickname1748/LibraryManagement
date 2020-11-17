@@ -1,0 +1,40 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+Список пользователей
+{% endblock %}
+{% block content %}
+    <h1>Список пользователей</h1>
+    {% include 'main/paginator.html' %}
+    <table class="user-table">
+        <tr>
+            <th>Имя пользователя</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Роль</th>
+            <th>Активен?</th>
+            <th>Последний вход</th>
+            <th>Подробнее</th>
+        </tr>
+        {% for entry in user_list %}
+        <tr>
+            <td>{{ entry.username }}</td>
+            <td>{{ entry.first_name }}</td>
+            <td>{{ entry.last_name }}</td>
+            <td>{{ entry.role }}</td>
+            {% if entry.is_active %}
+            <td><i class="fas fa-check"></i></td>
+            {% else %}
+            <td><i class="fas fa-times"></i></td>
+            {% endif %}
+            {% if entry.last_login is None %}
+            <td>Никогда</td>
+            {% else %}
+            <td>{{ entry.last_login }}</td>
+            {% endif %}
+            <td><a href="{% url 'main:admin_profile' entry.id %}" class="btn-more">Подробнее</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% include 'main/paginator.html' %}
+{% endblock %}

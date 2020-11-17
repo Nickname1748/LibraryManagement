@@ -1,0 +1,13 @@
+{% autoescape off %}
+Здравствуйте,
+
+Ваш аккаунт был успешно создан. Чтобы активировать его, перейдите по ссылке ниже.
+
+{{ scheme }}://{{ site }}{% url 'main:activate' activation_key=activation_key %}
+
+Если вы не совершали регистрацию, проигнорируйте это письмо.
+
+С уважением,
+Команда Library Management System
+
+{% endautoescape %}

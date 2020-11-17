@@ -1,4 +1,4 @@
-{% extends "main/base.html" %}
+{% extends 'main/base.html' %}
 
 {% block title %}
 Новая книга
@@ -6,24 +6,22 @@
 {% block content %}
 
 {% load widget_tweaks %}
-    <div class="container">
-        <h1 class="mt-3">Новая книга</h1>
-        {% if form.errors %}
-            {% for field in form %}
-                {% for error in field.errors %}
-                    <div class="alert alert-danger">{{ error|escape }}</div>
-                {% endfor %}
+    <h1>Новая книга</h1>
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert-danger">{{ error|escape }}</div>
             {% endfor %}
-        {% endif %}
-        <form class="mt-3" method="POST" action="{% url 'main:new_book' %}">
-            {% csrf_token %}
-            {% for field in form.visible_fields %}
-            <div class="form-group">
-                {{ field.label_tag }}
-                {% render_field field class="form-control" %}
-            </div>
-            {% endfor %}
-            <input type="submit" class="btn btn-primary" value="Добавить">
-        </form>
-    </div>
+        {% endfor %}
+    {% endif %}
+    <form method="POST">
+        {% csrf_token %}
+        {% for field in form.visible_fields %}
+        <div class="form-group">
+            {{ field.label_tag }}
+            {% render_field field class="form-control" %}
+        </div>
+        {% endfor %}
+        <input type="submit" class="btn-action" value="Добавить">
+    </form>
 {% endblock %}

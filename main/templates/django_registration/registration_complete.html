@@ -1,0 +1,9 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+Успешная регистрация
+{% endblock %}
+{% block content %}
+    <h1>Проверьте вашу почту</h1>
+    <a href="{% url 'main:login' %}" class="btn-action">Войти</a>
+{% endblock %}

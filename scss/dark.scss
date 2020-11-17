@@ -1,0 +1,175 @@
+$theme-colors: (
+    "dark":  #212529
+);
+
+$body-bg: #343a40;
+$body-color: #fff;
+
+// Import Bootstrap
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+
+html {
+    height: 100%;
+}
+
+body {
+    @extend .d-flex;
+    @extend .flex-column;
+    height: 100%;
+}
+
+nav {
+    @extend .navbar;
+    @extend .navbar-expand-sm;
+    @extend .bg-dark;
+    @extend .text-white;
+}
+
+.navbar-logo {
+    height: 2em;
+}
+
+.profile-link {
+    @extend .btn;
+    @extend .btn-dark;
+}
+
+.logout-link {
+    @extend .btn;
+    @extend .btn-light;
+}
+
+.main-container {
+    @extend .container;
+    @extend .flex-grow-1;
+    @extend .pt-4;
+    @extend .pb-4;
+}
+
+h1 {
+    @extend .mt-4;
+}
+
+h2 {
+    @extend .mt-3;
+}
+
+h3 {
+    @extend .mt-2;
+}
+
+.first-header {
+    @extend .mt-0;
+}
+
+.btn-main {
+    @extend .btn;
+    @extend .mt-2;
+}
+
+.btn-action {
+    @extend .btn-main;
+    @extend .btn-primary;
+}
+
+.btn-cancel {
+    @extend .btn-main;
+    @extend .btn-secondary;
+}
+
+.btn-more {
+    @extend .btn-main;
+    @extend .btn-info;
+}
+
+.help-text {
+    @extend .font-weight-light;
+    @extend .mt-2;
+}
+
+footer {
+    @extend .p-4;
+    @extend .bg-dark;
+    @extend .text-white;
+}
+
+.madeby-logo {
+    height: 2em;
+}
+
+.paginator {
+    @extend .mt-2;
+}
+
+.log-table, .user-table {
+    @extend .table;
+    @extend .table-striped;
+    @extend .table-hover;
+}
+
+.log-table {
+    @extend .mt-2
+}
+
+.card-list {
+    @extend .d-flex;
+    @extend .flex-wrap;
+}
+
+.card {
+    @extend .m-2;
+    @extend .bg-dark;
+    width: 12.8em;
+}
+
+.card-contents {
+    @extend .card-body;
+    @extend .d-flex;
+    @extend .flex-column;
+    @extend .justify-content-end;
+}
+
+.returned {
+    @extend .text-success;
+}
+
+.expiring {
+    @extend .text-warning;
+}
+
+.expired {
+    @extend .text-danger;
+}
+
+.card-btn {
+    @extend .btn-more;
+    @extend .stretched-link;
+}
+
+.side-container {
+    @extend .row;
+    @extend .mt-3;
+}
+
+.side-image {
+    @extend .col-md-4;
+}
+
+.side-info {
+    @extend .col-md-8;
+}
+
+.alert-danger, .alert-warning {
+    @extend .alert;
+}
+
+.form-control {
+    @extend .bg-dark;
+    @extend .border-dark;
+    @extend .text-white;
+}
+
+form {
+    @extend .mb-4
+}

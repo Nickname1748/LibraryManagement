@@ -1,22 +1,24 @@
-{% extends "main/base.html" %}
+{% extends 'main/base.html' %}
 
 {% block title %}
 {{ book.name }}
 {% endblock %}
 {% block content %}
-    <div class="container">
-        <a href="{% url 'main:librarian' %}" class="btn btn-primary mt-3">Назад</a>
-        <a href="{% url 'main:books' %}" class="btn btn-primary mt-3">Все книги</a>
-        <div class="row mt-3">
-            <img class="col-md-4" src="https://pictures.abebooks.com/isbn/{{ book.isbn }}-us.jpg" style="width: 20em;" onerror="imgError(this);">
-            <div class="col-md-8">
-                <h1 class="mt-3">{{ book.name }}</h1>
-                <p>Общее количество: {{ book.count }}</p>
-                <p>Количество доступно: {{ book.available_count }}</p>
-                {% if book.available_count > 0 %}
-                <a href="{% url 'main:new_lease' book.isbn %}" class="btn btn-primary">Выдать книгу</a>
-                {% endif %}
-            </div>
+    <a href="{% url 'main:librarian' %}" class="btn-more">Назад</a>
+    <a href="{% url 'main:books' %}" class="btn-more">Все книги</a>
+    <div class="side-container">
+        <img class="side-image" src="https://pictures.abebooks.com/isbn/{{ book.isbn }}-us.jpg" onerror="imgError(this);">
+        <div class="side-info">
+            <h1>{{ book.name }}</h1>
+            <p>Авторы: {{ book.authors }}</p>
+            <p>ISBN: {{ book.formatted_isbn }}</p>
+            <p>Добавлено {{ book.added_date }}</p>
+            <p>Общее количество: {{ book.count }}</p>
+            <p>Количество доступно: {{ book.available_count }}</p>
+            {% if book.is_available %}
+            <a href="{% url 'main:new_lease' book.isbn %}" class="btn-action">Выдать книгу</a>
+            {% endif %}
+            <a href="{% url 'main:edit_book' book.isbn %}" class="btn-action">Изменить книгу (списать, добавить)</a>
         </div>
     </div>
 {% endblock %}

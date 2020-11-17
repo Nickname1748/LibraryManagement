@@ -3,11 +3,12 @@
 <html lang="ru">
     <head>
         <meta charset="UTF-8">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous"> -->
+        <link rel="stylesheet" href="{% static 'main/css/active.css' %}">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{% block title %}{% endblock %}</title>
     </head>
-    <body class="pb-4">
+    <body>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
@@ -19,17 +20,22 @@
                 return true;
             }
         </script>
-        <nav class="navbar navbar-expand-sm bg-dark text-white">
+        <nav>
             <div class="container">
-                <div class="navbar-brand"><img src="{% static 'main/LibraryManagementLogoLongInlineDark.png' %}" style="height: 2em;"></div>
+                <div class="navbar-brand"><a href="{% url 'main:index' %}"><img src="{% static 'main/LibraryManagementLogoLongInlineTransparent.png' %}" class="navbar-logo"></a></div>
                 {% if user.is_authenticated %}
                 <div>
-                    <i class="fas fa-user mr-2"></i>{{ user.get_username }}
-                    <a href="{% url 'main:logout' %}" class="btn btn-light ml-2">Выйти</a>
+                    <a href="{% url 'main:profile' %}" class="profile-link"><i class="fas fa-user mr-2"></i>{{ user }}</a>
+                    <a href="{% url 'main:logout' %}" class="logout-link">Выйти<i class="fas fa-sign-out-alt ml-2"></i></a>
                 </div>
                 {% endif %}
             </div>
         </nav>
-        {% block content %}{% endblock %}
+        <div class="main-container">{% block content %}{% endblock %}</div>
+        <footer>
+            <div class="container">
+                <h4><img src="{% static 'main/ByNicknameLogoTransparent.png' %}" class="madeby-logo"></h4>
+            </div>
+        </footer>
     </body>
 </html>

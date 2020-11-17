@@ -19,8 +19,9 @@ This module contains admin inclusions of main app.
 """
 
 from django.contrib import admin
+
 from .models import Book, Lease
 
-# Register your models here.
+
 admin.site.register(Book)
 admin.site.register(Lease)

@@ -23,7 +23,9 @@ from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
-from main.models import Book, Lease
+from main.models import Book
+
+from .utils import student_credentials, create_student_lease
 
 
 class BookModelTests(TestCase):
@@ -42,12 +44,8 @@ class BookModelTests(TestCase):
             name='Test Book 2',
             count=0)
 
-        self.student_credentials = {
-            'username': 'student1',
-            'password': 'testpass'
-        }
         student_user = get_user_model().objects.create_user(
-            **self.student_credentials)
+            **student_credentials)
         group = Group.objects.get_or_create(name="Student")[0]
         student_user.groups.add(group)
 
@@ -73,11 +71,7 @@ class BookModelTests(TestCase):
         """
         If 1 book is available, 1 is returned.
         """
-        Lease.objects.create(
-            student=get_user_model().objects.get_by_natural_key(
-                self.student_credentials['username']),
-            book=Book.objects.get(pk='9780000000002'),
-            expire_date=timezone.now() + timezone.timedelta(days=30))
+        create_student_lease('9780000000002')
         self.assertEqual(self.book1.available_count(), 1)
 
     def test_book_available_count_when_none_available(self):
@@ -85,11 +79,7 @@ class BookModelTests(TestCase):
         If no books are available, 0 is returned.
         """
         for _ in range(2):
-            Lease.objects.create(
-                student=get_user_model().objects.get_by_natural_key(
-                    self.student_credentials['username']),
-                book=Book.objects.get(pk='9780000000002'),
-                expire_date=timezone.now() + timezone.timedelta(days=30))
+            create_student_lease('9780000000002')
         self.assertEqual(self.book1.available_count(), 0)
 
     def test_book_is_available_when_two_available(self):
@@ -102,11 +92,7 @@ class BookModelTests(TestCase):
         """
         If 1 book is available, true is returned.
         """
-        Lease.objects.create(
-            student=get_user_model().objects.get_by_natural_key(
-                self.student_credentials['username']),
-            book=Book.objects.get(pk='9780000000002'),
-            expire_date=timezone.now() + timezone.timedelta(days=30))
+        create_student_lease('9780000000002')
         self.assertTrue(self.book1.is_available())
 
     def test_book_is_available_when_none_available(self):
@@ -114,11 +100,7 @@ class BookModelTests(TestCase):
         If no books are available, false is returned.
         """
         for _ in range(2):
-            Lease.objects.create(
-                student=get_user_model().objects.get_by_natural_key(
-                    self.student_credentials['username']),
-                book=Book.objects.get(pk='9780000000002'),
-                expire_date=timezone.now() + timezone.timedelta(days=30))
+            create_student_lease('9780000000002')
         self.assertFalse(self.book1.is_available())
 
 
@@ -133,20 +115,12 @@ class LeaseModelTests(TestCase):
             name='Test Book',
             count=2)
 
-        student_credentials = {
-            'username': 'student1',
-            'password': 'testpass'
-        }
         student_user = get_user_model().objects.create_user(
             **student_credentials)
         group = Group.objects.get_or_create(name="Student")[0]
         student_user.groups.add(group)
 
-        self.lease = Lease.objects.create(
-            student=get_user_model().objects.get_by_natural_key(
-                student_credentials['username']),
-            book=Book.objects.get(pk='9780000000002'),
-            expire_date=timezone.now() + timezone.timedelta(days=30))
+        self.lease = create_student_lease('9780000000002')
 
     def test_lease_is_active_on_active_lease(self):
         """

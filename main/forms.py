@@ -18,23 +18,102 @@
 This module contains all forms of main app.
 """
 
-from django import forms
-from django.core.validators import MinValueValidator
-
 import stdnum.isbn
+from django_registration.forms import RegistrationForm
+
+from django import forms
+from django.utils import timezone
+from django.utils.translation import gettext as _, ngettext
+from django.core.validators import MinValueValidator
+from django.contrib.auth import get_user_model
+
 
 from .models import Book, Lease
+
+
+class RegisterForm(RegistrationForm):
+    """
+    The form used for user registration.
+    """
+    first_name = forms.CharField(max_length=30, label=_("First name"))
+    last_name = forms.CharField(max_length=30,  label=_("Last name"))
+    email = forms.EmailField(label=_("Email"))
+
+    class Meta:
+        model = get_user_model()
+        fields = [
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+            'password1',
+            'password2'
+        ]
+
+
+class LibrarianRegisterForm(RegistrationForm):
+    """
+    The form used for librarian registration.
+    """
+    first_name = forms.CharField(max_length=30, label=_("First name"))
+    last_name = forms.CharField(max_length=30,  label=_("Last name"))
+    email = forms.EmailField(label=_("Email"))
+
+    class Meta:
+        model = get_user_model()
+        fields = [
+            'username',
+            'first_name',
+            'last_name',
+            'email'
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['password1'].widget = forms.HiddenInput()
+        self.fields['password2'].widget = forms.HiddenInput()
+        self.fields['password1'].required = False
+        self.fields['password2'].required = False
+
+
+class EditProfileForm(forms.ModelForm):
+    """
+    The form used to edit profile.
+    """
+
+    class Meta:
+        model = get_user_model()
+        fields = [
+            'username',
+            'first_name',
+            'last_name',
+            'email'
+        ]
+
+
+THEMES = (
+    ('default', _("Light (Default)")),
+    ('dark', _("Dark"))
+)
+
+
+class ThemeSelectionForm(forms.Form):
+    """
+    The form which allows to select visual theme.
+    """
+    theme = forms.ChoiceField(choices=THEMES)
 
 
 class BookCreationForm(forms.ModelForm):
     """
     The form which allows to create new Book instance.
     """
-    count = forms.IntegerField(validators=[MinValueValidator(1)], min_value=1)
+    count = forms.IntegerField(
+        validators=[MinValueValidator(1)], min_value=1, label=_("Count"))
 
     class Meta:
         model = Book
-        fields = ['isbn', 'name', 'count']
+        fields = ['isbn', 'name', 'authors', 'count']
 
     def clean_isbn(self):
         """
@@ -43,10 +122,55 @@ class BookCreationForm(forms.ModelForm):
         return stdnum.isbn.to_isbn13(self.cleaned_data['isbn'])
 
 
+class BookUpdateForm(forms.ModelForm):
+    """
+    The form which allows to update a Book instance.
+    """
+    count = forms.IntegerField(
+        validators=[MinValueValidator(0)], min_value=0, label=_("Count"))
+
+    class Meta:
+        model = Book
+        fields = ['isbn', 'name', 'authors', 'count']
+
+    def clean_isbn(self):
+        """
+        ISBN passed to model must be in ISBN-13 format.
+        """
+        return stdnum.isbn.to_isbn13(self.cleaned_data['isbn'])
+
+    def clean_count(self):
+        """
+        Count must be not less than leased book count.
+        """
+        count = self.cleaned_data['count']
+        try:
+            book_isbn = self.cleaned_data['isbn']
+        except KeyError:
+            raise forms.ValidationError(_('No ISBN is sent')) from None
+        if Book.objects.filter(pk=book_isbn).exists():
+            book = Book.objects.get(pk=book_isbn)
+            lease_count = book.lease_set.filter(return_date__isnull=True)\
+                .count()
+            if count < lease_count:
+                raise forms.ValidationError(
+                    (ngettext(
+                        '{0} book is leased, '
+                        'so minimum allowed book count is {0}',
+                        '{0} books are leased, '
+                        'so minimum allowed book count is {0}',
+                        lease_count))
+                    .format(lease_count))
+        return count
+
+
 class LeaseCreationForm(forms.ModelForm):
     """
     The form which allows to create new Lease instance.
     """
+    student = forms.ModelChoiceField(
+        queryset=get_user_model().objects.filter(groups__name='Student'),
+        label=_("Student"))
 
     class Meta:
         model = Lease
@@ -58,5 +182,14 @@ class LeaseCreationForm(forms.ModelForm):
         """
         book = self.cleaned_data['book']
         if book.available_count() <= 0:
-            raise forms.ValidationError('Book is not available')
+            raise forms.ValidationError(_('Book is not available for leasing'))
         return book
+
+    def clean_expire_date(self):
+        """
+        Expire date must be in future.
+        """
+        expire_date = self.cleaned_data['expire_date']
+        if expire_date <= timezone.now().date():
+            raise forms.ValidationError(_('Expire date must be in future'))
+        return expire_date

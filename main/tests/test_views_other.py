@@ -26,75 +26,9 @@ from django.contrib.auth.models import Group
 
 from main.models import Book, Lease
 
-
-class IndexViewTests(TestCase):
-    """
-    Tests checking index view functionality.
-    """
-
-    def setUp(self):
-        self.credentials = {
-            'username': 'testuser',
-            'password': 'testpass'
-        }
-        self.user = get_user_model().objects.create_user(**self.credentials)
-        self.url = reverse('main:index')
-
-    def test_index_view_get_no_login(self):
-        """
-        If user is not authenticated, he is redirected to login page.
-        """
-        response = self.client.get(self.url)
-        self.assertRedirects(
-            response,
-            reverse('main:login') + '?next=' + self.url)
-
-    def test_index_view_get_login(self):
-        """
-        If user is authenticated, his username is shown.
-        """
-        self.client.login(**self.credentials)
-        response = self.client.get(self.url)
-        self.assertContains(response, self.user.username)
-
-
-class RegisterViewTests(TestCase):
-    """
-    Tests checking register view functionality.
-    """
-
-    def setUp(self):
-        self.url = reverse('main:register')
-
-    def test_register_view_get(self):
-        """
-        If GET request is sent, register form is shown.
-        """
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'registration/register.html')
-
-    def test_register_view_post_adds_new_user(self):
-        """
-        If valid POST request is sent, new Student user is added.
-        """
-        response = self.client.post(self.url, {
-            'username': 'testuser1',
-            'password1': 'sdfkjhsdaofoih',
-            'password2': 'sdfkjhsdaofoih'
-        })
-        self.assertRedirects(response, reverse('main:index'))
-        self.assertIn(
-            Group.objects.get(name='Student'),
-            get_user_model().objects.get(username='testuser1').groups.all())
-
-    def test_register_view_post_invalid_fails(self):
-        """
-        If invalid POST request is sent, errors are shown.
-        """
-        response = self.client.post(self.url, {})
-        self.assertEqual(response.status_code, 200)
-        self.assertGreater(len(response.context['form'].errors), 0)
+from .utils import (
+    isbn_list_6, isbn_list_3_1, isbn_list_3_2, student_credentials,
+    create_student_lease)
 
 
 class StudentViewTests(TestCase):
@@ -107,14 +41,13 @@ class StudentViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        get_user_model().objects.create_user(**self.credentials)
+        get_user_model().objects.create_user(
+            **self.credentials,
+            email='test@example.com')
 
-        self.student_credentials = {
-            'username': 'student1',
-            'password': 'testpass'
-        }
         student_user = get_user_model().objects.create_user(
-            **self.student_credentials)
+            **student_credentials,
+            email='student@example.com')
         student_group = Group.objects.get_or_create(name="Student")[0]
         student_user.groups.add(student_group)
 
@@ -123,20 +56,13 @@ class StudentViewTests(TestCase):
             'password': 'testpass'
         }
         another_student_user = get_user_model().objects.create_user(
-            **self.another_student_credentials)
+            **self.another_student_credentials,
+            email='student2@example.com')
         another_student_user.groups.add(student_group)
 
-        isbn_list = [
-            '9780000000002',
-            '9780000000019',
-            '9780000000026',
-            '9780000000033',
-            '9780000000040',
-            '9780000000057'
-        ]
-        for isbn in isbn_list:
+        for isbn in isbn_list_6:
             Book.objects.create(
-                isbn=isbn, name=isbn, count=1)
+                isbn=isbn, name=isbn, authors=isbn, count=1)
 
         self.url = reverse('main:student')
 
@@ -163,7 +89,7 @@ class StudentViewTests(TestCase):
         """
         If user is student, student page is shown.
         """
-        self.client.login(**self.student_credentials)
+        self.client.login(**student_credentials)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'main/student.html')
@@ -172,7 +98,7 @@ class StudentViewTests(TestCase):
         """
         If no leases exist, no leases are shown.
         """
-        self.client.login(**self.student_credentials)
+        self.client.login(**student_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['active_lease_list'], [])
 
@@ -180,22 +106,10 @@ class StudentViewTests(TestCase):
         """
         If 6 leases exist, all 6 leases are shown.
         """
-        isbn_list = [
-            '9780000000002',
-            '9780000000019',
-            '9780000000026',
-            '9780000000033',
-            '9780000000040',
-            '9780000000057'
-        ]
-        for isbn in isbn_list:
-            Lease.objects.create(
-                student=get_user_model().objects.get_by_natural_key(
-                    self.student_credentials['username']),
-                book=Book.objects.get(pk=isbn),
-                expire_date=timezone.now() + timezone.timedelta(days=30))
+        for isbn in isbn_list_6:
+            create_student_lease(isbn)
 
-        self.client.login(**self.student_credentials)
+        self.client.login(**student_credentials)
         response = self.client.get(self.url)
         self.assertEqual(response.context['active_lease_list'].count(), 6)
         self.assertEqual(
@@ -209,22 +123,14 @@ class StudentViewTests(TestCase):
         """
         If only another student leases exist, no leases are shown.
         """
-        isbn_list = [
-            '9780000000002',
-            '9780000000019',
-            '9780000000026',
-            '9780000000033',
-            '9780000000040',
-            '9780000000057'
-        ]
-        for isbn in isbn_list:
+        for isbn in isbn_list_6:
             Lease.objects.create(
                 student=get_user_model().objects.get_by_natural_key(
                     self.another_student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=timezone.now() + timezone.timedelta(days=30))
 
-        self.client.login(**self.student_credentials)
+        self.client.login(**student_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['active_lease_list'], [])
 
@@ -233,30 +139,16 @@ class StudentViewTests(TestCase):
         If 3 current student leases exist, only these 3 leases are
         shown.
         """
-        isbn_list = [
-            '9780000000002',
-            '9780000000019',
-            '9780000000026'
-        ]
-        another_isbn_list = [
-            '9780000000033',
-            '9780000000040',
-            '9780000000057'
-        ]
-        for isbn in isbn_list:
-            Lease.objects.create(
-                student=get_user_model().objects.get_by_natural_key(
-                    self.student_credentials['username']),
-                book=Book.objects.get(pk=isbn),
-                expire_date=timezone.now() + timezone.timedelta(days=30))
-        for isbn in another_isbn_list:
+        for isbn in isbn_list_3_1:
+            create_student_lease(isbn)
+        for isbn in isbn_list_3_2:
             Lease.objects.create(
                 student=get_user_model().objects.get_by_natural_key(
                     self.another_student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=timezone.now() + timezone.timedelta(days=30))
 
-        self.client.login(**self.student_credentials)
+        self.client.login(**student_credentials)
         response = self.client.get(self.url)
         self.assertEqual(response.context['active_lease_list'].count(), 3)
         self.assertEqual(
@@ -270,23 +162,15 @@ class StudentViewTests(TestCase):
         """
         If all leases are returned, no leases are shown.
         """
-        isbn_list = [
-            '9780000000002',
-            '9780000000019',
-            '9780000000026',
-            '9780000000033',
-            '9780000000040',
-            '9780000000057'
-        ]
-        for isbn in isbn_list:
+        for isbn in isbn_list_6:
             Lease.objects.create(
                 student=get_user_model().objects.get_by_natural_key(
-                    self.student_credentials['username']),
+                    student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=timezone.now() + timezone.timedelta(days=30),
                 return_date=timezone.now())
 
-        self.client.login(**self.student_credentials)
+        self.client.login(**student_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['active_lease_list'], [])
 
@@ -294,31 +178,17 @@ class StudentViewTests(TestCase):
         """
         If 3 active leases exist, only these 3 leases are shown.
         """
-        isbn_list = [
-            '9780000000002',
-            '9780000000019',
-            '9780000000026'
-        ]
-        another_isbn_list = [
-            '9780000000033',
-            '9780000000040',
-            '9780000000057'
-        ]
-        for isbn in isbn_list:
+        for isbn in isbn_list_3_1:
+            create_student_lease(isbn)
+        for isbn in isbn_list_3_2:
             Lease.objects.create(
                 student=get_user_model().objects.get_by_natural_key(
-                    self.student_credentials['username']),
-                book=Book.objects.get(pk=isbn),
-                expire_date=timezone.now() + timezone.timedelta(days=30))
-        for isbn in another_isbn_list:
-            Lease.objects.create(
-                student=get_user_model().objects.get_by_natural_key(
-                    self.student_credentials['username']),
+                    student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=timezone.now() + timezone.timedelta(days=30),
                 return_date=timezone.now())
 
-        self.client.login(**self.student_credentials)
+        self.client.login(**student_credentials)
         response = self.client.get(self.url)
         self.assertEqual(response.context['active_lease_list'].count(), 3)
         self.assertEqual(
@@ -332,24 +202,16 @@ class StudentViewTests(TestCase):
         """
         Leases are shown in expire date order.
         """
-        isbn_list = [
-            '9780000000002',
-            '9780000000019',
-            '9780000000026',
-            '9780000000033',
-            '9780000000040',
-            '9780000000057'
-        ]
-        for i, isbn in enumerate(isbn_list):
+        for i, isbn in enumerate(isbn_list_6):
             Lease.objects.create(
                 student=get_user_model().objects.get_by_natural_key(
-                    self.student_credentials['username']),
+                    student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
-                expire_date=
+                expire_date=(
                     timezone.now()
-                    + timezone.timedelta(days=30-i))
+                    + timezone.timedelta(days=30-i)))
 
-        self.client.login(**self.student_credentials)
+        self.client.login(**student_credentials)
         response = self.client.get(self.url)
         self.assertEqual(response.context['active_lease_list'].count(), 6)
         self.assertEqual(
@@ -373,14 +235,13 @@ class LibrarianViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        get_user_model().objects.create_user(**self.credentials)
+        get_user_model().objects.create_user(
+            **self.credentials,
+            email='test@example.com')
 
-        self.student_credentials = {
-            'username': 'student1',
-            'password': 'testpass'
-        }
         student_user = get_user_model().objects.create_user(
-            **self.student_credentials)
+            **student_credentials,
+            email='student@example.com')
         student_group = Group.objects.get_or_create(name="Student")[0]
         student_user.groups.add(student_group)
 
@@ -389,7 +250,8 @@ class LibrarianViewTests(TestCase):
             'password': 'testpass'
         }
         librarian_user = get_user_model().objects.create_user(
-            **self.librarian_credentials)
+            **self.librarian_credentials,
+            email='librarian@example.com')
         librarian_group = Group.objects.get_or_create(name="Librarian")[0]
         librarian_user.groups.add(librarian_group)
 
@@ -435,45 +297,32 @@ class LibrarianViewTests(TestCase):
         """
         If 3 books exist, all 3 books are shown.
         """
-        isbn_list = [
-            '9780000000002',
-            '9780000000019',
-            '9780000000026'
-        ]
-        for isbn in isbn_list:
-            Book.objects.create(isbn=isbn, name=isbn, count=1)
+        for isbn in isbn_list_3_1:
+            Book.objects.create(isbn=isbn, name=isbn, authors=isbn, count=1)
 
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['latest_book_list'], [
-            '<Book: Book object (9780000000026)>',
-            '<Book: Book object (9780000000019)>',
-            '<Book: Book object (9780000000002)>'
+            '<Book: 9780000000026 [9780000000026]>',
+            '<Book: 9780000000019 [9780000000019]>',
+            '<Book: 9780000000002 [9780000000002]>'
         ])
 
     def test_librarian_view_get_six_books(self):
         """
         If 6 books exist, 5 last created books are shown.
         """
-        isbn_list = [
-            '9780000000002',
-            '9780000000019',
-            '9780000000026',
-            '9780000000033',
-            '9780000000040',
-            '9780000000057'
-        ]
-        for isbn in isbn_list:
-            Book.objects.create(isbn=isbn, name=isbn, count=1)
+        for isbn in isbn_list_6:
+            Book.objects.create(isbn=isbn, name=isbn, authors=isbn, count=1)
 
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['latest_book_list'], [
-            '<Book: Book object (9780000000057)>',
-            '<Book: Book object (9780000000040)>',
-            '<Book: Book object (9780000000033)>',
-            '<Book: Book object (9780000000026)>',
-            '<Book: Book object (9780000000019)>'
+            '<Book: 9780000000057 [9780000000057]>',
+            '<Book: 9780000000040 [9780000000040]>',
+            '<Book: 9780000000033 [9780000000033]>',
+            '<Book: 9780000000026 [9780000000026]>',
+            '<Book: 9780000000019 [9780000000019]>'
         ])
 
     def test_librarian_view_get_no_leases(self):
@@ -488,18 +337,9 @@ class LibrarianViewTests(TestCase):
         """
         If 3 leases exist, all 3 leases are shown.
         """
-        isbn_list = [
-            '9780000000002',
-            '9780000000019',
-            '9780000000026'
-        ]
-        for isbn in isbn_list:
-            Book.objects.create(isbn=isbn, name=isbn, count=1)
-            Lease.objects.create(
-                student=get_user_model().objects.get_by_natural_key(
-                    self.student_credentials['username']),
-                book=Book.objects.get(pk=isbn),
-                expire_date=timezone.now() + timezone.timedelta(days=30))
+        for isbn in isbn_list_3_1:
+            Book.objects.create(isbn=isbn, name=isbn, authors=isbn, count=1)
+            create_student_lease(isbn)
 
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
@@ -515,21 +355,9 @@ class LibrarianViewTests(TestCase):
         """
         If 6 leases exist, only 5 nearest leases are shown.
         """
-        isbn_list = [
-            '9780000000002',
-            '9780000000019',
-            '9780000000026',
-            '9780000000033',
-            '9780000000040',
-            '9780000000057'
-        ]
-        for isbn in isbn_list:
-            Book.objects.create(isbn=isbn, name=isbn, count=1)
-            Lease.objects.create(
-                student=get_user_model().objects.get_by_natural_key(
-                    self.student_credentials['username']),
-                book=Book.objects.get(pk=isbn),
-                expire_date=timezone.now() + timezone.timedelta(days=30))
+        for isbn in isbn_list_6:
+            Book.objects.create(isbn=isbn, name=isbn, authors=isbn, count=1)
+            create_student_lease(isbn)
 
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
@@ -545,19 +373,11 @@ class LibrarianViewTests(TestCase):
         """
         If all leases are returned, no leases are shown.
         """
-        isbn_list = [
-            '9780000000002',
-            '9780000000019',
-            '9780000000026',
-            '9780000000033',
-            '9780000000040',
-            '9780000000057'
-        ]
-        for isbn in isbn_list:
-            Book.objects.create(isbn=isbn, name=isbn, count=1)
+        for isbn in isbn_list_6:
+            Book.objects.create(isbn=isbn, name=isbn, authors=isbn, count=1)
             Lease.objects.create(
                 student=get_user_model().objects.get_by_natural_key(
-                    self.student_credentials['username']),
+                    student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=timezone.now() + timezone.timedelta(days=30),
                 return_date=timezone.now())
@@ -570,28 +390,14 @@ class LibrarianViewTests(TestCase):
         """
         If 3 active leases exist, only these 3 leases are shown.
         """
-        isbn_list = [
-            '9780000000002',
-            '9780000000019',
-            '9780000000026'
-        ]
-        another_isbn_list = [
-            '9780000000033',
-            '9780000000040',
-            '9780000000057'
-        ]
-        for isbn in isbn_list:
-            Book.objects.create(isbn=isbn, name=isbn, count=1)
+        for isbn in isbn_list_3_1:
+            Book.objects.create(isbn=isbn, name=isbn, authors=isbn, count=1)
+            create_student_lease(isbn)
+        for isbn in isbn_list_3_2:
+            Book.objects.create(isbn=isbn, name=isbn, authors=isbn, count=1)
             Lease.objects.create(
                 student=get_user_model().objects.get_by_natural_key(
-                    self.student_credentials['username']),
-                book=Book.objects.get(pk=isbn),
-                expire_date=timezone.now() + timezone.timedelta(days=30))
-        for isbn in another_isbn_list:
-            Book.objects.create(isbn=isbn, name=isbn, count=1)
-            Lease.objects.create(
-                student=get_user_model().objects.get_by_natural_key(
-                    self.student_credentials['username']),
+                    student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
                 expire_date=timezone.now() + timezone.timedelta(days=30),
                 return_date=timezone.now())
@@ -610,23 +416,15 @@ class LibrarianViewTests(TestCase):
         """
         Leases are shown in expire date order.
         """
-        isbn_list = [
-            '9780000000002',
-            '9780000000019',
-            '9780000000026',
-            '9780000000033',
-            '9780000000040',
-            '9780000000057'
-        ]
-        for i, isbn in enumerate(isbn_list):
-            Book.objects.create(isbn=isbn, name=isbn, count=1)
+        for i, isbn in enumerate(isbn_list_6):
+            Book.objects.create(isbn=isbn, name=isbn, authors=isbn, count=1)
             Lease.objects.create(
                 student=get_user_model().objects.get_by_natural_key(
-                    self.student_credentials['username']),
+                    student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
-                expire_date=
+                expire_date=(
                     timezone.now()
-                    + timezone.timedelta(days=30-i))
+                    + timezone.timedelta(days=30-i)))
 
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
@@ -652,14 +450,17 @@ class NewBookViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        get_user_model().objects.create_user(**self.credentials)
+        get_user_model().objects.create_user(
+            **self.credentials,
+            email='test@example.com')
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
         librarian_user = get_user_model().objects.create_user(
-            **self.librarian_credentials)
+            **self.librarian_credentials,
+            email='librarian@example.com')
         group = Group.objects.get_or_create(name="Librarian")[0]
         librarian_user.groups.add(group)
 
@@ -701,9 +502,11 @@ class NewBookViewTests(TestCase):
         response = self.client.post(self.url, {
             'isbn': '9780000000002',
             'name': 'Test Book',
+            'authors': 'Author',
             'count': 1
         })
-        self.assertRedirects(response, reverse('main:librarian'))
+        self.assertRedirects(
+            response, reverse('main:book_detail', args=['9780000000002']))
         self.assertEqual(
             Book.objects.get(isbn='9780000000002').name,
             'Test Book')
@@ -728,14 +531,17 @@ class BookListViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        get_user_model().objects.create_user(**self.credentials)
+        get_user_model().objects.create_user(
+            **self.credentials,
+            email='test@example.com')
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
         librarian_user = get_user_model().objects.create_user(
-            **self.librarian_credentials)
+            **self.librarian_credentials,
+            email='librarian@example.com')
         group = Group.objects.get_or_create(name="Librarian")[0]
         librarian_user.groups.add(group)
 
@@ -781,48 +587,35 @@ class BookListViewTests(TestCase):
         """
         If 3 books exist, all 3 books are shown.
         """
-        isbn_list = [
-            '9780000000002',
-            '9780000000019',
-            '9780000000026'
-        ]
-        for isbn in isbn_list:
+        for isbn in isbn_list_3_1:
             Book.objects.create(
-                isbn=isbn, name=isbn, count=1)
+                isbn=isbn, name=isbn, authors=isbn, count=1)
 
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['book_list'], [
-            '<Book: Book object (9780000000026)>',
-            '<Book: Book object (9780000000019)>',
-            '<Book: Book object (9780000000002)>'
+            '<Book: 9780000000026 [9780000000026]>',
+            '<Book: 9780000000019 [9780000000019]>',
+            '<Book: 9780000000002 [9780000000002]>'
         ])
 
     def test_book_list_view_get_six_books(self):
         """
         If 6 books exist, all 6 books are shown.
         """
-        isbn_list = [
-            '9780000000002',
-            '9780000000019',
-            '9780000000026',
-            '9780000000033',
-            '9780000000040',
-            '9780000000057'
-        ]
-        for isbn in isbn_list:
+        for isbn in isbn_list_6:
             Book.objects.create(
-                isbn=isbn, name=isbn, count=1)
+                isbn=isbn, name=isbn, authors=isbn, count=1)
 
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
         self.assertQuerysetEqual(response.context['book_list'], [
-            '<Book: Book object (9780000000057)>',
-            '<Book: Book object (9780000000040)>',
-            '<Book: Book object (9780000000033)>',
-            '<Book: Book object (9780000000026)>',
-            '<Book: Book object (9780000000019)>',
-            '<Book: Book object (9780000000002)>'
+            '<Book: 9780000000057 [9780000000057]>',
+            '<Book: 9780000000040 [9780000000040]>',
+            '<Book: 9780000000033 [9780000000033]>',
+            '<Book: 9780000000026 [9780000000026]>',
+            '<Book: 9780000000019 [9780000000019]>',
+            '<Book: 9780000000002 [9780000000002]>'
         ])
 
 
@@ -836,20 +629,24 @@ class BookDetailViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        get_user_model().objects.create_user(**self.credentials)
+        get_user_model().objects.create_user(
+            **self.credentials,
+            email='test@example.com')
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
         librarian_user = get_user_model().objects.create_user(
-            **self.librarian_credentials)
+            **self.librarian_credentials,
+            email='librarian@example.com')
         group = Group.objects.get_or_create(name="Librarian")[0]
         librarian_user.groups.add(group)
 
         Book.objects.create(
             isbn='9780000000002',
             name='Test Book',
+            authors='Author',
             count=1
         )
 
@@ -894,29 +691,30 @@ class NewLeaseViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        get_user_model().objects.create_user(**self.credentials)
+        get_user_model().objects.create_user(
+            **self.credentials,
+            email='test@example.com')
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
         librarian_user = get_user_model().objects.create_user(
-            **self.librarian_credentials)
+            **self.librarian_credentials,
+            email='librarian@example.com')
         librarian_group = Group.objects.get_or_create(name="Librarian")[0]
         librarian_user.groups.add(librarian_group)
 
-        student_credentials = {
-            'username': 'student1',
-            'password': 'testpass'
-        }
         self.student_user = get_user_model().objects.create_user(
-            **student_credentials)
+            **student_credentials,
+            email='student@example.com')
         student_group = Group.objects.get_or_create(name="Student")[0]
         self.student_user.groups.add(student_group)
 
         Book.objects.create(
             isbn='9780000000002',
             name='Test Book',
+            authors='Author',
             count=1
         )
 
@@ -961,7 +759,9 @@ class NewLeaseViewTests(TestCase):
             'expire_date': str(
                 (timezone.now()+timezone.timedelta(days=30)).date())
         })
-        self.assertRedirects(response, reverse('main:librarian'))
+        lease_id = Lease.objects.filter(book_id='9780000000002')[0].id
+        self.assertRedirects(
+            response, reverse('main:lease_detail', args=[lease_id]))
         self.assertEqual(
             Lease.objects.get(book='9780000000002').student,
             self.student_user)
@@ -986,37 +786,29 @@ class LeaseListViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        get_user_model().objects.create_user(**self.credentials)
+        get_user_model().objects.create_user(
+            **self.credentials,
+            email='test@example.com')
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
         librarian_user = get_user_model().objects.create_user(
-            **self.librarian_credentials)
+            **self.librarian_credentials,
+            email='librarian@example.com')
         librarian_group = Group.objects.get_or_create(name="Librarian")[0]
         librarian_user.groups.add(librarian_group)
 
-        self.student_credentials = {
-            'username': 'student1',
-            'password': 'testpass'
-        }
         student_user = get_user_model().objects.create_user(
-            **self.student_credentials)
+            **student_credentials,
+            email='student@example.com')
         student_group = Group.objects.get_or_create(name="Student")[0]
         student_user.groups.add(student_group)
 
-        isbn_list = [
-            '9780000000002',
-            '9780000000019',
-            '9780000000026',
-            '9780000000033',
-            '9780000000040',
-            '9780000000057'
-        ]
-        for isbn in isbn_list:
+        for isbn in isbn_list_6:
             Book.objects.create(
-                isbn=isbn, name=isbn, count=1)
+                isbn=isbn, name=isbn, authors=isbn, count=1)
 
         self.url = reverse('main:leases')
 
@@ -1060,20 +852,8 @@ class LeaseListViewTests(TestCase):
         """
         If 6 leases exist, all 6 leases are shown.
         """
-        isbn_list = [
-            '9780000000002',
-            '9780000000019',
-            '9780000000026',
-            '9780000000033',
-            '9780000000040',
-            '9780000000057'
-        ]
-        for isbn in isbn_list:
-            Lease.objects.create(
-                student=get_user_model().objects.get_by_natural_key(
-                    self.student_credentials['username']),
-                book=Book.objects.get(pk=isbn),
-                expire_date=timezone.now() + timezone.timedelta(days=30))
+        for isbn in isbn_list_6:
+            create_student_lease(isbn)
 
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
@@ -1089,22 +869,14 @@ class LeaseListViewTests(TestCase):
         """
         Leases are shown in expire date order.
         """
-        isbn_list = [
-            '9780000000002',
-            '9780000000019',
-            '9780000000026',
-            '9780000000033',
-            '9780000000040',
-            '9780000000057'
-        ]
-        for i, isbn in enumerate(isbn_list):
+        for i, isbn in enumerate(isbn_list_6):
             Lease.objects.create(
                 student=get_user_model().objects.get_by_natural_key(
-                    self.student_credentials['username']),
+                    student_credentials['username']),
                 book=Book.objects.get(pk=isbn),
-                expire_date=
+                expire_date=(
                     timezone.now()
-                    + timezone.timedelta(days=30-i))
+                    + timezone.timedelta(days=30-i)))
 
         self.client.login(**self.librarian_credentials)
         response = self.client.get(self.url)
@@ -1130,37 +902,34 @@ class LeaseDetailViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        get_user_model().objects.create_user(**self.credentials)
+        get_user_model().objects.create_user(
+            **self.credentials,
+            email='test@example.com')
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
         librarian_user = get_user_model().objects.create_user(
-            **self.librarian_credentials)
+            **self.librarian_credentials,
+            email='librarian@example.com')
         librarian_group = Group.objects.get_or_create(name="Librarian")[0]
         librarian_user.groups.add(librarian_group)
 
-        student_credentials = {
-            'username': 'student1',
-            'password': 'testpass'
-        }
         student_user = get_user_model().objects.create_user(
-            **student_credentials)
+            **student_credentials,
+            email='student@example.com')
         student_group = Group.objects.get_or_create(name="Student")[0]
         student_user.groups.add(student_group)
 
         Book.objects.create(
             isbn='9780000000002',
             name='Test Book',
+            authors='Author',
             count=1
         )
 
-        lease = Lease.objects.create(
-            student=get_user_model().objects.get_by_natural_key(
-                student_credentials['username']),
-            book=Book.objects.get(pk='9780000000002'),
-            expire_date=timezone.now() + timezone.timedelta(days=30))
+        lease = create_student_lease('9780000000002')
 
         self.url = reverse('main:lease_detail', args=[lease.id])
 
@@ -1203,37 +972,34 @@ class ReturnLeaseViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        get_user_model().objects.create_user(**self.credentials)
+        get_user_model().objects.create_user(
+            **self.credentials,
+            email='test@example.com')
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
         librarian_user = get_user_model().objects.create_user(
-            **self.librarian_credentials)
+            **self.librarian_credentials,
+            email='librarian@example.com')
         librarian_group = Group.objects.get_or_create(name="Librarian")[0]
         librarian_user.groups.add(librarian_group)
 
-        student_credentials = {
-            'username': 'student1',
-            'password': 'testpass'
-        }
         student_user = get_user_model().objects.create_user(
-            **student_credentials)
+            **student_credentials,
+            email='student@example.com')
         student_group = Group.objects.get_or_create(name="Student")[0]
         student_user.groups.add(student_group)
 
         Book.objects.create(
             isbn='9780000000002',
             name='Test Book',
+            authors='Author',
             count=1
         )
 
-        self.lease = Lease.objects.create(
-            student=get_user_model().objects.get_by_natural_key(
-                student_credentials['username']),
-            book=Book.objects.get(pk='9780000000002'),
-            expire_date=timezone.now() + timezone.timedelta(days=30))
+        self.lease = create_student_lease('9780000000002')
 
         self.url = reverse('main:return_lease', args=[self.lease.id])
 
@@ -1296,14 +1062,17 @@ class XlsxReportViewTests(TestCase):
             'username': 'testuser',
             'password': 'testpass'
         }
-        get_user_model().objects.create_user(**self.credentials)
+        get_user_model().objects.create_user(
+            **self.credentials,
+            email='test@example.com')
 
         self.librarian_credentials = {
             'username': 'librarian',
             'password': 'testpass'
         }
         librarian_user = get_user_model().objects.create_user(
-            **self.librarian_credentials)
+            **self.librarian_credentials,
+            email='librarian@example.com')
         group = Group.objects.get_or_create(name="Librarian")[0]
         librarian_user.groups.add(group)
 

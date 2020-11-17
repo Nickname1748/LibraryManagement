@@ -1,0 +1,8 @@
+<div class="card">
+    <img class="card-img-top" src="https://pictures.abebooks.com/isbn/{{ book.isbn }}-us.jpg" onerror="imgError(this);">
+    <div class="card-contents">
+        <h5 class="card-title">{{ book.truncated_name }}</h5>
+        <p>{{ book.authors }}</p>
+        <a href="{% url 'main:book_detail' book.isbn %}" class="card-btn">Подробнее</a>
+    </div>
+</div>

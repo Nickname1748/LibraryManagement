@@ -1,0 +1,10 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+Ошибка
+{% endblock %}
+{% block content %}
+    <h1>Ошибка</h1>
+    <p>{{ activation_error }}</p>
+    <a href="{% url 'main:login' %}" class="btn-action">Войти</a>
+{% endblock %}

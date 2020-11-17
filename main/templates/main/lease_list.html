@@ -1,37 +1,50 @@
-{% extends "main/base.html" %}
+{% extends 'main/base.html' %}
 
 {% block title %}
 Выдачи книг
 {% endblock %}
 {% block content %}
-    <div class="container">
-        <a href="{% url 'main:librarian' %}" class="btn btn-primary mt-3">Назад</a>
-        <h1 class="mt-3">Выдачи книг</h1>
-        <form class="mt-3" method="GET">
-            <div class="form-group">
-                <label for="query">Поиск</label>
-                <input type="text" class="form-control" action="{% url 'main:leases' %}" id="query" name="q">
-            </div>
-            <input type="submit" class="btn btn-primary" value="Найти">
-        </form>
-        {% if lease_list %}
-            <div class="d-flex flex-wrap">
-                {% for lease in lease_list %}
-                    {% if lease.is_active %}
-                    <div class="card m-2" style="width: 12.8em;">
-                        <img class="card-img-top" src="https://pictures.abebooks.com/isbn/{{ lease.book.isbn }}-us.jpg" onerror="imgError(this);">
-                        <div class="card-body d-flex flex-column justify-content-end">
-                            <div class="card-text">
-                                <p><i class="fas fa-book mr-2"></i>{{ lease.book.name }}<br><i class="fas fa-user mr-2"></i>{{ lease.student }}<br><i class="fas fa-calendar-day mr-2"></i>{{ lease.expire_date }}</p>
-                            </div>
-                            <a href="{% url 'main:lease_detail' lease.id %}" class="btn btn-primary stretched-link">Подробнее</a>
-                        </div>
-                    </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        {% else %}
-                <p>По вашему запросу выдач не найдено.</p>
-        {% endif %}
-    </div>
+    <a href="{% url 'main:librarian' %}" class="btn-more">Назад</a>
+    <h1>Выдачи книг</h1>
+    <form method="GET">
+        <div class="form-group">
+            <label for="query">Поиск</label>
+            <input type="text" class="form-control" id="query" name="q" value="{{ q }}">
+        </div>
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            <label class="btn btn-more">
+                {% if active == 'all' %}
+                <input type="radio" name="active" id="all" value="all" checked> Все
+                {% else %}
+                <input type="radio" name="active" id="all" value="all"> Все
+                {% endif %}
+            </label>
+            <label class="btn btn-more">
+                {% if active == 'yes' %}
+                <input type="radio" name="active" id="yes" value="yes" checked> Активные
+                {% else %}
+                <input type="radio" name="active" id="yes" value="yes"> Активные
+                {% endif %}
+            </label>
+            <label class="btn btn-more">
+                {% if active == 'no' %}
+                <input type="radio" name="active" id="no" value="no" checked> Возвращённые
+                {% else %}
+                <input type="radio" name="active" id="no" value="no"> Возвращённые
+                {% endif %}
+            </label>
+        </div><br>
+        <input type="submit" class="btn-action" value="Найти">
+    </form>
+    {% if lease_list %}
+        {% include 'main/paginator.html' %}
+        <div class="card-list">
+            {% for lease in lease_list %}
+                {% include 'main/lease_card.html' %}
+            {% endfor %}
+        </div>
+        {% include 'main/paginator.html' %}
+    {% else %}
+            <p>По вашему запросу выдач не найдено.</p>
+    {% endif %}
 {% endblock %}

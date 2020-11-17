@@ -1,0 +1,25 @@
+<div class="card">
+    <img class="card-img-top" src="https://pictures.abebooks.com/isbn/{{ lease.book.isbn }}-us.jpg" onerror="imgError(this);">
+    <div class="card-contents">
+        <div class="card-text">
+            {% if not lease.is_active %}
+            <p><i class="fas fa-book mr-2"></i>{{ lease.book.truncated_name }}<br>
+                <i class="fas fa-user mr-2"></i>{{ lease.student }}<br>
+                <i class="fas fa-calendar-day mr-2"></i>{{ lease.expire_date }}<br><span class="returned"><i class="fas fa-clock mr-2"></i>{{ lease.status }}</span></p>
+            {% elif lease.is_expired %}
+            <p><i class="fas fa-book mr-2"></i>{{ lease.book.truncated_name }}<br>
+                <i class="fas fa-user mr-2"></i>{{ lease.student }}<br>
+                <span class="expired"><i class="fas fa-calendar-day mr-2"></i>{{ lease.expire_date }}<br><i class="fas fa-clock mr-2"></i>{{ lease.status }}</span></p>
+            {% elif lease.is_expiring %}
+            <p><i class="fas fa-book mr-2"></i>{{ lease.book.truncated_name }}<br>
+                <i class="fas fa-user mr-2"></i>{{ lease.student }}<br>
+                <span class="expiring"><i class="fas fa-calendar-day mr-2"></i>{{ lease.expire_date }}<br><i class="fas fa-clock mr-2"></i>{{ lease.status }}</span></p>
+            {% else %}
+            <p><i class="fas fa-book mr-2"></i>{{ lease.book.truncated_name }}<br>
+                <i class="fas fa-user mr-2"></i>{{ lease.student }}<br>
+                <i class="fas fa-calendar-day mr-2"></i>{{ lease.expire_date }}<br><i class="fas fa-clock mr-2"></i>{{ lease.status }}</p>
+            {% endif %}
+        </div>
+        <a href="{% url 'main:lease_detail' lease.id %}" class="card-btn">Подробнее</a>
+    </div>
+</div>

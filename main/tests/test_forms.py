@@ -24,7 +24,9 @@ from django.contrib.auth.models import Group
 from django.utils import timezone
 
 from main.forms import BookCreationForm, LeaseCreationForm
-from main.models import Book, Lease
+from main.models import Book
+
+from .utils import student_credentials, create_student_lease
 
 
 class BookCreationFormTests(TestCase):
@@ -39,6 +41,7 @@ class BookCreationFormTests(TestCase):
         form = BookCreationForm(data={
             'isbn': '9780000000002',
             'name': 'Test Book',
+            'authors': 'Author',
             'count': 1
         })
         self.assertTrue(form.is_valid())
@@ -50,6 +53,7 @@ class BookCreationFormTests(TestCase):
         form = BookCreationForm(data={
             'isbn': '0000000000',
             'name': 'Test Book',
+            'authors': 'Author',
             'count': 1
         })
         self.assertTrue(form.is_valid())
@@ -61,7 +65,7 @@ class BookCreationFormTests(TestCase):
         """
         form = BookCreationForm(data={})
         self.assertFalse(form.is_valid())
-        self.assertEqual(len(form.errors), 3)
+        self.assertEqual(len(form.errors), 4)
 
     def test_book_creation_form_no_isbn(self):
         """
@@ -69,6 +73,7 @@ class BookCreationFormTests(TestCase):
         """
         form = BookCreationForm(data={
             'name': 'Test Book',
+            'authors': 'Author',
             'count': 1
         })
         self.assertFalse(form.is_valid())
@@ -80,6 +85,7 @@ class BookCreationFormTests(TestCase):
         form = BookCreationForm(data={
             'isbn': '9780000000001',
             'name': 'Test Book',
+            'authors': 'Author',
             'count': 1
         })
         self.assertFalse(form.is_valid())
@@ -90,6 +96,7 @@ class BookCreationFormTests(TestCase):
         """
         form = BookCreationForm(data={
             'isbn': '9780000000002',
+            'authors': 'Author',
             'count': 1
         })
         self.assertFalse(form.is_valid())
@@ -100,18 +107,20 @@ class BookCreationFormTests(TestCase):
         """
         form = BookCreationForm(data={
             'isbn': '9780000000002',
-            'name': 'Test Book'
+            'name': 'Test Book',
+            'authors': 'Author'
         })
         self.assertFalse(form.is_valid())
 
-    def test_book_creation_form_count_is_zero(self):
+    def test_book_creation_form_count_is_negative(self):
         """
-        If book count is 0, form is invalid.
+        If book count is negative, form is invalid.
         """
         form = BookCreationForm(data={
             'isbn': '9780000000002',
             'name': 'Test Book',
-            'count': 0
+            'authors': 'Author',
+            'count': -1
         })
         self.assertFalse(form.is_valid())
 
@@ -132,12 +141,8 @@ class LeaseCreationFormTests(TestCase):
             name='Test Book 2',
             count=0)
 
-        self.student_credentials = {
-            'username': 'student1',
-            'password': 'testpass'
-        }
         self.student_user = get_user_model().objects.create_user(
-            **self.student_credentials)
+            **student_credentials)
         group = Group.objects.get_or_create(name="Student")[0]
         self.student_user.groups.add(group)
 
@@ -223,11 +228,7 @@ class LeaseCreationFormTests(TestCase):
         """
         If book is unavailable, form is invalid.
         """
-        Lease.objects.create(
-            student=get_user_model().objects.get_by_natural_key(
-                self.student_credentials['username']),
-            book=Book.objects.get(pk='9780000000002'),
-            expire_date=timezone.now() + timezone.timedelta(days=30))
+        create_student_lease('9780000000002')
 
         form = LeaseCreationForm(data={
             'student': self.student_user.id,

@@ -1,0 +1,10 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+Регистрация закрыта
+{% endblock %}
+{% block content %}
+    <h1>Регистрация закрыта</h1>
+    <p>Попробуйте позже</p>
+    <a href="{% url 'main:login' %}" class="btn-action">Войти</a>
+{% endblock %}
