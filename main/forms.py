@@ -168,6 +168,9 @@ class LeaseCreationForm(forms.ModelForm):
     """
     The form which allows to create new Lease instance.
     """
+    student = forms.ModelChoiceField(
+        queryset=get_user_model().objects.filter(groups__name='Student'),
+        label=_("Student"))
 
     class Meta:
         model = Lease
