@@ -214,6 +214,8 @@ def block_user(request, user_id):
     Page that allows to block user.
     """
     user = get_object_or_404(get_user_model(), pk=user_id)
+    if user == request.user:
+        return redirect('main:admin_profile', pk=user_id)
     if not user.is_active:
         return redirect('main:admin_profile', pk=user_id)
     if request.method == 'POST':
