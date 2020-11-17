@@ -136,7 +136,7 @@ urlpatterns = [
     ),
     path('student/', views.student, name='student'),
     path(
-        'student/lease_history',
+        'student/lease_history/',
         views.LeaseHistoryView.as_view(),
         name='lease_history'),
     path('librarian/', views.librarian, name='librarian'),
