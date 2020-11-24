@@ -30,6 +30,9 @@ from main.models import Book, Lease
 REGISTRATION_SALT = getattr(settings, "REGISTRATION_SALT", "registration")
 
 
+base_dir = str(getattr(settings, 'BASE_DIR'))
+
+
 isbn_list_6 = [
     '9780000000002',
     '9780000000019',
@@ -80,13 +83,13 @@ def create_test_user():
     """
     Creates test user.
     """
-    admin = get_user_model().objects.create_user(
+    user = get_user_model().objects.create_user(
         **test_credentials,
         email='test@example.com',
         first_name='Name',
         last_name='Surname'
     )
-    return admin
+    return user
 
 
 def create_admin_user():
