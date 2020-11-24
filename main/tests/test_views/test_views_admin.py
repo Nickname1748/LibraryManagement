@@ -25,7 +25,7 @@ from django.urls import reverse
 
 from main.tests.utils import (
     create_test_user, create_admin_user, get_user, test_credentials,
-    admin_credentials, base_dir)
+    admin_credentials, BASE_DIR)
 
 
 class AdminViewTests(TestCase):
@@ -340,9 +340,8 @@ class SelectThemeViewTests(TestCase):
     def setUp(self):
         create_admin_user()
 
-        self.path = base_dir + '/main/static/main/css/active.css'
-        if os.path.exists(self.path):
-            os.remove(self.path)
+        self.path = BASE_DIR + '/main/static/main/css/active.css'
+        os.remove(self.path)
 
         self.url = reverse('main:select_theme')
 

@@ -30,7 +30,7 @@ from main.models import Book, Lease
 REGISTRATION_SALT = getattr(settings, "REGISTRATION_SALT", "registration")
 
 
-base_dir = str(getattr(settings, 'BASE_DIR'))
+BASE_DIR = str(getattr(settings, 'BASE_DIR'))
 
 
 isbn_list_6 = [
