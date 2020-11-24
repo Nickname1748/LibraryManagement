@@ -24,7 +24,7 @@ from django.urls import reverse
 from main.tests.utils import (
     check_user_in_group, check_user_is_active, create_inactive_librarian_user,
     create_test_user, create_admin_user, create_librarian_user,
-    create_student_user, generate_activation_key, test_credentials,
+    create_student_user, generate_activation_key, get_user, test_credentials,
     admin_credentials, librarian_credentials, student_credentials)
 
 
@@ -198,3 +198,83 @@ class LibrarianActivationViewTests(TestCase):
         response = self.client.get(self.url)
         self.assertRedirects(response, reverse('main:password_change'))
         self.assertTrue(check_user_is_active('librarian'))
+
+
+class ProfileViewTests(TestCase):
+    """
+    Tests checking profile view functionality.
+    """
+
+    def setUp(self):
+        create_test_user()
+
+        self.url = reverse('main:profile')
+
+    def test_profile_view_get_no_login(self):
+        """
+        If user is not authenticated, he is redirected to login page.
+        """
+        response = self.client.get(self.url)
+        self.assertRedirects(
+            response,
+            reverse('main:login') + '?next=' + self.url)
+
+    def test_profile_view_get_login(self):
+        """
+        If user is authenticated, the profile page is shown.
+        """
+        self.client.login(**test_credentials)
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, 'main/profile.html')
+
+
+class EditProfileViewTests(TestCase):
+    """
+    Tests checking edit profile view functionality.
+    """
+
+    def setUp(self):
+        create_test_user()
+
+        self.url = reverse('main:edit_profile')
+
+    def test_edit_profile_view_get_no_login(self):
+        """
+        If user is not authenticated, he is redirected to login page.
+        """
+        response = self.client.get(self.url)
+        self.assertRedirects(
+            response,
+            reverse('main:login') + '?next=' + self.url)
+
+    def test_edit_profile_view_get_login(self):
+        """
+        If user is authenticated, the edit profile page is shown.
+        """
+        self.client.login(**test_credentials)
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, 'main/edit_profile.html')
+
+    def test_edit_profile_view_post_changes_profile(self):
+        """
+        If valid POST request is sent, profile is edited.
+        """
+        self.client.login(**test_credentials)
+        response = self.client.post(self.url, {
+            'username': 'testuser',
+            'first_name': 'Test',
+            'last_name': 'Testov',
+            'email': 'test@example.com'
+        })
+        self.assertRedirects(response, reverse('main:profile'))
+        self.assertEqual(get_user('testuser').first_name, 'Test')
+        self.assertEqual(get_user('testuser').last_name, 'Testov')
+
+    def test_edit_profile_view_post_invalid_fails(self):
+        """
+        If invalid POST request is sent, errors are shown.
+        """
+        self.client.login(**test_credentials)
+        response = self.client.post(self.url, {})
+        self.assertEqual(response.status_code, 200)
+        self.assertGreater(len(response.context['form'].errors), 0)

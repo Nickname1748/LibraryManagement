@@ -150,21 +150,27 @@ def create_student_user():
     return student
 
 
+def get_user(username):
+    """
+    Returnes user by username.
+    """
+    return get_user_model().objects.get(username=username)
+
+
 def check_user_in_group(username, group):
     """
     Checks if user is a member of group.
     """
     return (
         Group.objects.get(name=group)
-        in get_user_model().objects.get(username=username).groups.all())
+        in get_user(username).groups.all())
 
 
 def check_user_is_active(username):
     """
     Checks if user is active
     """
-    user = get_user_model().objects.get(username=username)
-    return user.is_active
+    return get_user(username).is_active
 
 
 def generate_activation_key(user):

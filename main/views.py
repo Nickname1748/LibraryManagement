@@ -168,6 +168,7 @@ def admin(request):
     return render(request, 'main/admin.html', context=context)
 
 
+@method_decorator(admin_required, name='dispatch')
 class LogListView(generic.ListView):
     """
     Log list view.
