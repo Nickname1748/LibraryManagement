@@ -134,5 +134,8 @@ dmypy.json
 # Node.js modules
 node_modules/
 
-data/
+.github/
 
+data/
+img/
+scss/
