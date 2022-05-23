@@ -4,7 +4,7 @@ django-createuser==0.1.0
 django-isbn-field==0.5.2
 django-registration==3.1.2
 django-widget-tweaks==1.4.8
-openpyxl==3.0.7
+openpyxl==3.0.10
 pycodestyle==2.7.0
 pylint==2.9.3
 pylint-django==2.4.4
