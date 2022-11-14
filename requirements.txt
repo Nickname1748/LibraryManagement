@@ -8,4 +8,4 @@ openpyxl==3.0.7
 pycodestyle==2.7.0
 pylint==2.9.3
 pylint-django==2.4.4
-python-stdnum==1.16
+python-stdnum==1.18
